@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KB Global One Team · Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+.gs-app {
+  --navy: #0a1628;
+  --navy2: #0d1f3c;
+  --blue: #0066cc;
+  --blue-box: rgba(0, 102, 204, 0.88);
+  --green: #1a8f5a;
+  --green-box: rgba(26, 143, 90, 0.92);
+  --orange: #e85d04;
+  --orange-box: rgba(232, 93, 4, 0.9);
+  --ink: #ffffff;
+  --muted: rgba(255,255,255,.72);
+  --dim: rgba(255,255,255,.45);
+  --line: rgba(255,255,255,.12);
+  --card: #f5f7fa;
+  --text: #1a1a2e;
+  --text-muted: #5a6270;
+  --header: 72px;
+  --sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--navy);
+}
+.gs-app * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+.gs-scroll {
+  height: 100vh; overflow-y: auto; overflow-x: hidden;
+  scroll-snap-type: y mandatory; scroll-behavior: smooth;
+}
+.gs-fp {
+  min-height: 100vh; scroll-snap-align: start; position: relative;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.gs-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--header);
+  display: flex; align-items: center; transition: background .35s, box-shadow .35s;
+}
+.gs-header.solid { background: rgba(10,22,40,.96); box-shadow: 0 2px 20px rgba(0,0,0,.3); }
+.gs-header-inner {
+  width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; gap: 20px;
+}
+.gs-logo {
+  display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex-shrink: 0;
+}
+.gs-logo-mark {
+  width: 40px; height: 40px; background: var(--blue); border-radius: 4px;
+  display: grid; place-items: center; font-size: 11px; font-weight: 800;
+}
+.gs-logo-text { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+.gs-logo-text em { font-style: normal; color: var(--muted); font-weight: 400; font-size: 14px; display: block; }
+.gs-nav {
+  flex: 1; display: flex; justify-content: center; gap: 2px; overflow-x: auto; scrollbar-width: none;
+}
+.gs-nav::-webkit-scrollbar { display: none; }
+.gs-nav-btn {
+  border: 0; background: transparent; color: rgba(255,255,255,.75);
+  font-size: 13px; font-weight: 500; padding: 8px 14px; cursor: pointer;
+  white-space: nowrap; transition: .2s; font-family: var(--sans);
+}
+.gs-nav-btn:hover, .gs-nav-btn.active { color: #fff; font-weight: 700; }
+.gs-util { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.gs-util-link {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink);
+  text-decoration: none; opacity: .85;
+}
+.gs-lang { display: flex; gap: 4px; }
+.gs-lang button {
+  border: 1px solid rgba(255,255,255,.3); background: transparent; color: var(--ink);
+  padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 2px;
+}
+.gs-lang button.on { background: var(--blue); border-color: var(--blue); }
+.gs-menu-btn {
+  width: 36px; height: 36px; border: 0; background: transparent; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 6px;
+}
+.gs-menu-btn span { display: block; height: 2px; background: #fff; border-radius: 1px; }
+
+.gs-dots {
+  position: fixed; left: 28px; top: 50%; transform: translateY(-50%); z-index: 400;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.gs-dot {
+  width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4);
+  background: transparent; cursor: pointer; padding: 0; transition: .25s;
+}
+.gs-dot.on { background: #fff; border-color: #fff; transform: scale(1.15); }
+
+.gs-dock {
+  position: fixed; bottom: 28px; right: 28px; z-index: 400;
+  display: flex; gap: 8px; background: rgba(10,22,40,.85);
+  padding: 10px 14px; border-radius: 40px; border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+.gs-dock-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  min-width: 52px; padding: 4px; transition: .2s;
+}
+.gs-dock-item:hover { color: #fff; }
+.gs-dock-icon {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line);
+  display: grid; place-items: center; font-size: 14px; background: rgba(255,255,255,.06);
+}
+.gs-dock-item span { font-size: 9px; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
+
+.gs-hero {
+  position: relative; min-height: 100vh; overflow: hidden;
+}
+.gs-hero-video {
+  position: absolute; inset: 0; z-index: 0;
+}
+.gs-hero-video::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: rgba(8, 12, 24, .42);
+}
+.gs-hero-video video {
+  width: 100%; height: 100%; display: block; object-fit: cover;
+}
+.gs-hero-fallback {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: none; object-fit: cover; object-position: center center;
+}
+.gs-hero-video.use-fallback video { display: none; }
+.gs-hero-video.use-fallback .gs-hero-fallback { display: block; }
+.gs-hero-inner {
+  position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 0 auto;
+  padding: calc(var(--header) + 32px) 32px 48px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; box-sizing: border-box; text-align: center;
+}
+.gs-hero-box {
+  background: transparent; padding: 0; max-width: 720px; width: 100%;
+}
+.gs-hero-tag {
+  font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+  color: #00e5c3; margin-bottom: 18px;
+}
+.gs-hero-box h1 {
+  font-size: clamp(44px, 9vw, 88px); font-weight: 700; line-height: 1;
+  margin-bottom: 22px; letter-spacing: .08em; text-transform: uppercase;
+}
+.gs-hero-desc {
+  font-size: 15px; line-height: 1.75; color: rgba(255,255,255,.78);
+  margin: 0 auto 32px; max-width: 580px;
+}
+.gs-hero-cta {
+  display: inline-block; border: 0; background: #00e5c3; color: #041018;
+  padding: 14px 36px; font-size: 11px; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; cursor: pointer; transition: .2s; font-family: var(--sans);
+}
+.gs-hero-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+.gs-business { justify-content: center; }
+.gs-business-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(rgba(10,22,40,.82), rgba(10,22,40,.88)),
+    url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80') center/cover;
+}
+.gs-business-inner {
+  position: relative; z-index: 2; width: 100%; max-width: 1280px; margin: 0 auto;
+  padding: calc(var(--header) + 32px) 32px 48px;
+}
+.gs-biz-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; min-height: 62vh; }
+.gs-biz-card {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 28px 24px; cursor: pointer; overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,.08); min-height: 280px;
+}
+.gs-biz-card:last-child { border-right: 0; }
+.gs-biz-card::before {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 0%; z-index: 1; pointer-events: none;
+  transition: height .45s cubic-bezier(.4, 0, .2, 1);
+}
+.gs-biz-card:hover::before { height: 100%; }
+.gs-biz-card.green { background: var(--green-box); }
+.gs-biz-card.green::before { background: linear-gradient(180deg, #4a2d8a 0%, #c0396b 55%, #e84393 100%); }
+.gs-biz-card.img1 {
+  background: linear-gradient(transparent 30%, rgba(0,0,0,.85)),
+    url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80') center/cover;
+}
+.gs-biz-card.img1::before { background: linear-gradient(180deg, #1a3a6b 0%, #0077b6 50%, #00b4d8 100%); }
+.gs-biz-card.img2 {
+  background: linear-gradient(transparent 30%, rgba(0,0,0,.85)),
+    url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80') center/cover;
+}
+.gs-biz-card.img2::before { background: linear-gradient(180deg, #1a5c3a 0%, #2d6a4f 50%, #52b788 100%); }
+.gs-biz-card.img3 {
+  background: linear-gradient(transparent 30%, rgba(0,0,0,.85)),
+    url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80') center/cover;
+}
+.gs-biz-card.img3::before { background: linear-gradient(180deg, #7b2d00 0%, #e85d04 55%, #f48c06 100%); }
+.gs-biz-card > * { position: relative; z-index: 2; }
+.gs-biz-label { font-size: 11px; font-weight: 700; letter-spacing: .12em; opacity: .7; margin-bottom: 8px; }
+.gs-biz-card h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+.gs-biz-card p { font-size: 13px; color: var(--muted); line-height: 1.6; transition: color .35s; }
+.gs-biz-card:hover p { color: rgba(255,255,255,.92); }
+@media (prefers-reduced-motion: reduce) {
+  .gs-biz-card::before { transition: none; }
+}
+
+.gs-network { justify-content: center; }
+.gs-network-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(30,60,120,.4), transparent 60%),
+    linear-gradient(180deg, #0a1628 0%, #0d1f3c 50%, #061018 100%);
+}
+.gs-network-bg::after {
+  content: ''; position: absolute; inset: 0; opacity: .35;
+  background-image: radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 60% 70%, #fff, transparent),
+    radial-gradient(1px 1px at 80% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 40% 80%, #fff, transparent);
+}
+.gs-network-inner {
+  position: relative; z-index: 2; width: 100%; max-width: 1280px; margin: 0 auto;
+  padding: calc(var(--header) + 24px) 32px 40px; display: grid;
+  grid-template-columns: 1fr 380px; gap: 40px; align-items: center; min-height: 100vh;
+}
+.gs-map-wrap { position: relative; min-height: 420px; }
+.gs-map-svg { width: 100%; height: auto; opacity: .6; }
+.gs-map-dot {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.gs-map-dot i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 12px var(--orange); }
+.gs-map-dot span { font-size: 9px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.gs-network-box {
+  background: var(--orange-box); padding: 40px 36px;
+}
+.gs-network-box h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+.gs-network-box p { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,.9); margin-bottom: 24px; }
+.gs-pulse-zone { margin-top: 8px; }
+.gs-pulse-hint { font-size: 11px; color: rgba(255,255,255,.65); margin-bottom: 12px; }
+.gs-clocks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.gs-clk {
+  background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.15); border-radius: 4px;
+  padding: 8px 4px; text-align: center; cursor: pointer; position: relative;
+}
+.gs-clk.is-open { z-index: 260; border-color: #fff; }
+.gs-clk-flag { font-size: 12px; }
+.gs-clk-name { font-size: 8px; color: rgba(255,255,255,.6); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-clk-time { font-size: 13px; font-weight: 700; display: block; margin: 2px 0; }
+.gs-temp-chip { font-size: 9px; opacity: .85; }
+.gs-clk-picker {
+  position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%);
+  padding: 10px; background: #1a2744; border: 1px solid var(--line); border-radius: 6px;
+  z-index: 270; min-width: 150px; box-shadow: 0 12px 32px rgba(0,0,0,.4);
+}
+.gs-clk-picker[hidden] { display: none !important; }
+.gs-clk-picker > span { display: block; font-size: 8px; text-align: center; margin-bottom: 6px; opacity: .6; }
+.gs-clk-picker-row { display: flex; gap: 4px; justify-content: center; }
+.gs-clk-opt {
+  padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: rgba(255,255,255,.05);
+  cursor: pointer; font-size: 14px; border: 0; background: transparent;
+}
+.gs-psum { margin-top: 12px; padding: 10px; background: rgba(0,0,0,.2); border-radius: 4px; }
+.gs-spec-bar { display: flex; height: 6px; border-radius: 99px; overflow: hidden; background: rgba(0,0,0,.3); }
+.gs-spec-seg { height: 100%; min-width: 2px; }
+.gs-spec-legend { display: flex; justify-content: space-around; margin-top: 6px; font-size: 9px; opacity: .8; }
+
+.gs-news { justify-content: center; background: linear-gradient(180deg, #061018, #0a1628); }
+.gs-news-inner {
+  width: 100%; max-width: 1100px; margin: 0 auto; padding: calc(var(--header) + 40px) 32px 60px;
+}
+.gs-news-card {
+  background: var(--card); color: var(--text); border-radius: 2px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.4); overflow: hidden;
+}
+.gs-news-head {
+  display: grid; grid-template-columns: 180px 1fr; border-bottom: 1px solid #e0e4ea;
+}
+.gs-news-title {
+  padding: 40px 32px; font-size: 48px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; border-right: 1px solid #e0e4ea;
+}
+.gs-news-list { padding: 28px 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.gs-news-item { cursor: pointer; transition: opacity .2s; }
+.gs-news-item:hover { opacity: .85; }
+.gs-news-tag {
+  display: inline-block; font-size: 10px; font-weight: 700; color: var(--blue);
+  letter-spacing: .06em; margin-bottom: 8px;
+}
+.gs-news-item h3 { font-size: 15px; font-weight: 700; line-height: 1.45; margin-bottom: 8px; color: var(--text); }
+.gs-news-item p { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+.gs-news-date { font-size: 11px; color: #999; }
+.gs-news-nav {
+  display: flex; justify-content: flex-end; gap: 8px; padding: 16px 32px;
+  border-top: 1px solid #e0e4ea;
+}
+.gs-news-nav button {
+  width: 36px; height: 36px; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 16px;
+}
+
+.gs-hub { background: var(--navy2); }
+.gs-hub-inner {
+  width: 100%; max-width: 1280px; margin: 0 auto;
+  padding: calc(var(--header) + 32px) 32px 48px; min-height: 100vh;
+}
+.gs-hub-hd { margin-bottom: 28px; }
+.gs-hub-hd h2 { font-size: 32px; font-weight: 700; margin-bottom: 6px; }
+.gs-hub-hd p { font-size: 14px; color: var(--muted); }
+.gs-hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.gs-panel {
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 4px; padding: 24px;
+}
+.gs-panel h3 { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--blue); margin-bottom: 16px; text-transform: uppercase; }
+.gs-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gs-tile {
+  background: rgba(0,0,0,.2); border: 1px solid var(--line); border-radius: 4px;
+  overflow: hidden; cursor: pointer; transition: .2s;
+}
+.gs-tile:hover { border-color: rgba(255,255,255,.3); transform: translateY(-2px); }
+.gs-tile-img { height: 80px; overflow: hidden; }
+.gs-tile-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gs-tile-body { padding: 12px; }
+.gs-tile-body h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.gs-tile-body p { font-size: 11px; color: var(--muted); }
+.gs-filters { display: flex; gap: 6px; margin-bottom: 12px; }
+.gs-filters button {
+  padding: 6px 14px; border: 1px solid var(--line); background: transparent;
+  color: var(--muted); font-size: 11px; cursor: pointer; border-radius: 2px;
+}
+.gs-filters button.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+.gs-story {
+  display: grid; grid-template-columns: 80px 1fr; gap: 10px; padding: 10px;
+  background: rgba(0,0,0,.15); border-radius: 4px; margin-bottom: 8px; border-left: 3px solid var(--blue);
+}
+.gs-story-img { height: 56px; overflow: hidden; border-radius: 2px; }
+.gs-story-img img { width: 100%; height: 100%; object-fit: cover; }
+.gs-story-body h4 { font-size: 12px; font-weight: 600; }
+.gs-story-body p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.gs-faq { display: flex; flex-direction: column; gap: 10px; }
+.gs-faq-item {
+  padding: 14px; background: rgba(0,0,0,.2); border: 1px solid var(--line);
+  border-radius: 4px; cursor: pointer; transition: .2s;
+}
+.gs-faq-item:hover { border-color: var(--orange); }
+.gs-faq-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.gs-faq-item p { font-size: 11px; color: var(--muted); }
+.gs-fun-grid { display: grid; grid-template-columns: 1fr; gap: 10px; max-height: 320px; overflow-y: auto; }
+.gs-fun-card { padding: 14px; background: rgba(0,0,0,.2); border: 1px solid var(--line); border-radius: 4px; }
+.gs-fun-card.picked { border-color: var(--green); }
+.gs-fun-q { font-size: 13px; font-weight: 600; margin: 8px 0; }
+.gs-fun-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.gs-fun-opt {
+  padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: rgba(255,255,255,.04);
+  font-size: 11px; cursor: pointer; text-align: left; color: var(--ink);
+}
+.gs-fun-opt.sel { border-color: var(--green); background: rgba(26,143,90,.2); }
+.gs-fun-opt:disabled { opacity: .8; cursor: default; }
+.gs-fun-result { margin-top: 8px; font-size: 10px; color: var(--green); }
+.gs-fun-bar { height: 4px; background: rgba(255,255,255,.1); border-radius: 99px; margin: 4px 0; overflow: hidden; }
+.gs-fun-bar i { display: block; height: 100%; background: var(--green); border-radius: 99px; }
+.gs-empty { padding: 24px; text-align: center; color: var(--dim); font-size: 12px; }
+
+.gs-footer {
+  background: #050a12; padding: 40px 32px 28px; scroll-snap-align: end;
+}
+.gs-footer-inner { max-width: 1280px; margin: 0 auto; }
+.gs-footer-info { font-size: 12px; color: var(--dim); line-height: 1.8; margin-bottom: 16px; }
+.gs-footer-copy { font-size: 11px; color: rgba(255,255,255,.35); letter-spacing: .04em; }
+.gs-footer-links { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.gs-footer-links button {
+  border: 0; background: transparent; color: var(--dim); font-size: 11px; cursor: pointer;
+}
+.gs-footer-links button:hover { color: #fff; }
+.gs-family {
+  margin-top: 16px; padding: 8px 12px; border: 1px solid var(--line);
+  background: transparent; color: var(--dim); font-size: 11px; cursor: pointer; min-width: 160px;
+}
+
+.gs-modal {
+  position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,.8);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.gs-modal.on { opacity: 1; pointer-events: auto; }
+.gs-modal-panel {
+  background: #fff; color: var(--text); max-width: 520px; width: 100%; max-height: 90vh;
+  overflow-y: auto; border-radius: 4px; transform: translateY(16px); transition: transform .3s;
+}
+.gs-modal.on .gs-modal-panel { transform: none; }
+.gs-modal-img { height: 180px; overflow: hidden; }
+.gs-modal-img img { width: 100%; height: 100%; object-fit: cover; }
+.gs-modal-body { padding: 28px; position: relative; }
+.gs-modal-x {
+  position: absolute; top: 12px; right: 12px; width: 32px; height: 32px;
+  border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 2px;
+}
+.gs-modal-tag { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: .1em; }
+.gs-modal-title { font-size: 24px; font-weight: 700; margin: 8px 0 14px; }
+.gs-modal-prose, .gs-modal-insight { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+.gs-modal-insight { padding: 12px; border-left: 3px solid var(--blue); background: #f0f4f8; color: var(--text); }
+.gs-src {
+  display: block; padding: 10px 12px; border: 1px solid #e0e4ea; border-radius: 2px;
+  margin-top: 6px; font-size: 12px; color: var(--text); text-decoration: none;
+}
+.gs-src:hover { border-color: var(--blue); color: var(--blue); }
+.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@media (max-width: 1024px) {
+  .gs-dots { display: none; }
+  .gs-hero-inner { padding: calc(var(--header) + 24px) 20px 40px; }
+  .gs-biz-grid { grid-template-columns: repeat(2, 1fr); min-height: auto; }
+  .gs-biz-card { min-height: 240px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .gs-network-inner { grid-template-columns: 1fr; }
+  .gs-news-head { grid-template-columns: 1fr; }
+  .gs-news-title { border-right: 0; border-bottom: 1px solid #e0e4ea; padding: 28px 24px; font-size: 36px; }
+  .gs-news-list { grid-template-columns: 1fr; }
+  .gs-hub-grid { grid-template-columns: 1fr; }
+  .gs-clocks { grid-template-columns: repeat(5, 1fr); }
+  .gs-dock { display: none; }
+}
+@media (max-width: 640px) {
+  .gs-nav { display: none; }
+  .gs-header-inner { padding: 0 16px; }
+  .gs-hero-box h1 { font-size: clamp(36px, 12vw, 56px); }
+  .gs-biz-grid { grid-template-columns: 1fr; }
+  .gs-clocks { grid-template-columns: repeat(3, 1fr); }
+  .gs-tiles { grid-template-columns: 1fr; }
+}
+  
+  
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue
+
+    createApp({
+      setup() {
+const lang = ref('ko')
+        const motionOff = ref(false)
+        const modalOpen = ref(false)
+        const headerSolid = ref(false)
+        const heroVideo = ref(null)
+        const heroUseFallback = ref(false)
+        const heroFallbackImg = 'https://www.samoo.com/home/works/content/download.do?seq=23&cntntsSn=32280'
+        const WEEK_ID = '2026-W26'
+
+let LANG = 'ko', clockTimer = null, activeSection = 'hero', spyIO = null
+const SECTION_IDS = ['hero', 'business', 'network', 'news', 'hub']
+
+const MAP_DOTS = [
+  { id: 'london', label: { ko: '유럽', en: 'Europe' }, x: 48, y: 28 },
+  { id: 'nyc', label: { ko: '북미', en: 'N.America' }, x: 22, y: 32 },
+  { id: 'tokyo', label: { ko: '일본', en: 'Japan' }, x: 82, y: 34 },
+  { id: 'hk', label: { ko: '홍콩', en: 'HK' }, x: 76, y: 42 },
+  { id: 'sg', label: { ko: '동남아', en: 'SEA' }, x: 72, y: 52 },
+  { id: 'china', label: { ko: '중국', en: 'China' }, x: 74, y: 36 },
+  { id: 'india', label: { ko: '인도', en: 'India' }, x: 68, y: 46 },
+  { id: 'auckland', label: { ko: '호주', en: 'Oceania' }, x: 88, y: 68 }
+]
+
+const PULSE_LEVELS = [
+  { id: 'hot', emoji: '🔥', ko: 'HOT', en: 'HOT', color: '#e85d04' },
+  { id: 'normal', emoji: '😐', ko: 'OK', en: 'OK', color: '#8A9AAD' },
+  { id: 'cold', emoji: '🧊', ko: 'COOL', en: 'COOL', color: '#0066cc' }
+]
+const PULSE_DEMO = { hot: 12, normal: 18, cold: 9 }
+
+const CLOCK_COUNTRIES = [
+  { id: 'london', flag: '🇬🇧', city: { ko: '런던', en: 'London' }, tz: 'Europe/London' },
+  { id: 'nyc', flag: '🇺🇸', city: { ko: '뉴욕', en: 'New York' }, tz: 'America/New_York' },
+  { id: 'tokyo', flag: '🇯🇵', city: { ko: '동경', en: 'Tokyo' }, tz: 'Asia/Tokyo' },
+  { id: 'hk', flag: '🇭🇰', city: { ko: '홍콩', en: 'Hong Kong' }, tz: 'Asia/Hong_Kong' },
+  { id: 'sg', flag: '🇸🇬', city: { ko: '싱가포르', en: 'Singapore' }, tz: 'Asia/Singapore' },
+  { id: 'china', flag: '🇨🇳', city: { ko: '중국', en: 'China' }, tz: 'Asia/Shanghai' },
+  { id: 'vietnam', flag: '🇻🇳', city: { ko: '베트남', en: 'Vietnam' }, tz: 'Asia/Ho_Chi_Minh' },
+  { id: 'india', flag: '🇮🇳', city: { ko: '인도', en: 'India' }, tz: 'Asia/Kolkata' },
+  { id: 'mm', flag: '🇲🇲', city: { ko: '미얀마', en: 'Myanmar' }, tz: 'Asia/Yangon' },
+  { id: 'auckland', flag: '🇳🇿', city: { ko: '오클랜드', en: 'Auckland' }, tz: 'Pacific/Auckland' }
+]
+
+const FUN_CHOICES = [
+  { id: 'q1', emoji: '💴', q: { ko: 'JPY 146, 첫 반응?', en: 'JPY 146 reaction?' },
+    a: { ko: '① ALM 재점검', en: '① ALM review' }, b: { ko: '② 커피 리필', en: '② Coffee' }, demo: { a: 58, b: 42 } },
+  { id: 'q2', emoji: '🌍', q: { ko: 'icebreaker?', en: 'Icebreaker?' },
+    a: { ko: '① Fed vs BOJ', en: '① Fed vs BOJ' }, b: { ko: '② 타임존 고백', en: '② Timezone sins' }, demo: { a: 31, b: 69 } },
+  { id: 'q3', emoji: '📉', q: { ko: 'EM 악화 대응?', en: 'EM response?' },
+    a: { ko: '① Exposure 축소', en: '① Cut exposure' }, b: { ko: '② "우린 괜찮아"', en: '② "We\'re fine"' }, demo: { a: 47, b: 53 } },
+  { id: 'q4', emoji: '🌱', q: { ko: 'EU ESG?', en: 'EU ESG?' },
+    a: { ko: '① 체크리스트', en: '① Checklist' }, b: { ko: '② 런던 위임', en: '② London handles' }, demo: { a: 62, b: 38 } },
+  { id: 'q5', emoji: '🌙', q: { ko: '야근 원인?', en: 'Overtime?' },
+    a: { ko: '① 환헤지', en: '① FX hedge' }, b: { ko: '② 온도 찍기', en: '② Pulse voting' }, demo: { a: 44, b: 56 } }
+]
+
+const P = {
+  hero: [
+    { u: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1400&q=80', s: 't1' },
+    { u: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1400&q=80', s: 't2' },
+    { u: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=80', s: 't3' }
+  ],
+  sigUrl: [
+    'https://images.unsplash.com/photo-1536098013257-b1f2993ad9e5?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1618044733300-9472054094ee?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80'
+  ],
+  sigSeed: ['s1', 's2', 's3', 's4'],
+  sub: [
+    { u: 'https://images.unsplash.com/photo-1555899434-94d1478fbf09?auto=format&fit=crop&w=900&q=80', s: 'id' },
+    { u: 'https://images.unsplash.com/photo-1559592416-2c47acc79e8b?auto=format&fit=crop&w=900&q=80', s: 'kh' }
+  ],
+  topic: [{ u: 'https://images.unsplash.com/photo-1473341304170-971dccb5adbe?auto=format&fit=crop&w=900&q=80', s: 'esg' }],
+  reg: [
+    { u: 'https://images.unsplash.com/photo-1496442226666-8d0d62e62e6e?auto=format&fit=crop&w=900&q=80', s: 'nyc' },
+    { u: 'https://images.unsplash.com/photo-1536599018102-95f1b4acfce0?auto=format&fit=crop&w=900&q=80', s: 'kr' },
+    { u: 'https://images.unsplash.com/photo-1555899434-94d1478fbf09?auto=format&fit=crop&w=900&q=80', s: 'id' }
+  ],
+  media: {
+    sg: { u: 'https://images.unsplash.com/photo-1565967511849-76a60a51630f?auto=format&fit=crop&w=900&q=80', s: 'sg' },
+    cn: { u: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=900&q=80', s: 'cn' },
+    in: { u: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=80', s: 'in' }
+  }
+}
+
+const TX = {
+  ko: {
+    tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '2026년 6월 23일', sub: '08:00 KST · WEEKLY BRIEF',
+    clockHint: '탭/클릭 → 🔥 HOT / 😐 OK / 🧊 COOL',
+    pulseSummaryTitle: '글로벌 온도 스펙트럼',
+    pulsePickHint: '온도 선택',
+    bizTitle: 'Intelligence', bizDesc: '글로벌 동향·시장신호·현지언론을 하나의 플랫폼에서.',
+    bizCards: [
+      { title: 'Weekly Brief', desc: '주간 글로벌 동향 & 4대 시장신호', section: 'news' },
+      { title: 'Macro Signals', desc: 'BOJ · Fed · EM 금리 변동 모니터링', section: 'news', modal: 'brief:0' },
+      { title: 'Local Media', desc: '10개국 현지언론 Intelligence', section: 'hub' },
+      { title: 'Global Subs', desc: '국외연결자회사 & Topic Watch', section: 'hub' }
+    ],
+    networkTitle: 'Global Network',
+    networkDesc: '런던 · 뉴욕 · 도쿄 · 싱가포르 등 10개 글로벌 허브와 실시간 Pulse 온도.',
+    newsTitle: 'News',
+    hubTitle: 'Intelligence Hub',
+    hubDesc: '현지언론 · 자회사 · Topic · 규제 · 참여 코너',
+    signals: [
+      { n: '01', h: 'BOJ 인상', p: 'JPY 146', detail: '<p>BOJ 금리 인상 시사.</p>', insight: '<p>엔화 노출 축소 검토.</p>', sources: [{ title: 'BOJ', url: '#' }] },
+      { n: '02', h: '조달 급변', p: 'EM', detail: '<p>채권 조건 악화.</p>', insight: '<p>유동성 대비 필요.</p>', sources: [{ title: 'EM', url: '#' }] },
+      { n: '03', h: 'EM 압박', p: '↑', detail: '<p>자본 이탈 우려.</p>', insight: '<p>Exposure 감축.</p>', sources: [{ title: 'KB', url: '#' }] },
+      { n: '04', h: 'ALM', p: '재점검', detail: '<p>금리 민감도 급변.</p>', insight: '<p>스트레스 테스트.</p>', sources: [{ title: 'BCBS', url: '#' }] }
+    ],
+    subs: [
+      { h: 'KB Indonesia', p: '턴어라운드', detail: '<p>리브랜딩 진행.</p>', insight: '<p>선별 성장.</p>', sources: [{ title: 'ID', url: '#' }] },
+      { h: 'KB PRASAC', p: 'SME', detail: '<p>합병 완료.</p>', insight: '<p>다변화.</p>', sources: [{ title: 'KH', url: '#' }] }
+    ],
+    topics: [{ h: 'ESG EU', p: '가이드', detail: '<p>실사법 시행.</p>', insight: '<p>ESG 의무화.</p>', sources: [{ title: 'EU', url: '#' }] }],
+    regulations: [
+      { flag: '🇺🇸', h: 'Fed 기준금리 동결', p: '3.50–3.75% · 달러 조달비용', date: '2026.06.18',
+        detail: '<p>6월 FOMC, 연방기금금리 <strong>3.50–3.75%</strong> 유지.</p>',
+        insight: '<p><strong>KB Watch:</strong> USD 조달금리 고점 유지.</p>',
+        sources: [{ title: 'Federal Reserve', url: 'https://www.federalreserve.gov/monetarypolicy.htm' }] },
+      { flag: '🇰🇷', h: '금리리스크 관리 강화', p: 'ALM·IPS 재점검 권고', date: '2026.06.12',
+        detail: '<p>금융당국 ALM·금리민감도 점검 주기 단축 권고.</p>',
+        insight: '<p><strong>KB Watch:</strong> JPY 146 시나리오 ALM 재편.</p>',
+        sources: [{ title: '금융위원회', url: 'https://www.fsc.go.kr/' }] },
+      { flag: '🇮🇩', h: 'BI 정책금리 5.75%', p: '루피아화 방어', date: '2026.06.20',
+        detail: '<p>BI-Rate <strong>5.75%</strong>로 25bp 인상.</p>',
+        insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM 점검.</p>',
+        sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
+    ],
+    tabs: ['홈', '사업영역', '글로벌 네트워크', 'IR 소식', 'Intelligence Hub'],
+    tabIds: SECTION_IDS,
+    footerText: '※ KB Global Intelligence 2026.6.23',
+    partTitle: '참여 코너', partSub: '웃긴 2지선다 — 1 또는 2!', funPicked: '완료!',
+    dock: [
+      { icon: '🌡', label: 'Pulse', section: 'network' },
+      { icon: '📊', label: 'Risk', section: 'news' },
+      { icon: '🌱', label: 'ESG', section: 'hub' },
+      { icon: '⚖', label: 'Reg', section: 'hub' }
+    ]
+  },
+  en: {
+    tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '23 June 2026', sub: '08:00 KST · WEEKLY BRIEF',
+    clockHint: 'Tap → 🔥 HOT / 😐 OK / 🧊 COOL',
+    pulseSummaryTitle: 'Global temperature spectrum',
+    pulsePickHint: 'Pick',
+    bizTitle: 'Intelligence', bizDesc: 'Macro trends, signals and local media in one platform.',
+    bizCards: [
+      { title: 'Weekly Brief', desc: 'Global trends & 4 market signals', section: 'news' },
+      { title: 'Macro Signals', desc: 'BOJ · Fed · EM rate monitoring', section: 'news', modal: 'brief:0' },
+      { title: 'Local Media', desc: '10-country local media intel', section: 'hub' },
+      { title: 'Global Subs', desc: 'Subsidiaries & Topic Watch', section: 'hub' }
+    ],
+    networkTitle: 'Global Network',
+    networkDesc: '10 global hubs — London, NYC, Tokyo, Singapore — with real-time Pulse.',
+    newsTitle: 'News',
+    hubTitle: 'Intelligence Hub',
+    hubDesc: 'Media · Subs · Topics · Regulation · Engagement',
+    signals: [
+      { n: '01', h: 'BOJ', p: '146', detail: '<p>Hike signal.</p>', insight: '<p>Cut JPY.</p>', sources: [{ title: 'BOJ', url: '#' }] },
+      { n: '02', h: 'Funding', p: 'EM', detail: '<p>Tighter bonds.</p>', insight: '<p>Prep liquidity.</p>', sources: [{ title: 'EM', url: '#' }] },
+      { n: '03', h: 'EM FX', p: 'Up', detail: '<p>Outflows.</p>', insight: '<p>Cut exposure.</p>', sources: [{ title: 'KB', url: '#' }] },
+      { n: '04', h: 'ALM', p: 'Review', detail: '<p>Sensitivity shift.</p>', insight: '<p>Stress test.</p>', sources: [{ title: 'BCBS', url: '#' }] }
+    ],
+    subs: [
+      { h: 'KB ID', p: 'Turn', detail: '<p>Rebrand.</p>', insight: '<p>Growth.</p>', sources: [{ title: 'ID', url: '#' }] },
+      { h: 'PRASAC', p: 'SME', detail: '<p>Merge.</p>', insight: '<p>Mix.</p>', sources: [{ title: 'KH', url: '#' }] }
+    ],
+    topics: [{ h: 'ESG', p: 'EU', detail: '<p>Law.</p>', insight: '<p>ESG.</p>', sources: [{ title: 'EU', url: '#' }] }],
+    regulations: [
+      { flag: '🇺🇸', h: 'Fed holds rates', p: '3.50–3.75%', date: '18 Jun 2026',
+        detail: '<p>Federal funds rate at <strong>3.50–3.75%</strong>.</p>',
+        insight: '<p><strong>KB Watch:</strong> USD funding costs.</p>',
+        sources: [{ title: 'Federal Reserve', url: 'https://www.federalreserve.gov/monetarypolicy.htm' }] },
+      { flag: '🇰🇷', h: 'IRR tightening', p: 'ALM review', date: '12 Jun 2026',
+        detail: '<p>Shorter ALM review cycles.</p>',
+        insight: '<p><strong>KB Watch:</strong> JPY 146 ALM.</p>',
+        sources: [{ title: 'FSC', url: 'https://www.fsc.go.kr/' }] },
+      { flag: '🇮🇩', h: 'BI rate 5.75%', p: 'IDR defence', date: '20 Jun 2026',
+        detail: '<p>BI-Rate raised to <strong>5.75%</strong>.</p>',
+        insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM.</p>',
+        sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
+    ],
+    tabs: ['Home', 'Business', 'Network', 'IR News', 'Hub'],
+    tabIds: SECTION_IDS,
+    footerText: '※ KB Global Intelligence',
+    partTitle: 'Engagement', partSub: 'Pick 1 or 2!', funPicked: 'Done!',
+    dock: [
+      { icon: '🌡', label: 'Pulse', section: 'network' },
+      { icon: '📊', label: 'Risk', section: 'news' },
+      { icon: '🌱', label: 'ESG', section: 'hub' },
+      { icon: '⚖', label: 'Reg', section: 'hub' }
+    ]
+  }
+}
+
+const COUNTRY_MEDIA = CLOCK_COUNTRIES.map((c, i) => ({
+  ...c,
+  a: i === 4 ? [{ c: 'esg', img: 'sg', t: { ko: '기후', en: 'Climate' }, q: { ko: '리스크', en: 'Risk' } }] :
+    i === 5 ? [{ c: 'fin', img: 'cn', t: { ko: 'SCF', en: 'SCF' }, q: { ko: '지연', en: 'Delay' } }] :
+    i === 7 ? [{ c: 'esg', img: 'in', t: { ko: '신용', en: 'Credit' }, q: { ko: 'ESG', en: 'ESG' } }] : []
+}))
+
+const mt = (v) => (typeof v === 'object' ? (v[LANG] || v.ko || v.en || '') : (v || ''))
+const pulseKey = () => `kb-pulse-${WEEK_ID}`
+const choiceKey = () => `kb-choice-${WEEK_ID}`
+const loadPulse = () => { try { return JSON.parse(localStorage.getItem(pulseKey()) || '{}') } catch (_) { return {} } }
+const savePulse = (id, lv) => { try { const v = loadPulse(); v[id] = lv; localStorage.setItem(pulseKey(), JSON.stringify(v)) } catch (_) {} }
+const loadChoices = () => { try { return JSON.parse(localStorage.getItem(choiceKey()) || '{}') } catch (_) { return {} } }
+const saveChoice = (id, pick) => { try { const v = loadChoices(); v[id] = pick; localStorage.setItem(choiceKey(), JSON.stringify(v)) } catch (_) {} }
+const pulseTotals = () => {
+  const t = { hot: PULSE_DEMO.hot, normal: PULSE_DEMO.normal, cold: PULSE_DEMO.cold }
+  Object.values(loadPulse()).forEach(lv => { if (t[lv] != null) t[lv]++ })
+  return t
+}
+const fmtTime = (tz) => {
+  try { return new Date().toLocaleTimeString('ko-KR', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }) }
+  catch (_) { return '--:--' }
+}
+
+function imgTag(url, seed, alt = '', loading = 'lazy') {
+  return `<img class="photo" src="${url}" alt="${alt.replace(/"/g, '&quot;')}" loading="${loading}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/kb${seed}/1200/700'"/>`
+}
+function mediaImg(k) { const m = P.media[k] || { u: P.hero[0].u, s: 'x' }; return imgTag(m.u, m.s) }
+
+function tempLineHTML(lv) {
+  if (!lv) return `<span class="gs-temp-chip">?</span>`
+  const l = PULSE_LEVELS.find(x => x.id === lv)
+  return l ? `<span class="gs-temp-chip">${l.emoji}</span>` : ''
+}
+
+function renderClockStrip() {
+  const votes = loadPulse(), t = TX[LANG]
+  return CLOCK_COUNTRIES.map(c => {
+    const lv = votes[c.id]
+    return `<div class="gs-clk ${lv ? 'has-temp' : ''}" data-country="${c.id}">
+      <span class="gs-clk-flag">${c.flag}</span>
+      <span class="gs-clk-name">${mt(c.city)}</span>
+      <time class="gs-clk-time">${fmtTime(c.tz)}</time>
+      ${tempLineHTML(lv)}
+      <div class="gs-clk-picker" hidden>
+        <span>${t.pulsePickHint}</span>
+        <div class="gs-clk-picker-row">
+          ${PULSE_LEVELS.map(l => `<button type="button" class="gs-clk-opt" data-level="${l.id}">${l.emoji}</button>`).join('')}
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function renderPulseSummaryOnly() {
+  const totals = pulseTotals(), sum = totals.hot + totals.normal + totals.cold, t = TX[LANG]
+  const spectrum = PULSE_LEVELS.map(l => {
+    const pct = sum ? Math.round(totals[l.id] / sum * 100) : 0
+    return `<div class="gs-spec-seg" style="width:${pct}%;background:${l.color}"></div>`
+  }).join('')
+  const legend = PULSE_LEVELS.map(l => {
+    const pct = sum ? Math.round(totals[l.id] / sum * 100) : 0
+    return `<span>${l.emoji} ${pct}%</span>`
+  }).join('')
+  return `<div class="gs-psum"><div style="font-size:10px;margin-bottom:6px">${t.pulseSummaryTitle} · ${sum} votes</div>
+    <div class="gs-spec-bar">${spectrum}</div><div class="gs-spec-legend">${legend}</div></div>`
+}
+
+function closeAllClockPickers() {
+  const strip = document.getElementById('clockStrip'); if (!strip) return
+  strip.querySelectorAll('.gs-clk-picker').forEach(p => { p.hidden = true })
+  strip.querySelectorAll('.gs-clk').forEach(c => c.classList.remove('is-open'))
+}
+
+function bindClockPulseEvents() {
+  const strip = document.getElementById('clockStrip'); if (!strip) return
+  strip.onclick = (e) => {
+    const opt = e.target.closest('.gs-clk-opt')
+    if (opt) {
+      e.stopPropagation()
+      savePulse(opt.closest('.gs-clk').dataset.country, opt.dataset.level)
+      closeAllClockPickers(); updateClockUI(); return
+    }
+    const clk = e.target.closest('.gs-clk'); if (!clk) return
+    const picker = clk.querySelector('.gs-clk-picker'), willOpen = picker.hidden
+    closeAllClockPickers()
+    if (willOpen) { clk.classList.add('is-open'); picker.hidden = false }
+    e.stopPropagation()
+  }
+}
+
+function updateClockUI() {
+  const strip = document.getElementById('clockStrip'), summary = document.getElementById('pulseSummary')
+  if (strip) strip.innerHTML = renderClockStrip()
+  if (summary) summary.innerHTML = renderPulseSummaryOnly()
+  bindClockPulseEvents()
+}
+
+function getScrollEl() { return document.getElementById('gsScroll') }
+
+function scrollToSection(id) {
+  activeSection = id
+  renderNav(); renderDots()
+  const el = document.getElementById('section-' + id)
+  const sc = getScrollEl()
+  if (!el || !sc) return
+  var top = el.offsetTop
+  if (sc.scrollTo) sc.scrollTo({ top: top, behavior: motionOff.value ? 'auto' : 'smooth' })
+  else sc.scrollTop = top
+}
+
+function setupScrollSpy() {
+  if (spyIO && spyIO.disconnect) spyIO.disconnect()
+  const sc = getScrollEl(); if (!sc) return
+  if (!window.IntersectionObserver) return
+  spyIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        activeSection = e.target.id.replace('section-', '')
+        renderNav(); renderDots()
+        headerSolid.value = activeSection !== 'hero'
+      }
+    })
+  }, { root: sc, threshold: 0.45 })
+  SECTION_IDS.forEach(function (id) {
+    const el = document.getElementById('section-' + id)
+    if (el) spyIO.observe(el)
+  })
+}
+
+function navButtonsHTML(active) {
+  const t = TX[LANG]
+  return t.tabs.map((tab, i) => {
+    const id = t.tabIds[i]
+    return `<button type="button" data-section="${id}" class="gs-nav-btn ${id === active ? 'active' : ''}">${tab}</button>`
+  }).join('')
+}
+
+function renderNav() {
+  const html = navButtonsHTML(activeSection)
+  const mainNav = document.getElementById('mainNav')
+  const footerNav = document.getElementById('footerNav')
+  ;[mainNav, footerNav].forEach(nav => {
+    if (!nav) return
+    nav.innerHTML = html
+    nav.onclick = (e) => {
+      const btn = e.target.closest('button[data-section]')
+      if (btn) scrollToSection(btn.dataset.section)
+    }
+  })
+}
+
+function renderDots() {
+  const box = document.getElementById('pageDots'); if (!box) return
+  box.innerHTML = SECTION_IDS.map(id =>
+    `<button type="button" class="gs-dot ${id === activeSection ? 'on' : ''}" data-section="${id}" aria-label="${id}"></button>`
+  ).join('')
+  box.onclick = (e) => {
+    const b = e.target.closest('.gs-dot')
+    if (b) scrollToSection(b.dataset.section)
+  }
+}
+
+function renderDock() {
+  const t = TX[LANG], box = document.getElementById('gsDock'); if (!box) return
+  box.innerHTML = t.dock.map(d =>
+    `<button type="button" class="gs-dock-item" data-section="${d.section}">
+      <span class="gs-dock-icon">${d.icon}</span><span>${d.label}</span></button>`
+  ).join('')
+  box.onclick = (e) => {
+    const b = e.target.closest('.gs-dock-item')
+    if (b) scrollToSection(b.dataset.section)
+  }
+}
+
+function renderFunChoices() {
+  const t = TX[LANG], picks = loadChoices()
+  return FUN_CHOICES.map((q, qi) => {
+    const picked = picks[q.id]
+    const pctA = picked === 'a' ? q.demo.a + 1 : q.demo.a
+    const pctB = picked === 'b' ? q.demo.b + 1 : q.demo.b
+    const sum = pctA + pctB, barA = Math.round(pctA / sum * 100)
+    return `<article class="gs-fun-card ${picked ? 'picked' : ''}" data-qid="${q.id}">
+      <div style="font-size:10px;opacity:.6">Q${qi + 1} ${q.emoji}</div>
+      <h4 class="gs-fun-q">${mt(q.q)}</h4>
+      <div class="gs-fun-btns">
+        <button type="button" class="gs-fun-opt ${picked === 'a' ? 'sel' : ''}" data-pick="a" ${picked ? 'disabled' : ''}>1 · ${mt(q.a)}</button>
+        <button type="button" class="gs-fun-opt ${picked === 'b' ? 'sel' : ''}" data-pick="b" ${picked ? 'disabled' : ''}>2 · ${mt(q.b)}</button>
+      </div>
+      ${picked ? `<div class="gs-fun-result">✅ ${t.funPicked}<div class="gs-fun-bar"><i style="width:${barA}%"></i></div></div>` : ''}
+    </article>`
+  }).join('')
+}
+
+function bindFunChoices() {
+  const box = document.getElementById('funChoiceBox')
+  if (!box || box.dataset.bound) return
+  box.dataset.bound = '1'
+  box.addEventListener('click', (e) => {
+    const btn = e.target.closest('.gs-fun-opt'); if (!btn || btn.disabled) return
+    saveChoice(btn.closest('.gs-fun-card').dataset.qid, btn.dataset.pick)
+    box.innerHTML = renderFunChoices()
+  })
+}
+
+function renderCountryMedia(f = 'all') {
+  const feed = document.getElementById('localMediaFeed'); if (!feed) return
+  const arts = COUNTRY_MEDIA.flatMap(x => x.a.map(a => ({ ...a, f: x.flag }))).filter(a => f === 'all' || a.c.includes(f))
+  feed.innerHTML = arts.length ? arts.map(a => `<article class="gs-story">
+    <div class="gs-story-img">${mediaImg(a.img)}</div>
+    <div class="gs-story-body"><h4>${mt(a.t)}</h4><p>${mt(a.q)}</p></div></article>`).join('')
+    : `<div class="gs-empty">${LANG === 'ko' ? '없음' : 'None'}</div>`
+}
+
+function bindModalClicks() {
+  document.querySelectorAll('[data-modal]').forEach(el => {
+    el.onclick = () => { const [ty, ix] = el.dataset.modal.split(':'); showModal(ty, +ix) }
+  })
+}
+
+function bindBizCards() {
+  document.querySelectorAll('.gs-biz-card').forEach(el => {
+    el.onclick = () => {
+      if (el.dataset.modal) { const [ty, ix] = el.dataset.modal.split(':'); showModal(ty, +ix); return }
+      if (el.dataset.section) scrollToSection(el.dataset.section)
+    }
+  })
+}
+
+function renderMapDots() {
+  const wrap = document.getElementById('mapDots'); if (!wrap) return
+  wrap.innerHTML = MAP_DOTS.map(d =>
+    `<div class="gs-map-dot" style="left:${d.x}%;top:${d.y}%"><i></i><span>${mt(d.label)}</span></div>`
+  ).join('')
+}
+
+function renderHero() {
+  const t = TX[LANG]
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
+  set('heroTagline', t.tagline)
+  set('heroTitle', 'GLOBAL ONE TEAM')
+  set('networkTitle', t.networkTitle)
+  set('networkDesc', t.networkDesc)
+  set('clockHint', t.clockHint)
+  set('hubTitle', t.hubTitle)
+  set('hubDesc', t.hubDesc)
+  set('footerText', t.footerText)
+  set('footerAddr', LANG === 'ko' ? '서울특별시 영등포구 · KB금융그룹 Global Intelligence' : 'Seoul · KB Financial Group Global Intelligence')
+}
+
+function renderBusiness() {
+  const t = TX[LANG], box = document.getElementById('bizGrid'); if (!box) return
+  const classes = ['green', 'img1', 'img2', 'img3']
+  box.innerHTML = t.bizCards.map((c, i) => {
+    const attrs = c.modal ? `data-modal="${c.modal}"` : `data-section="${c.section}"`
+    return `<article class="gs-biz-card ${classes[i]}" ${attrs}>
+      <span class="gs-biz-label">${i === 0 ? t.bizTitle : ''}</span>
+      <h2>${c.title}</h2><p>${c.desc}</p></article>`
+  }).join('')
+  bindBizCards()
+}
+
+function renderNews() {
+  const t = TX[LANG], box = document.getElementById('newsList'); if (!box) return
+  const items = [...t.signals.slice(0, 3), ...t.regulations.slice(0, 1)].slice(0, 3)
+  const tags = [LANG === 'ko' ? '시장신호' : 'Signal', LANG === 'ko' ? '시장신호' : 'Signal', LANG === 'ko' ? '보도자료' : 'Release']
+  box.innerHTML = items.map((item, i) => {
+    const isReg = i === 2 && t.regulations[0]
+    const modal = isReg ? 'reg:0' : `brief:${i}`
+    const tag = isReg ? (LANG === 'ko' ? '보도자료' : 'Release') : tags[i]
+    const date = item.date || t.date
+    return `<article class="gs-news-item" data-modal="${modal}">
+      <span class="gs-news-tag">${tag}</span>
+      <h3>${item.h}</h3><p>${item.p}</p>
+      <time class="gs-news-date">${date}</time></article>`
+  }).join('')
+  bindModalClicks()
+}
+
+function renderHub() {
+  const t = TX[LANG]
+  document.getElementById('hubSubs').innerHTML = t.subs.map((c, i) =>
+    `<article class="gs-tile" data-modal="sub:${i}">
+      <div class="gs-tile-img">${imgTag(P.sub[i].u, P.sub[i].s, c.h)}</div>
+      <div class="gs-tile-body"><h4>${c.h}</h4><p>${c.p}</p></div></article>`).join('')
+  document.getElementById('hubTopics').innerHTML = t.topics.map((c, i) =>
+    `<article class="gs-tile" data-modal="topic:${i}">
+      <div class="gs-tile-img">${imgTag(P.topic[i].u, P.topic[i].s, c.h)}</div>
+      <div class="gs-tile-body"><h4>${c.h}</h4><p>${c.p}</p></div></article>`).join('')
+  document.getElementById('hubRegs').innerHTML = t.regulations.map((c, i) =>
+    `<article class="gs-faq-item" data-modal="reg:${i}">
+      <h4>${c.flag} ${c.h}</h4><p>${c.p} · ${c.date}</p></article>`).join('')
+  const funBox = document.getElementById('funChoiceBox')
+  if (funBox) { funBox.innerHTML = renderFunChoices(); delete funBox.dataset.bound; bindFunChoices() }
+  bindModalClicks()
+}
+
+function bindMediaFilters() {
+  const el = document.getElementById('mediaFilters')
+  if (!el || el.dataset.bound) return
+  el.dataset.bound = '1'
+  el.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-f]'); if (!b) return
+    document.querySelectorAll('#mediaFilters button').forEach(x => x.classList.remove('active'))
+    b.classList.add('active'); renderCountryMedia(b.dataset.f)
+  })
+}
+
+function renderAll() {
+  renderHero(); renderBusiness(); renderNews(); renderHub(); renderMapDots()
+  updateClockUI(); renderNav(); renderDots(); renderDock()
+  bindMediaFilters(); renderCountryMedia('all')
+  setupScrollSpy()
+}
+
+function setLang(l) {
+          LANG = l; lang.value = l
+          document.getElementById('btnKo')?.classList.toggle('on', l === 'ko')
+          document.getElementById('btnEn')?.classList.toggle('on', l === 'en')
+          renderAll()
+        }
+
+function showModal(type, idx) {
+          const t = TX[LANG]; let d = null, img = P.hero[0].u, seed = 'm'
+          if (type === 'brief') { d = t.signals[idx]; img = P.sigUrl[idx]; seed = P.sigSeed[idx] }
+          else if (type === 'sub') { d = t.subs[idx]; img = P.sub[idx].u; seed = P.sub[idx].s }
+          else if (type === 'topic') { d = t.topics[idx]; img = P.topic[idx].u; seed = P.topic[idx].s }
+          else if (type === 'reg') { d = t.regulations[idx]; img = P.reg[idx].u; seed = P.reg[idx].s }
+          if (!d) return
+          document.getElementById('modal-img-wrap').innerHTML = imgTag(img, seed, d.h, 'eager')
+          document.getElementById('modal-tag').textContent = type.toUpperCase()
+          document.getElementById('modal-title').textContent = d.h
+          document.getElementById('modal-detail').innerHTML = d.detail
+          document.getElementById('modal-insight').innerHTML = d.insight
+          document.getElementById('modal-sources').innerHTML = d.sources?.map(s => `<a href="${s.url}" class="gs-src" target="_blank" rel="noopener">${s.title}</a>`).join('') || ''
+          modalOpen.value = true
+          document.getElementById('modal').classList.add('on')
+          document.body.style.overflow = 'hidden'
+        }
+
+function closeModal() {
+          modalOpen.value = false
+          document.getElementById('modal').classList.remove('on')
+          document.body.style.overflow = ''
+        }
+
+function showHeroFallback() {
+          if (heroUseFallback.value) return
+          heroUseFallback.value = true
+          const v = heroVideo.value
+          if (v) { v.pause(); v.removeAttribute('src'); v.load() }
+        }
+
+function initHeroVideo() {
+          nextTick(() => {
+            const v = heroVideo.value
+            if (!v) return
+            v.addEventListener('error', showHeroFallback, { once: true })
+            if (motionOff.value) { v.pause(); return }
+            v.play().catch(() => showHeroFallback())
+          })
+        }
+
+
+
+        function init() {
+          motionOff.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          renderAll()
+          initHeroVideo()
+          clockTimer = setInterval(() => {
+            document.querySelectorAll('.gs-clk-time').forEach((el, i) => {
+              if (CLOCK_COUNTRIES[i]) el.textContent = fmtTime(CLOCK_COUNTRIES[i].tz)
+            })
+          }, 15000)
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('.gs-pulse-zone')) closeAllClockPickers()
+          })
+          getScrollEl()?.addEventListener('scroll', () => {
+            headerSolid.value = (getScrollEl()?.scrollTop || 0) > 80
+          })
+        }
+
+        onMounted(init)
+        onUnmounted(() => {
+          clearInterval(clockTimer); spyIO?.disconnect()
+          document.body.style.overflow = ''
+        })
+
+        return { lang, headerSolid, heroVideo, heroUseFallback, heroFallbackImg, setLang, closeModal, scrollToSection }
+
+      },
+      template: `
+        <div class="gs-app">
+          <header class="gs-header" :class="{ solid: headerSolid }">
+            <div class="gs-header-inner">
+              <a class="gs-logo" href="#" @click.prevent="scrollToSection('hero')">
+                <span class="gs-logo-mark">KB</span>
+                <span class="gs-logo-text">Global One<em>Team Intelligence</em></span>
+              </a>
+              <nav id="mainNav" class="gs-nav"></nav>
+              <div class="gs-util">
+                <a class="gs-util-link" href="#" @click.prevent="scrollToSection('hub')">CONTACT US</a>
+                <div class="gs-lang">
+                  <button id="btnKo" type="button" class="on" @click="setLang('ko')">KOR</button>
+                  <button id="btnEn" type="button" @click="setLang('en')">ENG</button>
+                </div>
+                <button type="button" class="gs-menu-btn" aria-label="menu"><span></span><span></span><span></span></button>
+              </div>
+            </div>
+          </header>
+
+          <nav id="pageDots" class="gs-dots"></nav>
+          <div id="gsDock" class="gs-dock"></div>
+
+          <div id="gsScroll" class="gs-scroll">
+            <section id="section-hero" class="gs-fp gs-hero">
+              <div class="gs-hero-video" :class="{ 'use-fallback': heroUseFallback }">
+                <video ref="heroVideo" src="hero-main.mp4" autoplay muted loop playsinline preload="auto" aria-label="KB Global One Team"></video>
+                <img class="gs-hero-fallback" :src="heroFallbackImg" alt="KB Global One Team" />
+              </div>
+              <div class="gs-hero-inner">
+                <div class="gs-hero-box">
+                  <p class="gs-hero-tag" id="heroTagline">WORLD INTELLIGENCE · ONE TEAM</p>
+                  <h1 id="heroTitle">GLOBAL ONE TEAM</h1>
+                  <button type="button" class="gs-hero-cta" @click="scrollToSection('business')">READ MORE</button>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-business" class="gs-fp gs-business">
+              <div class="gs-business-bg"></div>
+              <div class="gs-business-inner"><div id="bizGrid" class="gs-biz-grid"></div></div>
+            </section>
+
+            <section id="section-network" class="gs-fp gs-network">
+              <div class="gs-network-bg"></div>
+              <div class="gs-network-inner">
+                <div class="gs-map-wrap">
+                  <svg class="gs-map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="rgba(255,255,255,.08)" d="M150,120 Q200,80 280,100 T420,90 T580,110 T720,95 T850,120 L880,200 Q820,240 700,220 T480,230 T260,210 T120,190 Z"/>
+                    <path fill="rgba(255,255,255,.06)" d="M80,280 Q180,260 320,270 T560,265 T780,275 T920,290 L900,380 Q750,400 550,390 T250,385 T100,360 Z"/>
+                  </svg>
+                  <div id="mapDots"></div>
+                </div>
+                <div class="gs-network-box">
+                  <h2 id="networkTitle">Global Network</h2>
+                  <p id="networkDesc"></p>
+                  <div class="gs-pulse-zone">
+                    <p class="gs-pulse-hint" id="clockHint"></p>
+                    <div id="clockStrip" class="gs-clocks"></div>
+                    <div id="pulseSummary"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-news" class="gs-fp gs-news">
+              <div class="gs-news-inner">
+                <div class="gs-news-card">
+                  <div class="gs-news-head">
+                    <div class="gs-news-title">News</div>
+                    <div id="newsList" class="gs-news-list"></div>
+                  </div>
+                  <div class="gs-news-nav">
+                    <button type="button" @click="scrollToSection('hub')">‹</button>
+                    <button type="button" @click="scrollToSection('hub')">›</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-hub" class="gs-fp gs-hub">
+              <div class="gs-hub-inner">
+                <div class="gs-hub-hd">
+                  <h2 id="hubTitle">Intelligence Hub</h2>
+                  <p id="hubDesc"></p>
+                </div>
+                <div class="gs-hub-grid">
+                  <div class="gs-panel">
+                    <h3>Local Media</h3>
+                    <div class="gs-filters" id="mediaFilters">
+                      <button class="active" data-f="all">{{ lang === 'ko' ? '전체' : 'All' }}</button>
+                      <button data-f="esg">ESG</button>
+                    </div>
+                    <div id="localMediaFeed"></div>
+                  </div>
+                  <div class="gs-panel">
+                    <h3>Subsidiaries & Topics</h3>
+                    <div class="gs-tiles" id="hubSubs"></div>
+                    <div class="gs-tiles" id="hubTopics" style="margin-top:10px"></div>
+                  </div>
+                  <div class="gs-panel">
+                    <h3>Regulation</h3>
+                    <div class="gs-faq" id="hubRegs"></div>
+                  </div>
+                  <div class="gs-panel">
+                    <h3>{{ lang === 'ko' ? '참여 코너' : 'Engagement' }}</h3>
+                    <div id="funChoiceBox" class="gs-fun-grid"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="gs-footer">
+              <div class="gs-footer-inner">
+                <nav id="footerNav" class="gs-footer-links"></nav>
+                <p class="gs-footer-info" id="footerAddr"></p>
+                <p class="gs-footer-copy" id="footerText"></p>
+                <select class="gs-family"><option>FAMILY SITE</option><option>KB Financial Group</option><option>KB Global Network</option></select>
+              </div>
+            </footer>
+          </div>
+
+          <div id="modal" class="gs-modal" @click.self="closeModal">
+            <div class="gs-modal-panel">
+              <button type="button" class="gs-modal-x" @click="closeModal">✕</button>
+              <div id="modal-img-wrap" class="gs-modal-img"></div>
+              <div class="gs-modal-body">
+                <div id="modal-tag" class="gs-modal-tag"></div>
+                <h2 id="modal-title" class="gs-modal-title"></h2>
+                <div id="modal-detail" class="gs-modal-prose"></div>
+                <div id="modal-insight" class="gs-modal-insight"></div>
+                <div id="modal-sources"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    }).mount('#app')
+  </script>
+</body>
+</html>
