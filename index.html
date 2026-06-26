@@ -32,7 +32,7 @@
   background: var(--navy);
 }
 .gs-app * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; overflow: hidden; background: #0a1628; }
 .gs-scroll {
   height: 100vh; overflow-y: auto; overflow-x: hidden;
   scroll-snap-type: y mandatory; scroll-behavior: smooth;
@@ -54,9 +54,10 @@ html, body { height: 100%; overflow: hidden; }
   display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex-shrink: 0;
 }
 .gs-logo-mark {
-  width: 40px; height: 40px; background: var(--blue); border-radius: 4px;
-  display: grid; place-items: center; font-size: 11px; font-weight: 800;
+  width: 40px; height: 40px; background: #695647; border-radius: 4px;
+  display: grid; place-items: center; padding: 5px; flex-shrink: 0;
 }
+.gs-logo-mark svg { width: 100%; height: 100%; display: block; }
 .gs-logo-text { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
 .gs-logo-text em { font-style: normal; color: var(--muted); font-weight: 400; font-size: 14px; display: block; }
 .gs-nav {
@@ -65,10 +66,17 @@ html, body { height: 100%; overflow: hidden; }
 .gs-nav::-webkit-scrollbar { display: none; }
 .gs-nav-btn {
   border: 0; background: transparent; color: rgba(255,255,255,.75);
-  font-size: 13px; font-weight: 500; padding: 8px 14px; cursor: pointer;
-  white-space: nowrap; transition: .2s; font-family: var(--sans);
+  font-size: 13px; font-weight: 500; padding: 10px 16px 14px; cursor: pointer;
+  white-space: nowrap; transition: color .2s; font-family: var(--sans);
+  border-radius: 12px; position: relative; isolation: isolate; user-select: none;
+}
+.gs-nav-btn::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+  border-radius: 0 0 12px 12px; background: #00e5c3;
+  box-shadow: 0 0 12px rgba(0, 229, 195, .65); opacity: 0; transition: opacity .2s; z-index: -1;
 }
 .gs-nav-btn:hover, .gs-nav-btn.active { color: #fff; font-weight: 700; }
+.gs-nav-btn:hover::after, .gs-nav-btn.active::after { opacity: 1; }
 .gs-util { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .gs-util-link {
   font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink);
@@ -80,6 +88,114 @@ html, body { height: 100%; overflow: hidden; }
   padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 2px;
 }
 .gs-lang button.on { background: var(--blue); border-color: var(--blue); }
+.gs-theme-switch {
+  width: 40px; height: 22px; border-radius: 11px; border: 1px solid #dcdfe6;
+  background: #f2f2f2; padding: 0; cursor: pointer; position: relative; flex-shrink: 0;
+  transition: background .35s cubic-bezier(.4,0,.2,1), border-color .35s cubic-bezier(.4,0,.2,1);
+}
+.gs-theme-switch.dark {
+  background: #141414; border-color: #4c4d4f;
+}
+.gs-theme-switch__knob {
+  position: absolute; top: 1px; left: 1px; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12);
+  display: grid; place-items: center;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.gs-theme-switch.dark .gs-theme-switch__knob { transform: translateX(18px); }
+.gs-theme-icon {
+  width: 12px; height: 12px; position: absolute; color: #606266;
+  transition: opacity .28s ease, transform .35s cubic-bezier(.4,0,.2,1);
+}
+.gs-theme-switch.dark .gs-theme-icon { color: #cfd3dc; }
+.gs-theme-icon--sun { opacity: 1; transform: rotate(0deg) scale(1); }
+.gs-theme-icon--moon { opacity: 0; transform: rotate(-25deg) scale(.75); }
+.gs-theme-switch.dark .gs-theme-icon--sun { opacity: 0; transform: rotate(25deg) scale(.75); }
+.gs-theme-switch.dark .gs-theme-icon--moon { opacity: 1; transform: rotate(0deg) scale(1); }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition="to-light"]::view-transition-new(root) { z-index: 2147483646; }
+html[data-theme-transition="to-light"]::view-transition-old(root) { z-index: 1; }
+html[data-theme-transition="to-dark"]::view-transition-old(root) { z-index: 2147483646; }
+html[data-theme-transition="to-dark"]::view-transition-new(root) { z-index: 1; }
+
+html.gs-light,
+html.gs-light body { background: #f5f7fa; }
+html.gs-light .gs-app {
+  --navy: #f5f7fa;
+  --navy2: #eef1f6;
+  --ink: #1a1a2e;
+  --muted: rgba(26,26,46,.68);
+  --dim: rgba(26,26,46,.45);
+  --line: rgba(26,26,46,.12);
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #5a6270;
+  background: #f5f7fa;
+  color: var(--ink);
+}
+html.gs-light .gs-header.solid {
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 2px 20px rgba(0,0,0,.08);
+}
+html.gs-light .gs-nav-btn { color: rgba(26,26,46,.72); }
+html.gs-light .gs-nav-btn:hover,
+html.gs-light .gs-nav-btn.active { color: #1a1a2e; }
+html.gs-light .gs-lang button {
+  border-color: rgba(26,26,46,.28);
+  color: var(--ink);
+}
+html.gs-light .gs-menu-btn span { background: #1a1a2e; }
+html.gs-light .gs-dot { border-color: rgba(26,26,46,.35); }
+html.gs-light .gs-dot.on { background: #1a1a2e; border-color: #1a1a2e; }
+html.gs-light .gs-dock {
+  background: rgba(255,255,255,.94);
+  border-color: rgba(26,26,46,.12);
+  box-shadow: 0 4px 24px rgba(0,0,0,.1);
+}
+html.gs-light .gs-dock-item:hover { color: #1a1a2e; }
+html.gs-light .gs-dock-icon { background: rgba(26,26,46,.06); }
+html.gs-light .gs-hero-video::after { background: rgba(255,255,255,.58); }
+html.gs-light .gs-hero-desc { color: rgba(26,26,46,.78); }
+html.gs-light .gs-hero-box h1 {
+  color: #1a1a2e;
+  text-shadow: 0 1px 3px rgba(255,255,255,.65);
+}
+html.gs-light .gs-trends-kpi-card,
+html.gs-light .gs-trends-signal { box-shadow: 0 2px 16px rgba(0,0,0,.28); }
+html.gs-light .gs-business-bg {
+  background: linear-gradient(rgba(245,247,250,.86), rgba(238,241,246,.9)),
+    url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80') center/cover;
+}
+html.gs-light .gs-network-bg {
+  background: radial-gradient(ellipse at 50% 30%, rgba(0,102,204,.14), transparent 60%),
+    linear-gradient(180deg, #eef1f6 0%, #e8ecf2 50%, #f5f7fa 100%);
+}
+html.gs-light .gs-network-bg::after { opacity: .12; }
+html.gs-light .gs-map-dot span { color: rgba(26,26,46,.65); }
+html.gs-light .gs-news { background: linear-gradient(180deg, #eef1f6, #f5f7fa); }
+html.gs-light .gs-hub { background: #eef1f6; }
+html.gs-light .gs-panel {
+  background: #fff;
+  border-color: rgba(26,26,46,.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+html.gs-light .gs-tile { background: #f8f9fb; }
+html.gs-light .gs-tile:hover { border-color: rgba(26,26,46,.22); }
+html.gs-light .gs-story,
+html.gs-light .gs-faq-item,
+html.gs-light .gs-fun-card { background: #f8f9fb; }
+html.gs-light .gs-fun-opt { background: #fff; color: var(--text); }
+html.gs-light .gs-clk-picker {
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(0,0,0,.14);
+}
+html.gs-light .gs-footer { background: #e8ecf2; }
+html.gs-light .gs-footer-copy { color: rgba(26,26,46,.42); }
+html.gs-light .gs-footer-links button:hover { color: #1a1a2e; }
 .gs-menu-btn {
   width: 36px; height: 36px; border: 0; background: transparent; cursor: pointer;
   display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 6px;
@@ -147,9 +263,10 @@ html, body { height: 100%; overflow: hidden; }
   color: #00e5c3; margin-bottom: 18px;
 }
 .gs-hero-box h1 {
-  font-size: clamp(44px, 9vw, 88px); font-weight: 700; line-height: 1;
+  font-size: clamp(44px, 9vw, 88px); font-weight: 700; line-height: 1.05;
   margin-bottom: 22px; letter-spacing: .08em; text-transform: uppercase;
 }
+.gs-hero-kb { color: #F39200; }
 .gs-hero-desc {
   font-size: 15px; line-height: 1.75; color: rgba(255,255,255,.78);
   margin: 0 auto 32px; max-width: 580px;
@@ -160,6 +277,88 @@ html, body { height: 100%; overflow: hidden; }
   text-transform: uppercase; cursor: pointer; transition: .2s; font-family: var(--sans);
 }
 .gs-hero-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+.gs-trends {
+  background: #050a12; justify-content: flex-start; overflow-y: auto;
+}
+html.gs-light .gs-trends,
+html:not(.gs-light) .gs-trends { background: #050a12; }
+.gs-trends-inner {
+  width: 100%; max-width: 1280px; margin: 0 auto;
+  padding: calc(var(--header) + 28px) 32px 48px;
+}
+.gs-trends-page-title {
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: #fff;
+  margin-bottom: 24px; letter-spacing: -.02em;
+}
+.gs-trends-focus {
+  display: grid; grid-template-columns: 1fr 280px; gap: 0;
+  background: #0f172a; border-radius: 16px; overflow: hidden; margin-bottom: 20px;
+}
+.gs-trends-focus-main { padding: 36px 40px; }
+.gs-trends-focus-action {
+  padding: 36px 32px; border-left: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.12);
+}
+.gs-trends-label {
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; display: block; margin-bottom: 14px;
+}
+.gs-trends-label--gold { color: #d4a853; }
+.gs-trends-focus-title {
+  font-size: clamp(22px, 3vw, 30px); font-weight: 700; color: #fff;
+  line-height: 1.35; margin-bottom: 16px;
+}
+.gs-trends-focus-desc {
+  font-size: 14px; line-height: 1.75; color: rgba(255,255,255,.78); margin-bottom: 22px;
+}
+.gs-trends-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.gs-trends-tag {
+  padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.88);
+}
+.gs-trends-action-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.gs-trends-action-list li { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.88); }
+.gs-trends-kpi {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px;
+}
+.gs-trends-kpi-card {
+  background: #fff; border-radius: 12px; padding: 28px 32px 28px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06); border-left: 4px solid transparent;
+}
+.gs-trends-kpi-card--shock { border-left-color: #e6a817; }
+.gs-trends-kpi-card--var { border-left-color: #0066cc; }
+.gs-trends-kpi-label { font-size: 12px; color: #888; margin-bottom: 10px; display: block; }
+.gs-trends-kpi-value {
+  font-family: Georgia, 'Times New Roman', serif; font-size: clamp(36px, 5vw, 52px);
+  font-weight: 700; color: #1a2744; line-height: 1; margin-bottom: 8px;
+}
+.gs-trends-kpi-sub { font-size: 14px; font-weight: 700; color: #0066cc; margin-bottom: 12px; }
+.gs-trends-kpi-card--shock .gs-trends-kpi-sub { color: #1a1a2e; }
+.gs-trends-kpi-desc { font-size: 13px; line-height: 1.65; color: #5a6270; }
+.gs-trends-signals-hd {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.gs-trends-signals-hd h3 { font-size: 20px; font-weight: 700; color: #fff; }
+.gs-trends-signals-hd p { font-size: 12px; color: rgba(255,255,255,.5); }
+.gs-trends-signals-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.gs-trends-signal {
+  background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05); transition: transform .2s, box-shadow .2s;
+}
+.gs-trends-signal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.1); }
+.gs-trends-signal-hd {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 11px; font-weight: 700;
+}
+.gs-trends-signal-hd--market { background: #e8f1fb; color: #0066cc; }
+.gs-trends-signal-hd--finance { background: #e8f5ef; color: #1a8f5a; }
+.gs-trends-signal-hd--risk { background: #fdecea; color: #c0392b; }
+.gs-trends-signal-hd--strategy { background: #f0ebf8; color: #6f42c1; }
+.gs-trends-signal-num { font-weight: 800; opacity: .7; }
+.gs-trends-signal-body { padding: 16px 14px 18px; }
+.gs-trends-signal-body h4 {
+  font-size: 14px; font-weight: 700; color: #1a1a2e; line-height: 1.4; margin-bottom: 8px;
+}
+.gs-trends-signal-body p { font-size: 12px; line-height: 1.55; color: #5a6270; }
 
 .gs-business { justify-content: center; }
 .gs-business-bg {
@@ -381,28 +580,46 @@ html, body { height: 100%; overflow: hidden; }
   background: transparent; color: var(--dim); font-size: 11px; cursor: pointer; min-width: 160px;
 }
 
-.gs-modal {
-  position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,.8);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  opacity: 0; pointer-events: none; transition: opacity .25s;
+.gs-drawer {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(0,0,0,0); pointer-events: none; transition: background .32s ease;
 }
-.gs-modal.on { opacity: 1; pointer-events: auto; }
-.gs-modal-panel {
-  background: #fff; color: var(--text); max-width: 520px; width: 100%; max-height: 90vh;
-  overflow-y: auto; border-radius: 4px; transform: translateY(16px); transition: transform .3s;
+.gs-drawer.on { background: rgba(0,0,0,.48); pointer-events: auto; }
+.gs-drawer-panel {
+  position: absolute; top: 0; right: 0; width: min(480px, 92vw); height: 100%;
+  background: #fff; color: #1a1a2e;
+  transform: translateX(100%);
+  transition: transform .36s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto; box-shadow: -12px 0 48px rgba(0,0,0,.25);
+  display: flex; flex-direction: column;
 }
-.gs-modal.on .gs-modal-panel { transform: none; }
-.gs-modal-img { height: 180px; overflow: hidden; }
-.gs-modal-img img { width: 100%; height: 100%; object-fit: cover; }
-.gs-modal-body { padding: 28px; position: relative; }
-.gs-modal-x {
-  position: absolute; top: 12px; right: 12px; width: 32px; height: 32px;
-  border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 2px;
+.gs-drawer.on .gs-drawer-panel { transform: translateX(0); }
+.gs-drawer-head {
+  position: sticky; top: 0; z-index: 2; display: flex; justify-content: flex-end;
+  padding: 12px 12px 0; background: inherit;
 }
-.gs-modal-tag { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: .1em; }
-.gs-modal-title { font-size: 24px; font-weight: 700; margin: 8px 0 14px; }
-.gs-modal-prose, .gs-modal-insight { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
-.gs-modal-insight { padding: 12px; border-left: 3px solid var(--blue); background: #f0f4f8; color: var(--text); }
+.gs-drawer-x {
+  width: 36px; height: 36px; border: 1px solid #ddd; background: #fff;
+  cursor: pointer; border-radius: 4px; font-size: 16px; line-height: 1;
+}
+.gs-drawer-img { height: 200px; overflow: hidden; flex-shrink: 0; }
+.gs-drawer-img img { width: 100%; height: 100%; object-fit: cover; }
+.gs-drawer-body { padding: 20px 28px 32px; }
+.gs-drawer-tag { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: .1em; text-transform: uppercase; }
+.gs-drawer-title { font-size: 22px; font-weight: 700; margin: 8px 0 14px; line-height: 1.35; }
+.gs-drawer-prose, .gs-drawer-insight { font-size: 13px; line-height: 1.7; margin-bottom: 10px; }
+.gs-drawer-prose { color: #5a6270; }
+.gs-drawer-insight {
+  padding: 12px; border-left: 3px solid var(--blue); background: #f0f4f8; color: #1a1a2e;
+}
+html:not(.gs-light) .gs-drawer-panel { background: #141414; color: #e5eaf3; }
+html:not(.gs-light) .gs-drawer-head { background: #141414; }
+html:not(.gs-light) .gs-drawer-x { background: #1d1e1f; border-color: #414243; color: #e5eaf3; }
+html:not(.gs-light) .gs-drawer-prose { color: #a3a6ad; }
+html:not(.gs-light) .gs-drawer-insight { background: rgba(255,255,255,.06); color: #e5eaf3; }
+html:not(.gs-light) .gs-drawer-panel .gs-src { border-color: #414243; color: #e5eaf3; }
+html.gs-light .gs-drawer-panel { background: #fff; color: #1a1a2e; }
+html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2e; }
 .gs-src {
   display: block; padding: 10px 12px; border: 1px solid #e0e4ea; border-radius: 2px;
   margin-top: 6px; font-size: 12px; color: var(--text); text-decoration: none;
@@ -422,6 +639,10 @@ html, body { height: 100%; overflow: hidden; }
   .gs-hub-grid { grid-template-columns: 1fr; }
   .gs-clocks { grid-template-columns: repeat(5, 1fr); }
   .gs-dock { display: none; }
+  .gs-trends-focus { grid-template-columns: 1fr; }
+  .gs-trends-focus-action { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .gs-trends-kpi { grid-template-columns: 1fr; }
+  .gs-trends-signals-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
   .gs-nav { display: none; }
@@ -430,6 +651,8 @@ html, body { height: 100%; overflow: hidden; }
   .gs-biz-grid { grid-template-columns: 1fr; }
   .gs-clocks { grid-template-columns: repeat(3, 1fr); }
   .gs-tiles { grid-template-columns: 1fr; }
+  .gs-trends-signals-grid { grid-template-columns: 1fr; }
+  .gs-trends-inner { padding-left: 16px; padding-right: 16px; }
 }
   
   
@@ -444,15 +667,16 @@ const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue
       setup() {
 const lang = ref('ko')
         const motionOff = ref(false)
-        const modalOpen = ref(false)
+        const drawerOpen = ref(false)
         const headerSolid = ref(false)
         const heroVideo = ref(null)
         const heroUseFallback = ref(false)
         const heroFallbackImg = 'https://www.samoo.com/home/works/content/download.do?seq=23&cntntsSn=32280'
+        const colorMode = ref('dark')
         const WEEK_ID = '2026-W26'
 
-let LANG = 'ko', clockTimer = null, activeSection = 'hero', spyIO = null
-const SECTION_IDS = ['hero', 'business', 'network', 'news', 'hub']
+let LANG = 'ko', clockTimer = null, activeSection = 'hero', activeTabIndex = 0, spyIO = null
+const SECTION_IDS = ['hero', 'trends', 'business', 'network', 'news', 'hub']
 
 const MAP_DOTS = [
   { id: 'london', label: { ko: '유럽', en: 'Europe' }, x: 48, y: 28 },
@@ -531,6 +755,38 @@ const P = {
 const TX = {
   ko: {
     tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '2026년 6월 23일', sub: '08:00 KST · WEEKLY BRIEF',
+    heroTitleHtml: '<span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM',
+    logoTextHtml: 'Global One Team<em>Team Intelligence</em>',
+    logoMarkLabel: 'KB국민은행',
+    themeLight: '라이트 모드',
+    themeDark: '다크 모드',
+    drawerClose: '닫기',
+    drawerTagBrief: '시장신호',
+    drawerTagSub: '국외연결자회사',
+    drawerTagTopic: 'Topic Watch',
+    drawerTagReg: '규제 · 금융기관',
+    trendsTitle: '글로벌 동향',
+    trendsFocusLabel: '주간 초점',
+    trendsFocusTitle: '엔화 146 시대의 도래 · 아시아 금융 재편 시작',
+    trendsFocusDesc: '일본은행(BOJ)의 명시적 금리 인상 신호로 엔화가 145선을 돌파하고 146대로 진입했습니다. 이는 글로벌 금리 체계의 대전환과 신흥국 금융에 급격한 변화를 초래하고 있습니다.',
+    trendsFocusTags: ['BOJ 인상신호', 'JPY 급등', 'EM 신용 악화', 'ALM 재점검 필수'],
+    trendsActionLabel: 'KB 액션',
+    trendsActions: [
+      '① JPY 차입금 규모 긴급 재평가',
+      '② 신흥국 거점별 신용 모니터링 강화',
+      '③ ALM 전략 완전 재편',
+      '④ 환헤징 비용 흡수 계획 수립'
+    ],
+    trendsShockLabel: '이 주의 충격',
+    trendsShockValue: '5.75%',
+    trendsShockSub: 'BI-Rate 5.75% ▲',
+    trendsShockDesc: '인도네시아 중앙은행의 연속 인상으로 현지 금리가 급상승하고 있으며, 루피아 약세 억제 노력이 진행 중입니다.',
+    trendsVarLabel: '이 주의 변수',
+    trendsVarValue: '3.50-3.75%',
+    trendsVarSub: 'Fed 기준금리 3.50-3.75%',
+    trendsVarDesc: '미국 연준의 기준금리 유지로 달러 강세가 지속되고 있으며, 신흥국으로부터의 자본 이탈이 가속화되고 있습니다.',
+    trendsSignalsTitle: '4대 시장신호',
+    trendsSignalsHint: '각 카드를 클릭하면 상세 심층 분석과 시사점을 확인할 수 있습니다.',
     clockHint: '탭/클릭 → 🔥 HOT / 😐 OK / 🧊 COOL',
     pulseSummaryTitle: '글로벌 온도 스펙트럼',
     pulsePickHint: '온도 선택',
@@ -547,10 +803,22 @@ const TX = {
     hubTitle: 'Intelligence Hub',
     hubDesc: '현지언론 · 자회사 · Topic · 규제 · 참여 코너',
     signals: [
-      { n: '01', h: 'BOJ 인상', p: 'JPY 146', detail: '<p>BOJ 금리 인상 시사.</p>', insight: '<p>엔화 노출 축소 검토.</p>', sources: [{ title: 'BOJ', url: '#' }] },
-      { n: '02', h: '조달 급변', p: 'EM', detail: '<p>채권 조건 악화.</p>', insight: '<p>유동성 대비 필요.</p>', sources: [{ title: 'EM', url: '#' }] },
-      { n: '03', h: 'EM 압박', p: '↑', detail: '<p>자본 이탈 우려.</p>', insight: '<p>Exposure 감축.</p>', sources: [{ title: 'KB', url: '#' }] },
-      { n: '04', h: 'ALM', p: '재점검', detail: '<p>금리 민감도 급변.</p>', insight: '<p>스트레스 테스트.</p>', sources: [{ title: 'BCBS', url: '#' }] }
+      { n: '01', cat: '시장·경제', catClass: 'market', h: 'BOJ 정책금리 인상 신호 강화', p: '엔화 145 → 146 급등으로 글로벌 금리 체계 재편 중',
+        detail: '<p>일본은행(BOJ)이 금리 인상 시그널을 강화하며 엔화가 145→146대로 급등했습니다.</p><p>글로벌 금리 체계의 구조적 재편이 가속화되고 있습니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> JPY 차입금·ALM 가정을 즉시 재점검하세요.</p>',
+        sources: [{ title: 'Bank of Japan', url: 'https://www.boj.or.jp/' }] },
+      { n: '02', cat: '금융산업', catClass: 'finance', h: '아시아 조달 환경 급변', p: 'JPY 차입금 많은 신흥국에 직접적 부담',
+        detail: '<p>엔화 강세로 JPY 차입 비용이 급등하며 아시아 신흥국 조달 환경이 급변하고 있습니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> 거점별 차입 구조·만기 분포를 재점검하세요.</p>',
+        sources: [{ title: 'Bloomberg', url: '#' }] },
+      { n: '03', cat: '규제·리스크', catClass: 'risk', h: '신흥국 통화·외채 압박 심화', p: '금리 상승 + 환율 악화 동시 진행',
+        detail: '<p>금리 상승과 환율 악화가 동시에 진행되며 신흥국 통화·외채 부담이 심화되고 있습니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> Exposure 축소·헤지 전략을 우선 검토하세요.</p>',
+        sources: [{ title: 'IMF', url: 'https://www.imf.org/' }] },
+      { n: '04', cat: '전략·운영', catClass: 'strategy', h: '자산·부채 구성 재점검 필수', p: 'ALM 가정이 단기간 내 무효화 가능',
+        detail: '<p>급격한 금리·환율 변동으로 기존 ALM 가정이 단기간 내 무효화될 수 있습니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> ALM·스트레스 테스트 시나리오를 전면 재편하세요.</p>',
+        sources: [{ title: 'BCBS', url: '#' }] }
     ],
     subs: [
       { h: 'KB Indonesia', p: '턴어라운드', detail: '<p>리브랜딩 진행.</p>', insight: '<p>선별 성장.</p>', sources: [{ title: 'ID', url: '#' }] },
@@ -571,19 +839,54 @@ const TX = {
         insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM 점검.</p>',
         sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
     ],
-    tabs: ['홈', '사업영역', '글로벌 네트워크', 'IR 소식', 'Intelligence Hub'],
-    tabIds: SECTION_IDS,
+    tabs: ['홈', '글로벌 동향', '현지언론', '국외연결자회사', 'Topic Watch', '규제 · 금융기관', '참여 코너'],
+    tabIds: ['hero', 'trends', 'hub', 'hub', 'hub', 'hub', 'hub'],
     footerText: '※ KB Global Intelligence 2026.6.23',
     partTitle: '참여 코너', partSub: '웃긴 2지선다 — 1 또는 2!', funPicked: '완료!',
     dock: [
-      { icon: '🌡', label: 'Pulse', section: 'network' },
-      { icon: '📊', label: 'Risk', section: 'news' },
-      { icon: '🌱', label: 'ESG', section: 'hub' },
-      { icon: '⚖', label: 'Reg', section: 'hub' }
+      { icon: '🏠', label: '홈', section: 'hero' },
+      { icon: '📊', label: '글로벌 동향', section: 'trends' },
+      { icon: '📰', label: '현지언론', section: 'hub' },
+      { icon: '🏢', label: '국외연결자회사', section: 'hub' },
+      { icon: '👁', label: 'Topic Watch', section: 'hub' },
+      { icon: '⚖', label: '규제 · 금융기관', section: 'hub' },
+      { icon: '🎯', label: '참여 코너', section: 'hub' }
     ]
   },
   en: {
     tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '23 June 2026', sub: '08:00 KST · WEEKLY BRIEF',
+    heroTitleHtml: '<span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM',
+    logoTextHtml: 'Global One Team<em>Team Intelligence</em>',
+    logoMarkLabel: 'KB Kookmin Bank',
+    themeLight: 'Light mode',
+    themeDark: 'Dark mode',
+    drawerClose: 'Close',
+    drawerTagBrief: 'Market Signal',
+    drawerTagSub: 'Subsidiaries',
+    drawerTagTopic: 'Topic Watch',
+    drawerTagReg: 'Regulation',
+    trendsTitle: 'Global Trends',
+    trendsFocusLabel: 'Weekly Focus',
+    trendsFocusTitle: 'Arrival of the Yen 146 Era · Start of Asian Financial Restructuring',
+    trendsFocusDesc: 'With the Bank of Japan\'s (BOJ) explicit signal for a rate hike, the yen has surpassed 145 and entered the 146 range. This is driving a major shift in the global rate regime and rapid change across emerging-market finance.',
+    trendsFocusTags: ['BOJ hike signal', 'JPY surge', 'EM credit stress', 'ALM review required'],
+    trendsActionLabel: 'KB Action',
+    trendsActions: [
+      '① Urgent reassessment of JPY borrowing scale',
+      '② Strengthen credit monitoring by emerging-market hubs',
+      '③ Complete restructuring of ALM strategy',
+      '④ Plan to absorb FX hedging costs'
+    ],
+    trendsShockLabel: 'Shock of the Week',
+    trendsShockValue: '5.75%',
+    trendsShockSub: 'BI-Rate 5.75% ▲',
+    trendsShockDesc: 'Local rates are rising sharply on consecutive hikes by Bank Indonesia, with ongoing efforts to curb rupiah weakness.',
+    trendsVarLabel: 'Variable of the Week',
+    trendsVarValue: '3.50-3.75%',
+    trendsVarSub: 'Fed benchmark rate 3.50-3.75%',
+    trendsVarDesc: 'The dollar remains strong as the U.S. Fed holds rates, accelerating capital outflows from emerging markets.',
+    trendsSignalsTitle: '4 Major Market Signals',
+    trendsSignalsHint: 'Click each card to view detailed analysis and implications.',
     clockHint: 'Tap → 🔥 HOT / 😐 OK / 🧊 COOL',
     pulseSummaryTitle: 'Global temperature spectrum',
     pulsePickHint: 'Pick',
@@ -600,10 +903,22 @@ const TX = {
     hubTitle: 'Intelligence Hub',
     hubDesc: 'Media · Subs · Topics · Regulation · Engagement',
     signals: [
-      { n: '01', h: 'BOJ', p: '146', detail: '<p>Hike signal.</p>', insight: '<p>Cut JPY.</p>', sources: [{ title: 'BOJ', url: '#' }] },
-      { n: '02', h: 'Funding', p: 'EM', detail: '<p>Tighter bonds.</p>', insight: '<p>Prep liquidity.</p>', sources: [{ title: 'EM', url: '#' }] },
-      { n: '03', h: 'EM FX', p: 'Up', detail: '<p>Outflows.</p>', insight: '<p>Cut exposure.</p>', sources: [{ title: 'KB', url: '#' }] },
-      { n: '04', h: 'ALM', p: 'Review', detail: '<p>Sensitivity shift.</p>', insight: '<p>Stress test.</p>', sources: [{ title: 'BCBS', url: '#' }] }
+      { n: '01', cat: 'Market · Economy', catClass: 'market', h: 'Strengthening of BOJ policy rate hike signals', p: 'Global rate regime restructuring as JPY surges from 145 to 146',
+        detail: '<p>The BOJ has strengthened rate-hike signals and the yen has surged from 145 to the 146 range.</p><p>Structural reshaping of the global rate regime is accelerating.</p>',
+        insight: '<p><strong>KB Watch:</strong> Immediately review JPY borrowings and ALM assumptions.</p>',
+        sources: [{ title: 'Bank of Japan', url: 'https://www.boj.or.jp/' }] },
+      { n: '02', cat: 'Financial Industry', catClass: 'finance', h: 'Rapid shift in Asian funding conditions', p: 'Direct burden on EMs with heavy JPY borrowings',
+        detail: '<p>Yen strength is sharply raising JPY funding costs and rapidly changing Asia EM funding conditions.</p>',
+        insight: '<p><strong>KB Watch:</strong> Review hub-level borrowing structures and maturity profiles.</p>',
+        sources: [{ title: 'Bloomberg', url: '#' }] },
+      { n: '03', cat: 'Regulation · Risk', catClass: 'risk', h: 'Intensifying EM currency and external debt pressure', p: 'Rate rises and FX deterioration proceeding together',
+        detail: '<p>Rising rates and weaker exchange rates are intensifying EM currency and external debt burdens.</p>',
+        insight: '<p><strong>KB Watch:</strong> Prioritize exposure reduction and hedging strategies.</p>',
+        sources: [{ title: 'IMF', url: 'https://www.imf.org/' }] },
+      { n: '04', cat: 'Strategy · Operations', catClass: 'strategy', h: 'Asset-liability mix review essential', p: 'ALM assumptions may become invalid in the short term',
+        detail: '<p>Sharp rate and FX moves may invalidate existing ALM assumptions in the near term.</p>',
+        insight: '<p><strong>KB Watch:</strong> Fully rebuild ALM and stress-test scenarios.</p>',
+        sources: [{ title: 'BCBS', url: '#' }] }
     ],
     subs: [
       { h: 'KB ID', p: 'Turn', detail: '<p>Rebrand.</p>', insight: '<p>Growth.</p>', sources: [{ title: 'ID', url: '#' }] },
@@ -624,15 +939,18 @@ const TX = {
         insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM.</p>',
         sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
     ],
-    tabs: ['Home', 'Business', 'Network', 'IR News', 'Hub'],
-    tabIds: SECTION_IDS,
+    tabs: ['Home', 'Global Trends', 'Local Media', 'Subsidiaries', 'Topic Watch', 'Regulation', 'Engagement'],
+    tabIds: ['hero', 'trends', 'hub', 'hub', 'hub', 'hub', 'hub'],
     footerText: '※ KB Global Intelligence',
     partTitle: 'Engagement', partSub: 'Pick 1 or 2!', funPicked: 'Done!',
     dock: [
-      { icon: '🌡', label: 'Pulse', section: 'network' },
-      { icon: '📊', label: 'Risk', section: 'news' },
-      { icon: '🌱', label: 'ESG', section: 'hub' },
-      { icon: '⚖', label: 'Reg', section: 'hub' }
+      { icon: '🏠', label: 'Home', section: 'hero' },
+      { icon: '📊', label: 'Global Trends', section: 'trends' },
+      { icon: '📰', label: 'Local Media', section: 'hub' },
+      { icon: '🏢', label: 'Subsidiaries', section: 'hub' },
+      { icon: '👁', label: 'Topic Watch', section: 'hub' },
+      { icon: '⚖', label: 'Regulation', section: 'hub' },
+      { icon: '🎯', label: 'Engagement', section: 'hub' }
     ]
   }
 }
@@ -737,8 +1055,13 @@ function updateClockUI() {
 
 function getScrollEl() { return document.getElementById('gsScroll') }
 
-function scrollToSection(id) {
+function scrollToSection(id, tabIndex) {
   activeSection = id
+  if (tabIndex != null) activeTabIndex = tabIndex
+  else {
+    const idx = TX[LANG].tabIds.indexOf(id)
+    activeTabIndex = idx >= 0 ? idx : 0
+  }
   renderNav(); renderDots()
   const el = document.getElementById('section-' + id)
   const sc = getScrollEl()
@@ -756,6 +1079,8 @@ function setupScrollSpy() {
     entries.forEach(function (e) {
       if (e.isIntersecting) {
         activeSection = e.target.id.replace('section-', '')
+        const idx = TX[LANG].tabIds.indexOf(activeSection)
+        activeTabIndex = idx >= 0 ? idx : 0
         renderNav(); renderDots()
         headerSolid.value = activeSection !== 'hero'
       }
@@ -767,16 +1092,16 @@ function setupScrollSpy() {
   })
 }
 
-function navButtonsHTML(active) {
+function navButtonsHTML() {
   const t = TX[LANG]
   return t.tabs.map((tab, i) => {
     const id = t.tabIds[i]
-    return `<button type="button" data-section="${id}" class="gs-nav-btn ${id === active ? 'active' : ''}">${tab}</button>`
+    return `<button type="button" data-section="${id}" data-tab-index="${i}" class="gs-nav-btn ${i === activeTabIndex ? 'active' : ''}">${tab}</button>`
   }).join('')
 }
 
 function renderNav() {
-  const html = navButtonsHTML(activeSection)
+  const html = navButtonsHTML()
   const mainNav = document.getElementById('mainNav')
   const footerNav = document.getElementById('footerNav')
   ;[mainNav, footerNav].forEach(nav => {
@@ -784,7 +1109,7 @@ function renderNav() {
     nav.innerHTML = html
     nav.onclick = (e) => {
       const btn = e.target.closest('button[data-section]')
-      if (btn) scrollToSection(btn.dataset.section)
+      if (btn) scrollToSection(btn.dataset.section, +btn.dataset.tabIndex)
     }
   })
 }
@@ -851,16 +1176,16 @@ function renderCountryMedia(f = 'all') {
     : `<div class="gs-empty">${LANG === 'ko' ? '없음' : 'None'}</div>`
 }
 
-function bindModalClicks() {
+function bindDrawerClicks() {
   document.querySelectorAll('[data-modal]').forEach(el => {
-    el.onclick = () => { const [ty, ix] = el.dataset.modal.split(':'); showModal(ty, +ix) }
+    el.onclick = () => { const [ty, ix] = el.dataset.modal.split(':'); showDrawer(ty, +ix) }
   })
 }
 
 function bindBizCards() {
   document.querySelectorAll('.gs-biz-card').forEach(el => {
     el.onclick = () => {
-      if (el.dataset.modal) { const [ty, ix] = el.dataset.modal.split(':'); showModal(ty, +ix); return }
+      if (el.dataset.modal) { const [ty, ix] = el.dataset.modal.split(':'); showDrawer(ty, +ix); return }
       if (el.dataset.section) scrollToSection(el.dataset.section)
     }
   })
@@ -876,8 +1201,10 @@ function renderMapDots() {
 function renderHero() {
   const t = TX[LANG]
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
+  const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v }
   set('heroTagline', t.tagline)
-  set('heroTitle', 'GLOBAL ONE TEAM')
+  setHtml('heroTitle', t.heroTitleHtml)
+  setHtml('logoText', t.logoTextHtml)
   set('networkTitle', t.networkTitle)
   set('networkDesc', t.networkDesc)
   set('clockHint', t.clockHint)
@@ -885,6 +1212,41 @@ function renderHero() {
   set('hubDesc', t.hubDesc)
   set('footerText', t.footerText)
   set('footerAddr', LANG === 'ko' ? '서울특별시 영등포구 · KB금융그룹 Global Intelligence' : 'Seoul · KB Financial Group Global Intelligence')
+}
+
+function renderTrends() {
+  const t = TX[LANG]
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
+  set('trendsTitle', t.trendsTitle)
+  set('trendsFocusLabel', t.trendsFocusLabel)
+  set('trendsFocusTitle', t.trendsFocusTitle)
+  set('trendsFocusDesc', t.trendsFocusDesc)
+  set('trendsActionLabel', t.trendsActionLabel)
+  set('trendsShockLabel', t.trendsShockLabel)
+  set('trendsShockValue', t.trendsShockValue)
+  set('trendsShockSub', t.trendsShockSub)
+  set('trendsShockDesc', t.trendsShockDesc)
+  set('trendsVarLabel', t.trendsVarLabel)
+  set('trendsVarValue', t.trendsVarValue)
+  set('trendsVarSub', t.trendsVarSub)
+  set('trendsVarDesc', t.trendsVarDesc)
+  set('trendsSignalsTitle', t.trendsSignalsTitle)
+  set('trendsSignalsHint', t.trendsSignalsHint)
+  const tagsEl = document.getElementById('trendsFocusTags')
+  if (tagsEl) tagsEl.innerHTML = t.trendsFocusTags.map(tag => `<span class="gs-trends-tag">${tag}</span>`).join('')
+  const actionsEl = document.getElementById('trendsActionList')
+  if (actionsEl) actionsEl.innerHTML = t.trendsActions.map(a => `<li>${a}</li>`).join('')
+  const grid = document.getElementById('trendsSignalsGrid')
+  if (grid) {
+    grid.innerHTML = t.signals.map((s, i) => `<article class="gs-trends-signal" data-modal="brief:${i}">
+      <div class="gs-trends-signal-hd gs-trends-signal-hd--${s.catClass}">
+        <span class="gs-trends-signal-num">${s.n}</span>
+        <span class="gs-trends-signal-cat">${s.cat}</span>
+      </div>
+      <div class="gs-trends-signal-body"><h4>${s.h}</h4><p>${s.p}</p></div>
+    </article>`).join('')
+    bindDrawerClicks()
+  }
 }
 
 function renderBusiness() {
@@ -913,7 +1275,7 @@ function renderNews() {
       <h3>${item.h}</h3><p>${item.p}</p>
       <time class="gs-news-date">${date}</time></article>`
   }).join('')
-  bindModalClicks()
+  bindDrawerClicks()
 }
 
 function renderHub() {
@@ -931,7 +1293,7 @@ function renderHub() {
       <h4>${c.flag} ${c.h}</h4><p>${c.p} · ${c.date}</p></article>`).join('')
   const funBox = document.getElementById('funChoiceBox')
   if (funBox) { funBox.innerHTML = renderFunChoices(); delete funBox.dataset.bound; bindFunChoices() }
-  bindModalClicks()
+  bindDrawerClicks()
 }
 
 function bindMediaFilters() {
@@ -946,7 +1308,7 @@ function bindMediaFilters() {
 }
 
 function renderAll() {
-  renderHero(); renderBusiness(); renderNews(); renderHub(); renderMapDots()
+  renderHero(); renderTrends(); renderBusiness(); renderNews(); renderHub(); renderMapDots()
   updateClockUI(); renderNav(); renderDots(); renderDock()
   bindMediaFilters(); renderCountryMedia('all')
   setupScrollSpy()
@@ -959,27 +1321,106 @@ function setLang(l) {
           renderAll()
         }
 
-function showModal(type, idx) {
+function applyColorMode() {
+  document.documentElement.classList.toggle('gs-light', colorMode.value === 'light')
+  try { localStorage.setItem('gs-color-mode', colorMode.value) } catch (_) {}
+}
+
+function toggleColorMode(event) {
+  const next = colorMode.value === 'light' ? 'dark' : 'light'
+  const goingDark = next === 'dark'
+  const apply = () => {
+    colorMode.value = next
+    applyColorMode()
+  }
+  if (!document.startViewTransition || !event) {
+    apply()
+    return
+  }
+  const root = document.documentElement
+  const x = event.clientX
+  const y = event.clientY
+  const endRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  )
+  root.dataset.themeTransition = goingDark ? 'to-dark' : 'to-light'
+  const animBase = { duration: 450, fill: 'forwards' }
+  const expand = [
+    `circle(0px at ${x}px ${y}px)`,
+    `circle(${endRadius}px at ${x}px ${y}px)`
+  ]
+  const shrink = [
+    `circle(${endRadius}px at ${x}px ${y}px)`,
+    `circle(0px at ${x}px ${y}px)`
+  ]
+  const fullyOpenClip = [
+    `circle(${endRadius}px at ${x}px ${y}px)`,
+    `circle(${endRadius}px at ${x}px ${y}px)`
+  ]
+  const transition = document.startViewTransition(apply)
+  transition.ready.then(() => {
+    if (goingDark) {
+      root.animate(
+        { clipPath: shrink },
+        { ...animBase, easing: 'ease-out', pseudoElement: '::view-transition-old(root)' }
+      )
+      root.animate(
+        { clipPath: fullyOpenClip },
+        { ...animBase, easing: 'linear', pseudoElement: '::view-transition-new(root)' }
+      )
+    } else {
+      root.animate(
+        { clipPath: expand },
+        { ...animBase, easing: 'ease-in', pseudoElement: '::view-transition-new(root)' }
+      )
+      root.animate(
+        { clipPath: fullyOpenClip },
+        { ...animBase, easing: 'linear', pseudoElement: '::view-transition-old(root)' }
+      )
+    }
+  }).catch(() => {})
+  transition.finished.finally(() => {
+    delete root.dataset.themeTransition
+  })
+}
+
+function themeSwitchLabel() {
+  return TX[LANG][colorMode.value === 'dark' ? 'themeDark' : 'themeLight']
+}
+
+function logoMarkLabel() {
+  return TX[LANG].logoMarkLabel
+}
+
+function drawerTagLabel(type) {
+  const key = { brief: 'drawerTagBrief', sub: 'drawerTagSub', topic: 'drawerTagTopic', reg: 'drawerTagReg' }[type]
+  return key ? TX[LANG][key] : type.toUpperCase()
+}
+
+function drawerCloseLabel() {
+  return TX[LANG].drawerClose
+}
+
+function showDrawer(type, idx) {
           const t = TX[LANG]; let d = null, img = P.hero[0].u, seed = 'm'
           if (type === 'brief') { d = t.signals[idx]; img = P.sigUrl[idx]; seed = P.sigSeed[idx] }
           else if (type === 'sub') { d = t.subs[idx]; img = P.sub[idx].u; seed = P.sub[idx].s }
           else if (type === 'topic') { d = t.topics[idx]; img = P.topic[idx].u; seed = P.topic[idx].s }
           else if (type === 'reg') { d = t.regulations[idx]; img = P.reg[idx].u; seed = P.reg[idx].s }
           if (!d) return
-          document.getElementById('modal-img-wrap').innerHTML = imgTag(img, seed, d.h, 'eager')
-          document.getElementById('modal-tag').textContent = type.toUpperCase()
-          document.getElementById('modal-title').textContent = d.h
-          document.getElementById('modal-detail').innerHTML = d.detail
-          document.getElementById('modal-insight').innerHTML = d.insight
-          document.getElementById('modal-sources').innerHTML = d.sources?.map(s => `<a href="${s.url}" class="gs-src" target="_blank" rel="noopener">${s.title}</a>`).join('') || ''
-          modalOpen.value = true
-          document.getElementById('modal').classList.add('on')
+          document.getElementById('drawer-img-wrap').innerHTML = imgTag(img, seed, d.h, 'eager')
+          document.getElementById('drawer-tag').textContent = drawerTagLabel(type)
+          document.getElementById('drawer-title').textContent = d.h
+          document.getElementById('drawer-detail').innerHTML = d.detail
+          document.getElementById('drawer-insight').innerHTML = d.insight
+          document.getElementById('drawer-sources').innerHTML = d.sources?.map(s => `<a href="${s.url}" class="gs-src" target="_blank" rel="noopener">${s.title}</a>`).join('') || ''
+          drawerOpen.value = true
           document.body.style.overflow = 'hidden'
         }
 
-function closeModal() {
-          modalOpen.value = false
-          document.getElementById('modal').classList.remove('on')
+function closeDrawer() {
+          drawerOpen.value = false
           document.body.style.overflow = ''
         }
 
@@ -1004,6 +1445,11 @@ function initHeroVideo() {
 
         function init() {
           motionOff.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          try {
+            const saved = localStorage.getItem('gs-color-mode')
+            if (saved === 'dark' || saved === 'light') colorMode.value = saved
+          } catch (_) {}
+          applyColorMode()
           renderAll()
           initHeroVideo()
           clockTimer = setInterval(() => {
@@ -1025,7 +1471,7 @@ function initHeroVideo() {
           document.body.style.overflow = ''
         })
 
-        return { lang, headerSolid, heroVideo, heroUseFallback, heroFallbackImg, setLang, closeModal, scrollToSection }
+        return { lang, headerSolid, heroVideo, heroUseFallback, heroFallbackImg, colorMode, drawerOpen, setLang, closeDrawer, drawerCloseLabel, scrollToSection, toggleColorMode, themeSwitchLabel, logoMarkLabel }
 
       },
       template: `
@@ -1033,8 +1479,21 @@ function initHeroVideo() {
           <header class="gs-header" :class="{ solid: headerSolid }">
             <div class="gs-header-inner">
               <a class="gs-logo" href="#" @click.prevent="scrollToSection('hero')">
-                <span class="gs-logo-mark">KB</span>
-                <span class="gs-logo-text">Global One<em>Team Intelligence</em></span>
+                <span class="gs-logo-mark">
+                  <svg viewBox="0 0 32 32" :aria-label="logoMarkLabel()" role="img">
+                    <rect width="32" height="32" rx="3" fill="#695647"/>
+                    <circle cx="16" cy="16" r="3.2" fill="#FFBC00"/>
+                    <circle cx="16" cy="7.2" r="1.7" fill="#FFBC00"/>
+                    <circle cx="16" cy="24.8" r="1.7" fill="#FFBC00"/>
+                    <circle cx="7.2" cy="16" r="1.7" fill="#FFBC00"/>
+                    <circle cx="24.8" cy="16" r="1.7" fill="#FFBC00"/>
+                    <circle cx="9.5" cy="9.5" r="1.5" fill="#FFBC00"/>
+                    <circle cx="22.5" cy="9.5" r="1.5" fill="#FFBC00"/>
+                    <circle cx="9.5" cy="22.5" r="1.5" fill="#FFBC00"/>
+                    <circle cx="22.5" cy="22.5" r="1.5" fill="#FFBC00"/>
+                  </svg>
+                </span>
+                <span class="gs-logo-text" id="logoText">Global One Team<em>Team Intelligence</em></span>
               </a>
               <nav id="mainNav" class="gs-nav"></nav>
               <div class="gs-util">
@@ -1043,6 +1502,31 @@ function initHeroVideo() {
                   <button id="btnKo" type="button" class="on" @click="setLang('ko')">KOR</button>
                   <button id="btnEn" type="button" @click="setLang('en')">ENG</button>
                 </div>
+                <button
+                  type="button"
+                  class="gs-theme-switch"
+                  :class="{ dark: colorMode === 'dark' }"
+                  @click="toggleColorMode($event)"
+                  :aria-label="themeSwitchLabel()"
+                  :title="themeSwitchLabel()"
+                >
+                  <span class="gs-theme-switch__knob">
+                    <svg class="gs-theme-icon gs-theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                      <circle cx="12" cy="4" r="1.2" fill="currentColor"/>
+                      <circle cx="12" cy="20" r="1.2" fill="currentColor"/>
+                      <circle cx="4" cy="12" r="1.2" fill="currentColor"/>
+                      <circle cx="20" cy="12" r="1.2" fill="currentColor"/>
+                      <circle cx="6.3" cy="6.3" r="1.1" fill="currentColor"/>
+                      <circle cx="17.7" cy="6.3" r="1.1" fill="currentColor"/>
+                      <circle cx="6.3" cy="17.7" r="1.1" fill="currentColor"/>
+                      <circle cx="17.7" cy="17.7" r="1.1" fill="currentColor"/>
+                    </svg>
+                    <svg class="gs-theme-icon gs-theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill="currentColor" d="M12 4.5a8 8 0 1 0 7.8 9.9A6.5 6.5 0 0 1 12 4.5Z"/>
+                    </svg>
+                  </span>
+                </button>
                 <button type="button" class="gs-menu-btn" aria-label="menu"><span></span><span></span><span></span></button>
               </div>
             </div>
@@ -1060,9 +1544,46 @@ function initHeroVideo() {
               <div class="gs-hero-inner">
                 <div class="gs-hero-box">
                   <p class="gs-hero-tag" id="heroTagline">WORLD INTELLIGENCE · ONE TEAM</p>
-                  <h1 id="heroTitle">GLOBAL ONE TEAM</h1>
+                  <h1 id="heroTitle"><span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM</h1>
                   <button type="button" class="gs-hero-cta" @click="scrollToSection('business')">READ MORE</button>
                 </div>
+              </div>
+            </section>
+
+            <section id="section-trends" class="gs-fp gs-trends">
+              <div class="gs-trends-inner">
+                <h2 id="trendsTitle" class="gs-trends-page-title">글로벌 동향</h2>
+                <div class="gs-trends-focus">
+                  <div class="gs-trends-focus-main">
+                    <span id="trendsFocusLabel" class="gs-trends-label gs-trends-label--gold">주간 초점</span>
+                    <h3 id="trendsFocusTitle" class="gs-trends-focus-title">엔화 146 시대의 도래 · 아시아 금융 재편 시작</h3>
+                    <p id="trendsFocusDesc" class="gs-trends-focus-desc"></p>
+                    <div id="trendsFocusTags" class="gs-trends-tags"></div>
+                  </div>
+                  <div class="gs-trends-focus-action">
+                    <span id="trendsActionLabel" class="gs-trends-label gs-trends-label--gold">KB 액션</span>
+                    <ol id="trendsActionList" class="gs-trends-action-list"></ol>
+                  </div>
+                </div>
+                <div class="gs-trends-kpi">
+                  <article class="gs-trends-kpi-card gs-trends-kpi-card--shock">
+                    <span id="trendsShockLabel" class="gs-trends-kpi-label">이 주의 충격</span>
+                    <div id="trendsShockValue" class="gs-trends-kpi-value">5.75%</div>
+                    <div id="trendsShockSub" class="gs-trends-kpi-sub">BI-Rate 5.75% ▲</div>
+                    <p id="trendsShockDesc" class="gs-trends-kpi-desc"></p>
+                  </article>
+                  <article class="gs-trends-kpi-card gs-trends-kpi-card--var">
+                    <span id="trendsVarLabel" class="gs-trends-kpi-label">이 주의 변수</span>
+                    <div id="trendsVarValue" class="gs-trends-kpi-value">3.50-3.75%</div>
+                    <div id="trendsVarSub" class="gs-trends-kpi-sub">Fed 기준금리 3.50-3.75%</div>
+                    <p id="trendsVarDesc" class="gs-trends-kpi-desc"></p>
+                  </article>
+                </div>
+                <div class="gs-trends-signals-hd">
+                  <h3 id="trendsSignalsTitle">4대 시장신호</h3>
+                  <p id="trendsSignalsHint"></p>
+                </div>
+                <div id="trendsSignalsGrid" class="gs-trends-signals-grid"></div>
               </div>
             </section>
 
@@ -1150,18 +1671,20 @@ function initHeroVideo() {
             </footer>
           </div>
 
-          <div id="modal" class="gs-modal" @click.self="closeModal">
-            <div class="gs-modal-panel">
-              <button type="button" class="gs-modal-x" @click="closeModal">✕</button>
-              <div id="modal-img-wrap" class="gs-modal-img"></div>
-              <div class="gs-modal-body">
-                <div id="modal-tag" class="gs-modal-tag"></div>
-                <h2 id="modal-title" class="gs-modal-title"></h2>
-                <div id="modal-detail" class="gs-modal-prose"></div>
-                <div id="modal-insight" class="gs-modal-insight"></div>
-                <div id="modal-sources"></div>
+          <div id="drawer" class="gs-drawer" :class="{ on: drawerOpen }" @click.self="closeDrawer">
+            <aside class="gs-drawer-panel" role="dialog" aria-modal="true">
+              <div class="gs-drawer-head">
+                <button type="button" class="gs-drawer-x" @click="closeDrawer" :aria-label="drawerCloseLabel()">✕</button>
               </div>
-            </div>
+              <div id="drawer-img-wrap" class="gs-drawer-img"></div>
+              <div class="gs-drawer-body">
+                <div id="drawer-tag" class="gs-drawer-tag"></div>
+                <h2 id="drawer-title" class="gs-drawer-title"></h2>
+                <div id="drawer-detail" class="gs-drawer-prose"></div>
+                <div id="drawer-insight" class="gs-drawer-insight"></div>
+                <div id="drawer-sources"></div>
+              </div>
+            </aside>
           </div>
         </div>
       `
