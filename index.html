@@ -35,19 +35,24 @@
 html, body { height: 100%; overflow: hidden; background: #0a1628; }
 .gs-scroll {
   height: 100vh; overflow-y: auto; overflow-x: hidden;
-  scroll-snap-type: y mandatory; scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 .gs-fp {
-  min-height: 100vh; scroll-snap-align: start; position: relative;
+  min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: normal;
+  position: relative;
   display: flex; flex-direction: column; overflow: hidden;
 }
 .gs-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--header);
-  display: flex; align-items: center; transition: background .35s, box-shadow .35s;
+  display: flex; flex-direction: column; align-items: stretch;
+  transition: background .35s, box-shadow .35s;
 }
 .gs-header.solid { background: rgba(10,22,40,.96); box-shadow: 0 2px 20px rgba(0,0,0,.3); }
 .gs-header-inner {
   width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 32px;
+  height: var(--header); flex-shrink: 0;
   display: flex; align-items: center; gap: 20px;
 }
 .gs-logo {
@@ -82,12 +87,28 @@ html, body { height: 100%; overflow: hidden; background: #0a1628; }
   font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink);
   text-decoration: none; opacity: .85;
 }
-.gs-lang { display: flex; gap: 4px; }
+.gs-main-menu-btn {
+  display: none; align-items: center; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.3); background: transparent; color: var(--ink);
+  padding: 5px 10px; font-size: 11px; font-weight: 700; letter-spacing: -.02em;
+  cursor: pointer; border-radius: 4px; white-space: nowrap; font-family: var(--sans);
+  transition: border-color .2s, background .2s;
+}
+.gs-main-menu-btn:hover { border-color: #E5C04A; background: rgba(229, 192, 74, .12); }
+html.gs-light .gs-main-menu-btn {
+  border-color: rgba(26,26,46,.28);
+}
+html.gs-light .gs-main-menu-btn:hover {
+  border-color: #E5C04A; background: rgba(229, 192, 74, .14);
+}
+.gs-lang { display: flex; gap: 4px; flex-shrink: 0; }
 .gs-lang button {
   border: 1px solid rgba(255,255,255,.3); background: transparent; color: var(--ink);
-  padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 2px;
+  min-width: 36px; height: 32px; padding: 0 8px; font-size: 18px; line-height: 1;
+  cursor: pointer; border-radius: 4px; display: grid; place-items: center;
 }
 .gs-lang button.on { background: var(--blue); border-color: var(--blue); }
+.gs-theme-switch { flex-shrink: 0; }
 .gs-theme-switch {
   width: 40px; height: 22px; border-radius: 11px; border: 1px solid #dcdfe6;
   background: #f2f2f2; padding: 0; cursor: pointer; position: relative; flex-shrink: 0;
@@ -164,12 +185,18 @@ html.gs-light .gs-hero-box h1 {
   color: #1a1a2e;
   text-shadow: 0 1px 3px rgba(255,255,255,.65);
 }
+html.gs-light .gs-hero-edition { color: rgba(26,26,46,.72); }
+html.gs-light .gs-trends { background: #e8ecf2; }
+html.gs-light .gs-exec-signals-block { background: #eceef2; }
+html.gs-light .gs-exec-signal-card { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+html.gs-light .gs-exec-signal-card-body h4 { color: #1a1a2e; }
+html.gs-light .gs-exec-signal-card-body p { color: #5a6270; }
+html.gs-light .gs-exec-panel--white h3 { color: #C8860A; }
+html.gs-light .gs-exec-hd-title h2,
+html.gs-light .gs-exec-hd-statement-label { color: #C8860A; }
+html.gs-light .gs-exec-panel--white p { color: #5a6270; }
 html.gs-light .gs-trends-kpi-card,
 html.gs-light .gs-trends-signal { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
-html.gs-light .gs-trends { background: #eef1f5; }
-html.gs-light .gs-trends-page-title { color: #1a1a2e; }
-html.gs-light .gs-trends-signals-hd h3 { color: #1a1a2e; }
-html.gs-light .gs-trends-signals-hd p { color: #888; }
 html.gs-light .gs-regulation { background: #eef1f5; }
 html.gs-light .gs-regulation-title { color: #1a1a2e; }
 html.gs-light .gs-regulation-desc { color: #5a6270; }
@@ -186,7 +213,7 @@ html.gs-light .gs-regulation-card time { color: #888; }
 html.gs-light .gs-regulation-block-title { color: #1a1a2e; }
 html.gs-light .gs-regulation-block-desc { color: #5a6270; }
 html.gs-light .gs-regulation-block-badge { background: rgba(0,102,204,.1); color: #0066cc; border-color: rgba(0,102,204,.18); }
-html.gs-light .gs-regulation-block--sub { border-top-color: rgba(26,26,46,.08); }
+html.gs-light .gs-regulation-block--sub { border-left-color: rgba(26,26,46,.08); }
 html.gs-light .gs-business-bg {
   background: linear-gradient(rgba(245,247,250,.86), rgba(238,241,246,.9)),
     url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80') center/cover;
@@ -262,9 +289,39 @@ html.gs-light .gs-footer-copy { color: rgba(26,26,46,.42); }
 html.gs-light .gs-footer-links button:hover { color: #1a1a2e; }
 .gs-menu-btn {
   width: 36px; height: 36px; border: 0; background: transparent; cursor: pointer;
-  display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 6px;
+  display: none; flex-direction: column; justify-content: center; gap: 5px; padding: 6px; flex-shrink: 0;
 }
-.gs-menu-btn span { display: block; height: 2px; background: #fff; border-radius: 1px; }
+.gs-menu-btn span { display: block; height: 2px; background: #fff; border-radius: 1px; transition: transform .25s, opacity .25s; }
+.gs-header.nav-open .gs-menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.gs-header.nav-open .gs-menu-btn span:nth-child(2) { opacity: 0; }
+.gs-header.nav-open .gs-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.gs-nav-panel {
+  display: none; position: absolute; top: var(--header); left: 0; right: 0; z-index: 600;
+  background: rgba(10,22,40,.98); border-bottom: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+  max-height: calc(100vh - var(--header)); overflow-y: auto;
+}
+.gs-header.nav-open .gs-nav-panel { display: block; }
+.gs-nav-mobile {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 16px 16px; max-width: 1280px; margin: 0 auto;
+}
+.gs-nav-mobile .gs-nav-btn {
+  width: 100%; text-align: left; padding: 14px 16px; border-radius: 8px;
+}
+.gs-nav-mobile .gs-nav-btn::after { display: none; }
+.gs-nav-mobile .gs-nav-btn.active {
+  background: rgba(0,102,204,.22); color: #fff;
+}
+html.gs-light .gs-nav-panel {
+  background: rgba(255,255,255,.98);
+  border-bottom-color: rgba(26,26,46,.1);
+  box-shadow: 0 12px 32px rgba(0,0,0,.12);
+}
+html.gs-light .gs-nav-mobile .gs-nav-btn.active {
+  background: rgba(0,102,204,.1); color: #1a1a2e;
+}
 
 .gs-dots {
   position: fixed; left: 28px; top: 50%; transform: translateY(-50%); z-index: 400;
@@ -331,6 +388,10 @@ html.gs-light .gs-footer-links button:hover { color: #1a1a2e; }
   margin-bottom: 22px; letter-spacing: .08em; text-transform: uppercase;
 }
 .gs-hero-kb { color: #F39200; }
+.gs-hero-edition {
+  font-size: clamp(14px, 2.2vw, 18px); font-weight: 600; letter-spacing: .05em;
+  color: rgba(255,255,255,.76); margin: -6px 0 26px;
+}
 .gs-hero-desc {
   font-size: 15px; line-height: 1.75; color: rgba(255,255,255,.78);
   margin: 0 auto 32px; max-width: 580px;
@@ -375,42 +436,135 @@ html.gs-light .gs-hero-cta {
 }
 
 .gs-trends {
-  background: #050a12; justify-content: flex-start; overflow-y: auto;
+  background: #0a1931; justify-content: flex-start; overflow-y: auto;
 }
-.gs-trends-inner {
+.gs-exec-inner {
   width: 100%; max-width: 1280px; margin: 0 auto;
-  padding: calc(var(--header) + 28px) 32px 48px;
+  padding: calc(var(--header) + 16px) 28px 40px;
 }
-.gs-trends-page-title {
-  font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: #fff;
-  margin-bottom: 24px; letter-spacing: -.02em;
+.gs-exec-hd {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) 1px minmax(0, 1fr);
+  gap: 16px 24px; align-items: start;
+  padding: 16px 28px 0; margin-bottom: 0;
+  background: #0a1931; color: #fff;
 }
-.gs-trends-focus {
-  display: grid; grid-template-columns: 1fr 280px; gap: 0;
-  background: #0f172a; border-radius: 16px; overflow: hidden; margin-bottom: 20px;
+.gs-exec-hd-title h2 {
+  font-size: clamp(26px, 3.6vw, 38px); font-weight: 800; color: #E5C04A;
+  line-height: 1.1; margin: 0 0 6px; letter-spacing: -.02em;
 }
-.gs-trends-focus-main { padding: 36px 40px; }
-.gs-trends-focus-action {
-  padding: 36px 32px; border-left: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.12);
+.gs-exec-hd-sub {
+  font-size: 11px; font-weight: 600; letter-spacing: .32em; color: rgba(255,255,255,.88);
+  margin: 0; text-transform: uppercase;
 }
-.gs-trends-label {
-  font-size: 12px; font-weight: 700; letter-spacing: .06em; display: block; margin-bottom: 14px;
+.gs-exec-hd-divider { width: 1px; align-self: stretch; min-height: 44px; background: rgba(255,255,255,.22); justify-self: center; }
+.gs-exec-hd-statement-label {
+  display: block; font-size: 13px; font-weight: 700; color: #E5C04A; margin-bottom: 6px;
 }
-.gs-trends-label--gold { color: #d4a853; }
-.gs-trends-focus-title {
-  font-size: clamp(22px, 3vw, 30px); font-weight: 700; color: #fff;
-  line-height: 1.35; margin-bottom: 16px;
+.gs-exec-hd-statement p {
+  font-size: 13px; line-height: 1.58; color: rgba(255,255,255,.82); margin: 0;
 }
-.gs-trends-focus-desc {
-  font-size: 14px; line-height: 1.75; color: rgba(255,255,255,.78); margin-bottom: 22px;
+.gs-exec-body {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  gap: 0; align-items: stretch;
 }
-.gs-trends-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.gs-trends-tag {
-  padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 600;
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.88);
+.gs-exec-main { display: flex; flex-direction: column; min-width: 0; }
+.gs-exec-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  background: #fff; margin-top: 0;
 }
-.gs-trends-action-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.gs-trends-action-list li { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.88); }
+.gs-exec-panel { padding: 10px 26px 14px; min-width: 0; }
+.gs-exec-panel--white + .gs-exec-panel--white { border-left: 2px solid #E5A823; }
+.gs-exec-panel--white h3 {
+  font-size: 14px; font-weight: 800; color: #C8860A; margin: 0 0 8px;
+}
+.gs-exec-panel--white p {
+  font-size: 11px; line-height: 1.62; color: #4a5568; margin: 0;
+}
+.gs-exec-solution {
+  display: grid; grid-template-columns: minmax(0, 1fr) 88px;
+  gap: 16px; align-items: center;
+  padding: 20px 28px;
+  background: linear-gradient(135deg, #B8860B 0%, #E5A823 55%, #F5C842 100%);
+  color: #fff;
+}
+.gs-exec-solution-label {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  color: rgba(255,255,255,.92); margin-bottom: 6px;
+}
+.gs-exec-solution h3 {
+  font-size: clamp(16px, 2vw, 21px); font-weight: 800; line-height: 1.32;
+  margin: 0 0 8px; color: #fff;
+}
+.gs-exec-solution-desc {
+  font-size: 12px; line-height: 1.62; color: rgba(255,255,255,.95); margin: 0 0 10px;
+}
+.gs-exec-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.gs-exec-tag {
+  padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 600;
+  background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.38); color: #fff;
+}
+.gs-exec-solution-icon { display: flex; align-items: center; justify-content: center; opacity: .92; }
+.gs-exec-solution-icon svg { width: 64px; height: 64px; stroke: #fff; fill: none; stroke-width: 1.5; }
+.gs-exec-signals-block {
+  padding: 22px 28px 26px; background: #eceef2;
+}
+.gs-exec-signals-block h3 {
+  font-size: 15px; font-weight: 800; color: #1a2744; margin: 0 0 4px;
+}
+.gs-exec-signals-hint {
+  font-size: 11px; color: #6b7280; margin: 0 0 14px;
+}
+.gs-exec-signals-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.gs-exec-signal-card {
+  background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06); transition: transform .2s, box-shadow .2s;
+}
+.gs-exec-signal-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+.gs-exec-signal-card-hd {
+  display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+  font-size: 10px; font-weight: 700;
+}
+.gs-exec-signal-card-hd--market { background: #e8f1fb; color: #0066cc; }
+.gs-exec-signal-card-hd--finance { background: #e8f5ef; color: #1a8f5a; }
+.gs-exec-signal-card-hd--risk { background: #fdecea; color: #c0392b; }
+.gs-exec-signal-card-hd--strategy { background: #f0ebf8; color: #6f42c1; }
+.gs-exec-signal-num { font-weight: 800; opacity: .7; }
+.gs-exec-signal-card-body { padding: 12px 12px 14px; }
+.gs-exec-signal-card-body h4 {
+  font-size: 12px; font-weight: 700; color: #1a2744; line-height: 1.38; margin: 0 0 6px;
+}
+.gs-exec-signal-card-body p { font-size: 10px; line-height: 1.55; color: #5a6270; margin: 0; }
+.gs-exec-side {
+  padding: 14px 24px 28px;
+  background: linear-gradient(180deg, #B8860B 0%, #D4A017 50%, #E5A823 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+.gs-exec-side h3 {
+  font-size: 18px; font-weight: 800; margin: 0 0 22px; color: #fff;
+}
+.gs-exec-team {
+  list-style: none; display: flex; flex-direction: column; gap: 28px;
+  margin: 0; padding: 0; flex: 1; justify-content: space-evenly;
+}
+.gs-exec-team-item { display: flex; gap: 16px; align-items: flex-start; }
+.gs-exec-team-avatar {
+  flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.75); background: rgba(255,255,255,.22);
+  overflow: hidden; display: block;
+}
+.gs-exec-team-avatar img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.gs-exec-team-item strong {
+  display: block; font-size: 12px; font-weight: 800; line-height: 1.45; margin-bottom: 6px;
+}
+.gs-exec-team-item p { font-size: 11px; line-height: 1.55; color: rgba(255,255,255,.82); margin: 0; }
+
 .gs-trends-kpi {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px;
 }
@@ -469,10 +623,16 @@ html.gs-light .gs-hero-cta {
 .gs-regulation-hd { width: 100%; margin-bottom: 20px; }
 .gs-regulation-desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
 .gs-regulation-hint { font-size: 11px; color: rgba(255,255,255,.42); margin-top: 4px; }
-.gs-regulation-block { width: 100%; }
+.gs-regulation-block { width: 100%; min-width: 0; }
+.gs-regulation-body {
+  width: 100%; display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  gap: 24px; align-items: stretch;
+}
 .gs-regulation-block--sub {
-  margin-top: 22px; padding-top: 22px;
-  border-top: 1px solid rgba(255,255,255,.08);
+  margin-top: 0; padding-top: 0; border-top: none;
+  padding-left: 24px;
+  border-left: 1px solid rgba(255,255,255,.08);
 }
 .gs-regulation-block-hd {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 14px;
@@ -491,7 +651,7 @@ html.gs-light .gs-hero-cta {
   width: 100%; display: grid; gap: 12px;
 }
 .gs-regulation-grid--branch { grid-template-columns: repeat(4, 1fr); }
-.gs-regulation-grid--sub { grid-template-columns: repeat(2, 1fr); max-width: 640px; }
+.gs-regulation-grid--sub { grid-template-columns: 1fr; max-width: none; }
 .gs-regulation-card {
   background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
   border-radius: 10px; padding: 12px 12px 10px; cursor: pointer;
@@ -708,7 +868,7 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
   .gs-media-card:hover .gs-media-card-inner::after { animation: none; }
 }
 
-.gs-business { justify-content: center; }
+.gs-business { justify-content: stretch; }
 .gs-business-bg {
   position: absolute; inset: 0;
   background: linear-gradient(rgba(10,22,40,.82), rgba(10,22,40,.88)),
@@ -717,7 +877,23 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
 .gs-business-inner {
   position: relative; z-index: 2; width: 100%; max-width: 1280px; margin: 0 auto;
   padding: calc(var(--header) + 32px) 32px 48px;
+  flex: 1; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box;
 }
+.gs-biz-carousel {
+  width: 100%; display: flex; align-items: stretch; gap: 8px; min-height: 0;
+}
+.gs-biz-carousel-viewport { flex: 1; min-width: 0; }
+.gs-biz-arrow {
+  display: none; width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; align-self: center;
+  border: 1px solid var(--line); background: rgba(255,255,255,.06);
+  color: var(--ink); cursor: pointer; font-size: 22px; line-height: 1;
+  place-items: center; transition: .2s; font-family: var(--sans);
+}
+html.gs-light .gs-biz-arrow {
+  background: #fff; border-color: rgba(26,26,46,.15); color: #1a1a2e;
+}
+.gs-biz-arrow:hover:not(:disabled) { border-color: #E5C04A; color: #E5C04A; }
+.gs-biz-arrow:disabled { opacity: .35; cursor: default; }
 .gs-biz-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; min-height: 68vh; perspective: 1200px; }
 .gs-biz-card {
   position: relative; display: flex; flex-direction: column; justify-content: flex-end;
@@ -797,15 +973,62 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
   .gs-biz-card.img4:hover { background-position: center 50%; }
   .gs-biz-card.img3:hover { background-position: center 46%; }
   .gs-biz-card:hover::before {
-    transform: translateY(-108%);
-    opacity: 0;
+    transform: none;
+    opacity: 1;
+    background: linear-gradient(180deg,
+      rgba(10,22,40,.04) 0%,
+      rgba(10,22,40,.18) 38%,
+      rgba(10,22,40,.62) 72%,
+      rgba(10,22,40,.92) 100%);
+    backdrop-filter: blur(8px) saturate(0.88);
+    -webkit-backdrop-filter: blur(8px) saturate(0.88);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
   .gs-biz-card:hover::after {
     opacity: 1;
     animation: gs-biz-shimmer 1.15s cubic-bezier(.22, 1, .36, 1) forwards;
   }
 }
-html.gs-light .gs-biz-card:hover {
+.gs-biz-card.is-touch-hover {
+  transform: translateY(-18px) scale(1.032);
+  box-shadow:
+    0 36px 72px rgba(0,0,0,.52),
+    0 0 0 1px rgba(229, 192, 74, .58),
+    0 0 56px rgba(229, 192, 74, .32),
+    0 12px 40px rgba(229, 192, 74, .16),
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 0 48px rgba(255,255,255,.1),
+    inset 0 -72px 56px -24px rgba(10,22,40,.52);
+  background-position: center 50%;
+  filter: brightness(1.12) saturate(1.08) contrast(1.03);
+  z-index: 4;
+  animation: gs-biz-card-glass-pulse 2.4s ease-in-out infinite;
+}
+.gs-biz-card.briefing.is-touch-hover { background-position: center 52%; }
+.gs-biz-card.img1.is-touch-hover { background-position: center 48%; }
+.gs-biz-card.img2.is-touch-hover { background-position: center 55%; }
+.gs-biz-card.img4.is-touch-hover { background-position: center 50%; }
+.gs-biz-card.img3.is-touch-hover { background-position: center 46%; }
+.gs-biz-card.is-touch-hover::before {
+  transform: none;
+  opacity: 1;
+  background: linear-gradient(180deg,
+    rgba(10,22,40,.04) 0%,
+    rgba(10,22,40,.18) 38%,
+    rgba(10,22,40,.62) 72%,
+    rgba(10,22,40,.92) 100%);
+  backdrop-filter: blur(8px) saturate(0.88);
+  -webkit-backdrop-filter: blur(8px) saturate(0.88);
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.gs-biz-card.is-touch-hover::after {
+  opacity: 1;
+  animation: gs-biz-shimmer 1.15s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+html.gs-light .gs-biz-card:hover,
+html.gs-light .gs-biz-card.is-touch-hover {
   animation: gs-biz-card-glass-pulse-light 2.4s ease-in-out infinite;
 }
 html.gs-light .gs-biz-card {
@@ -823,6 +1046,18 @@ html.gs-light .gs-biz-card::before {
     rgba(238,241,246,0) 100%);
   backdrop-filter: blur(12px) saturate(0.88);
   -webkit-backdrop-filter: blur(12px) saturate(0.88);
+}
+html.gs-light .gs-biz-card:hover::before,
+html.gs-light .gs-biz-card.is-touch-hover::before {
+  background: linear-gradient(180deg,
+    rgba(10,22,40,.06) 0%,
+    rgba(10,22,40,.28) 42%,
+    rgba(10,22,40,.72) 76%,
+    rgba(10,22,40,.94) 100%);
+  backdrop-filter: blur(8px) saturate(0.9);
+  -webkit-backdrop-filter: blur(8px) saturate(0.9);
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 .gs-biz-card.briefing {
   background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80');
@@ -844,11 +1079,17 @@ html.gs-light .gs-biz-card::before {
 .gs-biz-card h2 { font-size: clamp(17px, 1.45vw, 22px); font-weight: 700; margin-bottom: 8px; transition: transform 0.55s cubic-bezier(.22, 1, .36, 1), color 0.35s; }
 .gs-biz-card p { font-size: clamp(11px, .95vw, 12px); color: rgba(255,255,255,.82); line-height: 1.55; transition: transform 0.55s cubic-bezier(.22, 1, .36, 1), color 0.35s, opacity 0.35s; }
 @media (hover: hover) {
-  .gs-biz-card:hover .gs-biz-label { transform: translateY(-5px); opacity: 1; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
-  .gs-biz-card:hover h2 { transform: translateY(-8px); color: #fff; text-shadow: 0 4px 18px rgba(0,0,0,.45); }
-  .gs-biz-card:hover p { transform: translateY(-5px); color: rgba(255,255,255,.96); opacity: 1; text-shadow: 0 2px 10px rgba(0,0,0,.35); }
+  .gs-biz-card:hover .gs-biz-label { transform: translateY(-5px); opacity: 1; text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 12px rgba(10,22,40,.75); }
+  .gs-biz-card:hover h2 { transform: translateY(-8px); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 2px 8px rgba(10,22,40,.9), 0 4px 18px rgba(0,0,0,.55); }
+  .gs-biz-card:hover p { transform: translateY(-5px); color: rgba(255,255,255,.98); opacity: 1; text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 2px 10px rgba(10,22,40,.85); }
 }
-html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,.32); }
+.gs-biz-card.is-touch-hover .gs-biz-label { transform: translateY(-5px); opacity: 1; text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 12px rgba(10,22,40,.75); }
+.gs-biz-card.is-touch-hover h2 { transform: translateY(-8px); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 2px 8px rgba(10,22,40,.9), 0 4px 18px rgba(0,0,0,.55); }
+.gs-biz-card.is-touch-hover p { transform: translateY(-5px); color: rgba(255,255,255,.98); opacity: 1; text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 2px 10px rgba(10,22,40,.85); }
+html.gs-light .gs-biz-card:hover h2,
+html.gs-light .gs-biz-card.is-touch-hover h2 { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.92), 0 4px 16px rgba(0,0,0,.45); }
+html.gs-light .gs-biz-card:hover p,
+html.gs-light .gs-biz-card.is-touch-hover p { color: rgba(255,255,255,.98); text-shadow: 0 1px 2px rgba(0,0,0,.88), 0 2px 8px rgba(0,0,0,.4); }
 @keyframes gs-biz-shimmer {
   0% { left: -130%; opacity: 0; }
   12% { opacity: 1; }
@@ -906,10 +1147,14 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
 @media (prefers-reduced-motion: reduce) {
   .gs-biz-card { transition: none; filter: none; }
   .gs-biz-card::before { transition: none; }
-  .gs-biz-card:hover { transform: none; background-position: center 100%; filter: none; animation: none; }
-  .gs-biz-card:hover::before { transform: none; opacity: 1; }
-  .gs-biz-card:hover::after { animation: none; }
-  .gs-biz-card:hover h2, .gs-biz-card:hover p, .gs-biz-card:hover .gs-biz-label { transform: none; }
+  .gs-biz-card:hover,
+  .gs-biz-card.is-touch-hover { transform: none; background-position: center 100%; filter: none; animation: none; }
+  .gs-biz-card:hover::before,
+  .gs-biz-card.is-touch-hover::before { transform: none; opacity: 1; }
+  .gs-biz-card:hover::after,
+  .gs-biz-card.is-touch-hover::after { animation: none; }
+  .gs-biz-card:hover h2, .gs-biz-card:hover p, .gs-biz-card:hover .gs-biz-label,
+  .gs-biz-card.is-touch-hover h2, .gs-biz-card.is-touch-hover p, .gs-biz-card.is-touch-hover .gs-biz-label { transform: none; }
 }
 
 .gs-network { justify-content: center; }
@@ -945,10 +1190,15 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
   border-radius: 12px; padding: 0; overflow: hidden;
 }
 html:not(.gs-light) .gs-map-wrap { background: #060d18; border-color: rgba(255,255,255,.1); }
-.gs-map-stage { position: relative; flex: 1; min-height: 0; }
-.gs-map-base { position: relative; line-height: 0; }
+.gs-map-stage { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+.gs-map-base {
+  position: relative; line-height: 0; width: 100%;
+  aspect-ratio: 710 / 444; overflow: hidden;
+}
 .gs-map-photo {
-  width: 100%; height: auto; display: block; user-select: none;
+  position: relative; z-index: 1;
+  width: 100%; height: 100%; display: block; user-select: none;
+  object-fit: fill;
   -webkit-user-drag: none; pointer-events: none;
 }
 html.gs-light .gs-map-photo { filter: brightness(1.04) contrast(1.02); }
@@ -964,7 +1214,9 @@ html.gs-light .gs-map-wrap { background: #060d18; border-color: rgba(26,26,46,.1
   box-shadow: 0 0 18px rgba(230,57,70,.35);
   transform: translate(-50%, -50%);
 }
-.gs-map-stage #mapDots { position: absolute; inset: 0; z-index: 9; pointer-events: none; }
+.gs-map-base #mapDots,
+.gs-map-base #mapMagnifier { position: absolute; inset: 0; z-index: 8; }
+.gs-map-base #mapDots { pointer-events: none; }
 .gs-map-red-pin {
   position: absolute; z-index: 6; pointer-events: none;
   transform: translate(-50%, -100%); opacity: 0;
@@ -1001,8 +1253,7 @@ html.gs-light .gs-map-wrap { background: #060d18; border-color: rgba(26,26,46,.1
   box-shadow: 0 3px 14px rgba(0,0,0,.5), 0 0 0 2px var(--blue), 0 0 10px rgba(0,102,204,.35);
 }
 .gs-map-hit:hover .gs-map-hit-flag { transform: scale(1.12); }
-.gs-map-hit:hover .gs-map-hit-flag,
-.gs-map-hit.is-active .gs-map-hit-flag { opacity: 0; }
+.gs-map-hit.is-active .gs-map-hit-flag { transform: scale(1.14); box-shadow: 0 4px 18px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.85); }
 .gs-map-hit-ring { display: none; }
 .gs-map-mag {
   position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0;
@@ -1278,7 +1529,7 @@ html.gs-light .gs-hub-engage-grid .gs-fun-bar i { background: var(--green); }
 .gs-empty { padding: 24px; text-align: center; color: var(--dim); font-size: 12px; }
 
 .gs-footer {
-  background: #050a12; padding: 40px 32px 28px; scroll-snap-align: end;
+  background: #050a12; padding: 40px 32px 28px;
 }
 .gs-footer-inner { max-width: 1280px; margin: 0 auto; }
 .gs-footer-info { font-size: 12px; color: var(--dim); line-height: 1.8; margin-bottom: 16px; }
@@ -1341,22 +1592,94 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
 .photo { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 @media (max-width: 1200px) {
+  .gs-biz-carousel { flex: 1; min-height: calc(100vh - var(--header) - 80px); gap: 0; }
+  .gs-biz-arrow { display: none !important; }
+  .gs-biz-carousel-viewport { overflow: hidden; }
   .gs-biz-grid {
-    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-    scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    overflow: hidden;
+    height: 100%;
+    min-height: calc(100vh - var(--header) - 80px);
+    align-items: stretch;
   }
   .gs-biz-card {
-    flex: 0 0 28%; min-width: 220px; scroll-snap-align: start;
-    border-right: 1px solid rgba(255,255,255,.08); border-bottom: 0;
+    flex: unset;
+    min-width: 0;
+    width: auto;
+    scroll-snap-align: unset;
+    padding: 10px 4px;
+    min-height: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
   }
   .gs-biz-card:last-child { border-right: 0; }
+  .gs-biz-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: clamp(9px, 1vw, 11px);
+    margin: 0;
+    letter-spacing: .1em;
+    flex-shrink: 0;
+  }
+  .gs-biz-card h2 {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: clamp(12px, 1.65vw, 16px);
+    margin: 0;
+    line-height: 1.5;
+    letter-spacing: .08em;
+    max-height: min(72vh, 520px);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .gs-biz-card p {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: clamp(9px, 1.15vw, 12px);
+    line-height: 1.55;
+    letter-spacing: .05em;
+    margin: 0;
+    max-height: min(52vh, 380px);
+    overflow: hidden;
+    opacity: .88;
+    flex-shrink: 1;
+  }
+  .gs-biz-card:hover,
+  .gs-biz-card.is-touch-hover {
+    transform: translateY(-6px) scale(1.012);
+  }
+  .gs-biz-card:hover h2,
+  .gs-biz-card.is-touch-hover h2,
+  .gs-biz-card:hover .gs-biz-label,
+  .gs-biz-card.is-touch-hover .gs-biz-label {
+    transform: translateX(-3px);
+  }
+  .gs-biz-card:hover p,
+  .gs-biz-card.is-touch-hover p {
+    transform: translateX(-2px);
+  }
 }
 @media (max-width: 1024px) {
   .gs-dots { display: none; }
+  .gs-util-link { display: none; }
+  .gs-util { gap: 8px; }
   .gs-hero-inner { padding: calc(var(--header) + 24px) 20px 40px; }
-  .gs-biz-grid { min-height: auto; }
-  .gs-biz-card { min-height: 320px; }
+  .gs-business-inner { padding: calc(var(--header) + 20px) 20px 24px; }
+  .gs-biz-grid { min-height: calc(100vh - var(--header) - 48px); }
+  .gs-biz-carousel { min-height: calc(100vh - var(--header) - 48px); }
   .gs-network-body { grid-template-columns: 1fr; }
+  .gs-map-wrap {
+    min-height: 0; height: auto; background: transparent;
+    border: none; box-shadow: none; overflow: visible;
+  }
+  html.gs-light .gs-map-wrap,
+  html:not(.gs-light) .gs-map-wrap { background: transparent; border: none; box-shadow: none; }
+  .gs-map-stage { flex: none; }
   .gs-news-head { grid-template-columns: 1fr; }
   .gs-news-title { border-right: 0; border-bottom: 1px solid #e0e4ea; padding: 28px 24px; font-size: 36px; }
   .gs-news-list { grid-template-columns: 1fr; }
@@ -1364,10 +1687,38 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
   .gs-clocks { grid-template-columns: repeat(4, 1fr); }
   .gs-trends-focus { grid-template-columns: 1fr; }
   .gs-trends-focus-action { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .gs-exec-hd {
+    grid-template-columns: 1fr; gap: 12px; padding: 14px 20px 0;
+  }
+  .gs-exec-hd-divider { display: none; }
+  .gs-exec-body {
+    display: flex; flex-direction: column;
+  }
+  .gs-exec-main { display: contents; }
+  .gs-exec-split { order: 1; }
+  .gs-exec-solution { order: 2; }
+  .gs-exec-side {
+    order: 3; width: 100%; box-sizing: border-box;
+    display: block; align-self: auto;
+  }
+  .gs-exec-team { flex: none; justify-content: flex-start; gap: 26px; }
+  .gs-exec-signals-block { order: 4; width: 100%; box-sizing: border-box; }
+  .gs-exec-panel--white + .gs-exec-panel--white { border-left: 0; border-top: 2px solid #E5A823; }
+  .gs-exec-split { grid-template-columns: 1fr; }
+  .gs-exec-solution { grid-template-columns: 1fr; padding: 18px 20px; }
+  .gs-exec-solution-icon { display: none; }
+  .gs-exec-signals-grid { grid-template-columns: 1fr; gap: 10px; width: 100%; }
+  .gs-exec-signal-card { width: 100%; min-width: 0; }
   .gs-trends-kpi { grid-template-columns: 1fr; }
   .gs-trends-signals-grid { grid-template-columns: repeat(2, 1fr); }
+  .gs-regulation-body { grid-template-columns: 1fr; gap: 20px; }
+  .gs-regulation-block--sub {
+    margin-top: 22px; padding-top: 22px; padding-left: 0;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  html.gs-light .gs-regulation-block--sub { border-top-color: rgba(26,26,46,.08); }
   .gs-regulation-grid--branch { grid-template-columns: repeat(3, 1fr); }
-  .gs-regulation-grid--sub { max-width: none; }
   .gs-media-carousel { min-height: 400px; }
   .gs-media-carousel-stage { height: 380px; }
   .gs-media-card { width: 240px; height: 336px; margin: -168px 0 0 -120px; }
@@ -1376,10 +1727,20 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
 }
 @media (max-width: 640px) {
   .gs-nav { display: none; }
-  .gs-dock { display: flex; }
-  .gs-header-inner { padding: 0 16px; }
+  .gs-menu-btn { display: flex; }
+  .gs-main-menu-btn { display: inline-flex; }
+  .gs-dock { display: none !important; }
+  .gs-header-inner { padding: 0 16px; gap: 10px; }
+  .gs-util { gap: 6px; margin-left: auto; }
+  .gs-lang button { min-width: 32px; height: 30px; font-size: 16px; }
   .gs-hero-box h1 { font-size: clamp(36px, 12vw, 56px); }
-  .gs-biz-card { flex: 0 0 78%; min-width: 260px; }
+  .gs-business-inner { padding: calc(var(--header) + 12px) 8px 16px; }
+  .gs-biz-grid { min-height: calc(100vh - var(--header) - 32px); }
+  .gs-biz-carousel { min-height: calc(100vh - var(--header) - 32px); }
+  .gs-biz-card { padding: 10px 3px; gap: 4px; }
+  .gs-biz-card h2 { font-size: clamp(11px, 3.4vw, 15px); max-height: min(68vh, 420px); }
+  .gs-biz-card p { font-size: clamp(9px, 2.8vw, 11px); max-height: min(46vh, 300px); }
+  .gs-biz-label { font-size: clamp(8px, 2.4vw, 10px); }
   .gs-hub-inner { padding: calc(var(--header) + 14px) 14px 14px; }
   .gs-hub-engage-hd { margin-bottom: 10px; }
   .gs-hub-engage-grid { gap: 6px; }
@@ -1391,6 +1752,11 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
   .gs-regulation-grid--branch,
   .gs-regulation-grid--sub { grid-template-columns: 1fr; }
   .gs-regulation-inner { padding-left: 16px; padding-right: 16px; }
+  .gs-exec-inner { padding-left: 12px; padding-right: 12px; }
+  .gs-exec-panel { padding: 10px 14px 12px; }
+  .gs-exec-signals-block { padding: 18px 20px 20px; }
+  .gs-exec-signals-grid { grid-template-columns: 1fr; gap: 10px; }
+  .gs-exec-side { padding: 10px 20px 18px; }
 }
   
   
@@ -1406,6 +1772,7 @@ const { createApp, ref, onMounted, onUnmounted, nextTick } = Vue
 const lang = ref('ko')
         const motionOff = ref(false)
         const drawerOpen = ref(false)
+        const navOpen = ref(false)
         const headerSolid = ref(false)
         const heroVideo = ref(null)
         const heroUseFallback = ref(false)
@@ -1413,16 +1780,31 @@ const lang = ref('ko')
         const colorMode = ref('dark')
         const WEEK_ID = '2026-W26'
 
-let LANG = 'ko', clockTimer = null, activeSection = 'hero', activeTabIndex = 0, spyIO = null
+const BRIEF_ISSUE = 24
+const BRIEF_DATE = new Date(2026, 5, 29)
+
+function formatHeroEditionLine(lang) {
+  const y = BRIEF_DATE.getFullYear()
+  const m = String(BRIEF_DATE.getMonth() + 1).padStart(2, '0')
+  const d = String(BRIEF_DATE.getDate()).padStart(2, '0')
+  if (lang === 'ko') {
+    const wd = ['일', '월', '화', '수', '목', '금', '토']
+    return `${y}.${m}.${d}(${wd[BRIEF_DATE.getDay()]}) - ${BRIEF_ISSUE}회차`
+  }
+  const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  return `${y}.${m}.${d} (${wd[BRIEF_DATE.getDay()]}) - Issue ${BRIEF_ISSUE}`
+}
+
+let LANG = 'ko', clockTimer = null, activeSection = 'hero', activeTabIndex = 0, spyIO = null, spyScrollRaf = null
 const SECTION_IDS = ['hero', 'business', 'trends', 'media', 'regulation', 'network', 'hub']
 let mediaCarouselIndex = 0, mediaCarouselOffset = 0, mediaCarouselTarget = 0
-let mediaWheelEndTimer = null, mediaSnapAnim = null, mediaWheelRaf = null, mediaWheelLastTs = 0
-const MEDIA_WHEEL_SENS = 0.0034
-const MEDIA_WHEEL_SMOOTH_MS = 95
+let mediaSnapAnim = null, mediaWheelIdleTimer = null, mediaWheelDriving = false, mediaWheelLastFrame = 0
 const MEDIA_SNAP_MS = 480
 const MEDIA_SNAP_CLICK_MS = 260
-const MEDIA_WHEEL_SNAP_DELAY = 320
-const MEDIA_VISIBLE_COUNT = 7
+const MEDIA_SNAP_STEP_MS = 180
+const MEDIA_WHEEL_CARD_PX = 100
+const MEDIA_WHEEL_IDLE_MS = 90
+const MEDIA_VISIBLE_COUNT = 5
 
 const MAP_REF = { w: 710, h: 444 }
 
@@ -1527,6 +1909,8 @@ const P = {
     { u: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=900&q=80', s: 'cn' },
     { u: 'https://images.unsplash.com/photo-1583417319070-4a2ac4950ec1?auto=format&fit=crop&w=900&q=80', s: 'vn' },
     { u: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=80', s: 'in' },
+    { u: 'https://images.unsplash.com/photo-1559592416-2c47acc79e8b?auto=format&fit=crop&w=900&q=80', s: 'mm' },
+    { u: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=900&q=80', s: 'nz' },
     { u: 'https://images.unsplash.com/photo-1555899434-94d1478fbf09?auto=format&fit=crop&w=900&q=80', s: 'id' },
     { u: 'https://images.unsplash.com/photo-1559592416-2c47acc79e8b?auto=format&fit=crop&w=900&q=80', s: 'kh' }
   ],
@@ -1546,6 +1930,14 @@ const TX = {
     logoMarkLabel: 'KB국민은행',
     themeLight: '라이트 모드',
     themeDark: '다크 모드',
+    contactUs: '문의하기',
+    langKo: '한국어',
+    langEn: 'English',
+    menuOpen: '메뉴 열기',
+    menuClose: '메뉴 닫기',
+    mainMenu: '메인메뉴',
+    bizPrev: '이전 카드',
+    bizNext: '다음 카드',
     drawerClose: '닫기',
     drawerTagBrief: '시장신호',
     drawerTagSub: '국외연결자회사',
@@ -1553,6 +1945,15 @@ const TX = {
     drawerTagReg: '규제 · 금융기관',
     drawerTagMedia: '현지언론',
     trendsTitle: '브리핑&글로벌동향',
+    trendsPageSub: 'W E E K L Y · B R I E F',
+    trendsStatementLabel: 'EXECUTIVE SUMMARY',
+    trendsBriefLabel: 'Weekly Brief',
+    trendsBriefSummary: '이번 주 글로벌 금융은 BOJ 금리 정상화와 엔화 146대 진입, Fed 고금리(3.50–3.75%) 유지, 인도네시아 BI-Rate 5.75% 인상이 동시에 전개됩니다. KB 글로벌 10개 거점·2개 연결자회사는 환율·신용·ALM 리스크를 통합 점검해야 하는 전환기입니다.',
+    trendsProblemLabel: '핵심 리스크',
+    trendsProblemDesc: '금리 상승과 환율 악화가 동시 진행되며 신흥국 통화·외채 부담이 심화되고 있습니다. 엔화 145→146 급등으로 글로벌 금리 체계 재편이 가속화되고 JPY 차입 의존 거점에 직접적 부담이 커지고 있습니다.',
+    trendsOpportunityLabel: '전략 기회',
+    trendsOpportunityDesc: '아시아 금융 재편 속 조달·환헤지·ALM 재설계가 KB 글로벌 거점의 차별화 포인트가 됩니다. 선제적 리스크 관리가 경쟁 우위를 만드는 전환기입니다.',
+    trendsSolutionLabel: '주간 해법',
     trendsFocusLabel: '주간 초점',
     trendsFocusTitle: '엔화 146 시대의 도래 · 아시아 금융 재편 시작',
     trendsFocusDesc: '일본은행(BOJ)의 명시적 금리 인상 신호로 엔화가 145선을 돌파하고 146대로 진입했습니다. 이는 글로벌 금리 체계의 대전환과 신흥국 금융에 급격한 변화를 초래하고 있습니다.',
@@ -1564,23 +1965,27 @@ const TX = {
       '③ ALM 전략 완전 재편',
       '④ 환헤징 비용 흡수 계획 수립'
     ],
-    trendsShockLabel: '이 주의 충격',
-    trendsShockValue: '5.75%',
-    trendsShockSub: 'BI-Rate 5.75% ▲',
-    trendsShockDesc: '인도네시아 중앙은행의 연속 인상으로 현지 금리가 급상승하고 있으며, 루피아 약세 억제 노력이 진행 중입니다.',
-    trendsVarLabel: '이 주의 변수',
-    trendsVarValue: '3.50-3.75%',
-    trendsVarSub: 'Fed 기준금리 3.50-3.75%',
-    trendsVarDesc: '미국 연준의 기준금리 유지로 달러 강세가 지속되고 있으며, 신흥국으로부터의 자본 이탈이 가속화되고 있습니다.',
+    trendsActionDescs: [
+      'JPY 차입금·만기 구조·헤지 비용을 거점별로 긴급 재산출합니다.',
+      '신흥국 거점 Exposure·NPL·조달 한도를 주간 단위로 모니터링합니다.',
+      '금리·환율 시나리오에 맞춰 ALM 가정과 스트레스 테스트를 전면 재편합니다.',
+      '환헤지 비용 상승을 흡수할 조달·손익 계획을 수립합니다.'
+    ],
+    trendsActionImgs: [
+      { src: 'https://images.unsplash.com/photo-1611974789855-94171284564?w=120&h=120&fit=crop&q=80', alt: 'JPY·환율 차트' },
+      { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop&q=80', alt: '신용·리스크 모니터링' },
+      { src: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45c?w=120&h=120&fit=crop&q=80', alt: 'ALM·자산부채 관리' },
+      { src: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=120&h=120&fit=crop&q=80', alt: '환헤지·FX 시장' }
+    ],
     trendsSignalsTitle: '4대 시장신호',
     trendsSignalsHint: '각 카드를 클릭하면 상세 심층 분석과 시사점을 확인할 수 있습니다.',
     mediaTitle: '현지언론',
     regulationTitle: '규제·금융기관',
-    regulationDesc: '국외점포 8개 거점 · 국외연결자회사 2개 법인의 금융 규제·감독기관 동향을 한눈에 확인하세요.',
+    regulationDesc: '국외점포 10개 거점 · 국외연결자회사 2개 법인의 금융 규제·감독기관 동향을 한눈에 확인하세요.',
     regulationHint: '카드를 클릭하면 규제 상세 · KB 시사점 · 공식 출처를 확인할 수 있습니다.',
-    regulationBranchTitle: '국외점포',
-    regulationBranchBadge: '8개 거점',
-    regulationBranchDesc: '런던 · 뉴욕 · 동경 · 홍콩 · 싱가포르 · 중국 · 베트남 · 인도',
+    regulationBranchTitle: '국외지점',
+    regulationBranchBadge: '10개 거점',
+    regulationBranchDesc: '런던 · 뉴욕 · 동경 · 홍콩 · 싱가포르 · 중국 · 베트남 · 인도 · 미얀마 · 뉴질랜드',
     regulationSubsTitle: '국외연결자회사',
     regulationSubsBadge: '2개 법인',
     regulationSubsDesc: '인도네시아 · 캄보디아',
@@ -1616,7 +2021,15 @@ const TX = {
       { flag: '🇮🇳', seed: 'in', country: '인도 · RBI', tag: '신용·ESG', title: 'RBI, 금리 동결 · ESG·디지털은행', summary: 'Repo 6.50% · ESG 공시 · 디지털 뱅킹', date: '2026.06.11',
         detail: '<p>RBI가 Repo Rate <strong>6.50%</strong>를 유지하고 ESG 공시·디지털 뱅킹 라이선스 규제를 확대했습니다.</p>',
         insight: '<p><strong>KB Watch:</strong> 인도 포트폴리오 ESG·신용등급·디지털 채널 컴플라이언스를 점검하세요.</p>',
-        sources: [{ title: 'RBI', url: 'https://www.rbi.org.in/' }] }
+        sources: [{ title: 'RBI', url: 'https://www.rbi.org.in/' }] },
+      { flag: '🇲🇲', seed: 'mm', country: '양곤 · 미얀마 · CBM', tag: '외환·리스크', title: 'CBM, 외환·송금 규제 지속', summary: 'FX 통제 · 현지 운영 컴플라이언스', date: '2026.06.16',
+        detail: '<p>미얀마 중앙은행(CBM)이 외환·송금 규제를 유지하며 현지 금융기관의 FX 보고·내부통제 기준을 강화했습니다.</p><p>미얀마 거점은 송금·결제 제약과 제재 리스크 하 운영·컴플라이언스 체계 점검이 핵심입니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> 미얀마 Exposure·송금 경로·비상 대응 시나리오를 재점검하세요.</p>',
+        sources: [{ title: 'Central Bank of Myanmar', url: 'https://www.cbm.gov.mm/' }] },
+      { flag: '🇳🇿', seed: 'nz', country: '오클랜드 · 뉴질랜드 · RBNZ', tag: '자본·정책', title: 'RBNZ, D-SIB 자본기준·OCR 유지', summary: 'Tier 1 16% · OCR 5.50% · NZD 변동성', date: '2026.06.13',
+        detail: '<p>뉴질랜드 중앙은행(RBNZ)이 D-SIB 자본기준(Tier 1 16%)을 유지하고 공식현금금리(OCR) <strong>5.50%</strong>를 동결했습니다.</p><p>뉴질랜드 거점은 NZD·AUD 연동 금리·유동성 관리가 핵심입니다.</p>',
+        insight: '<p><strong>KB Watch:</strong> 오클랜드 거점 NZD Exposure·RBNZ 자본·유동성 기준 준수를 점검하세요.</p>',
+        sources: [{ title: 'RBNZ', url: 'https://www.rbnz.govt.nz/' }] }
     ],
     regulationSubs: [
       { flag: '🇮🇩', seed: 'id', country: '자카르타 · 인도네시아 · BI', tag: '금리·환율', title: 'BI, 정책금리 5.75% 인상', summary: 'BI-Rate 5.75% ▲ · 루피아화 방어', date: '2026.06.20',
@@ -1684,19 +2097,19 @@ const TX = {
     hubTitle: '참여 코너',
     hubDesc: '글로벌 KB 팀이 함께하는 재미있는 2지선다 — 골라보세요!',
     signals: [
-      { n: '01', cat: '시장·경제', catClass: 'market', h: 'BOJ 정책금리 인상 신호 강화', p: '엔화 145 → 146 급등으로 글로벌 금리 체계 재편 중',
+      { n: '01', cat: '시장·경제', catClass: 'market', pct: 72, donutColor: '#5c5edc', h: 'BOJ 정책금리 인상 신호 강화', p: '엔화 145 → 146 급등으로 글로벌 금리 체계 재편 중',
         detail: '<p>일본은행(BOJ)이 금리 인상 시그널을 강화하며 엔화가 145→146대로 급등했습니다.</p><p>글로벌 금리 체계의 구조적 재편이 가속화되고 있습니다.</p>',
         insight: '<p><strong>KB Watch:</strong> JPY 차입금·ALM 가정을 즉시 재점검하세요.</p>',
         sources: [{ title: 'Bank of Japan', url: 'https://www.boj.or.jp/' }] },
-      { n: '02', cat: '금융산업', catClass: 'finance', h: '아시아 조달 환경 급변', p: 'JPY 차입금 많은 신흥국에 직접적 부담',
+      { n: '02', cat: '금융산업', catClass: 'finance', pct: 84, donutColor: '#0a1931', h: '아시아 조달 환경 급변', p: 'JPY 차입금 많은 신흥국에 직접적 부담',
         detail: '<p>엔화 강세로 JPY 차입 비용이 급등하며 아시아 신흥국 조달 환경이 급변하고 있습니다.</p>',
         insight: '<p><strong>KB Watch:</strong> 거점별 차입 구조·만기 분포를 재점검하세요.</p>',
         sources: [{ title: 'Bloomberg', url: '#' }] },
-      { n: '03', cat: '규제·리스크', catClass: 'risk', h: '신흥국 통화·외채 압박 심화', p: '금리 상승 + 환율 악화 동시 진행',
+      { n: '03', cat: '규제·리스크', catClass: 'risk', pct: 60, donutColor: '#8b8fd4', h: '신흥국 통화·외채 압박 심화', p: '금리 상승 + 환율 악화 동시 진행',
         detail: '<p>금리 상승과 환율 악화가 동시에 진행되며 신흥국 통화·외채 부담이 심화되고 있습니다.</p>',
         insight: '<p><strong>KB Watch:</strong> Exposure 축소·헤지 전략을 우선 검토하세요.</p>',
         sources: [{ title: 'IMF', url: 'https://www.imf.org/' }] },
-      { n: '04', cat: '전략·운영', catClass: 'strategy', h: '자산·부채 구성 재점검 필수', p: 'ALM 가정이 단기간 내 무효화 가능',
+      { n: '04', cat: '전략·운영', catClass: 'strategy', pct: 56, donutColor: '#4ecdc4', h: '자산·부채 구성 재점검 필수', p: 'ALM 가정이 단기간 내 무효화 가능',
         detail: '<p>급격한 금리·환율 변동으로 기존 ALM 가정이 단기간 내 무효화될 수 있습니다.</p>',
         insight: '<p><strong>KB Watch:</strong> ALM·스트레스 테스트 시나리오를 전면 재편하세요.</p>',
         sources: [{ title: 'BCBS', url: '#' }] }
@@ -1743,6 +2156,14 @@ const TX = {
     logoMarkLabel: 'KB Kookmin Bank',
     themeLight: 'Light mode',
     themeDark: 'Dark mode',
+    contactUs: 'Contact Us',
+    langKo: 'Korean',
+    langEn: 'English',
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
+    mainMenu: 'Main Menu',
+    bizPrev: 'Previous card',
+    bizNext: 'Next card',
     drawerClose: 'Close',
     drawerTagBrief: 'Market Signal',
     drawerTagSub: 'Subsidiaries',
@@ -1750,6 +2171,15 @@ const TX = {
     drawerTagReg: 'Regulation',
     drawerTagMedia: 'Local Media',
     trendsTitle: 'Briefing & Global Trends',
+    trendsPageSub: 'W E E K L Y · B R I E F',
+    trendsStatementLabel: 'EXECUTIVE SUMMARY',
+    trendsBriefLabel: 'Weekly Brief',
+    trendsBriefSummary: 'This week, global finance sees BOJ rate normalization and yen at 146, the Fed holding rates at 3.50–3.75%, and Bank Indonesia raising BI-Rate to 5.75%. KB\'s 10 overseas hubs and 2 connected subsidiaries must integrate FX, credit, and ALM risk review in a pivotal transition.',
+    trendsProblemLabel: 'Key Risks',
+    trendsProblemDesc: 'Rising rates and weaker FX are hitting emerging markets simultaneously, deepening currency and external debt pressure. Yen surge from 145 to 146 is accelerating a global rate regime shift and straining JPY-funded hubs.',
+    trendsOpportunityLabel: 'Strategic Opportunity',
+    trendsOpportunityDesc: 'Asia\'s financial restructuring makes funding, hedging, and ALM redesign a differentiator for KB global hubs. Proactive risk management creates competitive advantage in this transition.',
+    trendsSolutionLabel: 'The Solution',
     trendsFocusLabel: 'Weekly Focus',
     trendsFocusTitle: 'Arrival of the Yen 146 Era · Start of Asian Financial Restructuring',
     trendsFocusDesc: 'With the Bank of Japan\'s (BOJ) explicit signal for a rate hike, the yen has surpassed 145 and entered the 146 range. This is driving a major shift in the global rate regime and rapid change across emerging-market finance.',
@@ -1761,23 +2191,27 @@ const TX = {
       '③ Complete restructuring of ALM strategy',
       '④ Plan to absorb FX hedging costs'
     ],
-    trendsShockLabel: 'Shock of the Week',
-    trendsShockValue: '5.75%',
-    trendsShockSub: 'BI-Rate 5.75% ▲',
-    trendsShockDesc: 'Local rates are rising sharply on consecutive hikes by Bank Indonesia, with ongoing efforts to curb rupiah weakness.',
-    trendsVarLabel: 'Variable of the Week',
-    trendsVarValue: '3.50-3.75%',
-    trendsVarSub: 'Fed benchmark rate 3.50-3.75%',
-    trendsVarDesc: 'The dollar remains strong as the U.S. Fed holds rates, accelerating capital outflows from emerging markets.',
+    trendsActionDescs: [
+      'Urgently recalculate JPY borrowings, maturity structure, and hedging costs by hub.',
+      'Monitor emerging-market hub exposure, NPL, and local funding limits weekly.',
+      'Fully rebuild ALM assumptions and stress tests under rate/FX scenarios.',
+      'Establish funding and P&L plans to absorb rising hedging costs.'
+    ],
+    trendsActionImgs: [
+      { src: 'https://images.unsplash.com/photo-1611974789855-94171284564?w=120&h=120&fit=crop&q=80', alt: 'JPY and FX chart' },
+      { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&h=120&fit=crop&q=80', alt: 'Credit and risk monitoring' },
+      { src: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45c?w=120&h=120&fit=crop&q=80', alt: 'ALM and balance sheet' },
+      { src: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=120&h=120&fit=crop&q=80', alt: 'FX hedging and markets' }
+    ],
     trendsSignalsTitle: '4 Major Market Signals',
     trendsSignalsHint: 'Click each card to view detailed analysis and implications.',
     mediaTitle: 'Local Media',
     regulationTitle: 'Regulation · Financial Institutions',
-    regulationDesc: 'Regulatory trends across 8 overseas branches and 2 connected subsidiaries at a glance.',
+    regulationDesc: 'Regulatory trends across 10 overseas branches and 2 connected subsidiaries at a glance.',
     regulationHint: 'Click a card for regulatory detail, KB implications, and official sources.',
-    regulationBranchTitle: 'Overseas Branches',
-    regulationBranchBadge: '8 Hubs',
-    regulationBranchDesc: 'London · New York · Tokyo · Hong Kong · Singapore · China · Vietnam · India',
+    regulationBranchTitle: 'Overseas Offices',
+    regulationBranchBadge: '10 Hubs',
+    regulationBranchDesc: 'London · New York · Tokyo · Hong Kong · Singapore · China · Vietnam · India · Myanmar · New Zealand',
     regulationSubsTitle: 'Connected Subsidiaries',
     regulationSubsBadge: '2 Entities',
     regulationSubsDesc: 'Indonesia · Cambodia',
@@ -1813,7 +2247,15 @@ const TX = {
       { flag: '🇮🇳', seed: 'in', country: 'India · RBI', tag: 'Credit · ESG', title: 'RBI holds rates · expands ESG and digital rules', summary: 'Repo 6.50% · ESG disclosure · digital banking', date: '11 Jun 2026',
         detail: '<p>RBI held the Repo Rate at <strong>6.50%</strong> and expanded ESG and digital banking regulations.</p>',
         insight: '<p><strong>KB Watch:</strong> Review India portfolio ESG, credit ratings, and digital channel compliance.</p>',
-        sources: [{ title: 'RBI', url: 'https://www.rbi.org.in/' }] }
+        sources: [{ title: 'RBI', url: 'https://www.rbi.org.in/' }] },
+      { flag: '🇲🇲', seed: 'mm', country: 'Yangon · Myanmar · CBM', tag: 'FX · Risk', title: 'CBM maintains FX and remittance controls', summary: 'FX controls · local operating compliance', date: '16 Jun 2026',
+        detail: '<p>The Central Bank of Myanmar (CBM) maintains FX and remittance controls and tightened FX reporting and internal control standards for local institutions.</p><p>Myanmar hub must review operations and compliance under payment restrictions and sanctions risk.</p>',
+        insight: '<p><strong>KB Watch:</strong> Review Myanmar exposure, remittance routes, and contingency scenarios.</p>',
+        sources: [{ title: 'Central Bank of Myanmar', url: 'https://www.cbm.gov.mm/' }] },
+      { flag: '🇳🇿', seed: 'nz', country: 'Auckland · New Zealand · RBNZ', tag: 'Capital · Policy', title: 'RBNZ holds D-SIB capital rules and OCR', summary: 'Tier 1 16% · OCR 5.50% · NZD volatility', date: '13 Jun 2026',
+        detail: '<p>The Reserve Bank of New Zealand (RBNZ) maintained D-SIB capital standards (Tier 1 16%) and held the Official Cash Rate (OCR) at <strong>5.50%</strong>.</p><p>New Zealand hub must manage NZD/AUD-linked rates and liquidity.</p>',
+        insight: '<p><strong>KB Watch:</strong> Review Auckland hub NZD exposure and RBNZ capital/liquidity compliance.</p>',
+        sources: [{ title: 'RBNZ', url: 'https://www.rbnz.govt.nz/' }] }
     ],
     regulationSubs: [
       { flag: '🇮🇩', seed: 'id', country: 'Jakarta · Indonesia · BI', tag: 'Rates · FX', title: 'BI raises policy rate to 5.75%', summary: 'BI-Rate 5.75% ▲ · IDR defence', date: '20 Jun 2026',
@@ -1881,19 +2323,19 @@ const TX = {
     hubTitle: 'Engagement Corner',
     hubDesc: 'Fun this-or-that polls for the global KB team — pick your side!',
     signals: [
-      { n: '01', cat: 'Market · Economy', catClass: 'market', h: 'Strengthening of BOJ policy rate hike signals', p: 'Global rate regime restructuring as JPY surges from 145 to 146',
+      { n: '01', cat: 'Market · Economy', catClass: 'market', pct: 72, donutColor: '#5c5edc', h: 'Strengthening of BOJ policy rate hike signals', p: 'Global rate regime restructuring as JPY surges from 145 to 146',
         detail: '<p>The BOJ has strengthened rate-hike signals and the yen has surged from 145 to the 146 range.</p><p>Structural reshaping of the global rate regime is accelerating.</p>',
         insight: '<p><strong>KB Watch:</strong> Immediately review JPY borrowings and ALM assumptions.</p>',
         sources: [{ title: 'Bank of Japan', url: 'https://www.boj.or.jp/' }] },
-      { n: '02', cat: 'Financial Industry', catClass: 'finance', h: 'Rapid shift in Asian funding conditions', p: 'Direct burden on EMs with heavy JPY borrowings',
+      { n: '02', cat: 'Financial Industry', catClass: 'finance', pct: 84, donutColor: '#0a1931', h: 'Rapid shift in Asian funding conditions', p: 'Direct burden on EMs with heavy JPY borrowings',
         detail: '<p>Yen strength is sharply raising JPY funding costs and rapidly changing Asia EM funding conditions.</p>',
         insight: '<p><strong>KB Watch:</strong> Review hub-level borrowing structures and maturity profiles.</p>',
         sources: [{ title: 'Bloomberg', url: '#' }] },
-      { n: '03', cat: 'Regulation · Risk', catClass: 'risk', h: 'Intensifying EM currency and external debt pressure', p: 'Rate rises and FX deterioration proceeding together',
+      { n: '03', cat: 'Regulation · Risk', catClass: 'risk', pct: 60, donutColor: '#8b8fd4', h: 'Intensifying EM currency and external debt pressure', p: 'Rate rises and FX deterioration proceeding together',
         detail: '<p>Rising rates and weaker exchange rates are intensifying EM currency and external debt burdens.</p>',
         insight: '<p><strong>KB Watch:</strong> Prioritize exposure reduction and hedging strategies.</p>',
         sources: [{ title: 'IMF', url: 'https://www.imf.org/' }] },
-      { n: '04', cat: 'Strategy · Operations', catClass: 'strategy', h: 'Asset-liability mix review essential', p: 'ALM assumptions may become invalid in the short term',
+      { n: '04', cat: 'Strategy · Operations', catClass: 'strategy', pct: 56, donutColor: '#4ecdc4', h: 'Asset-liability mix review essential', p: 'ALM assumptions may become invalid in the short term',
         detail: '<p>Sharp rate and FX moves may invalidate existing ALM assumptions in the near term.</p>',
         insight: '<p><strong>KB Watch:</strong> Fully rebuild ALM and stress-test scenarios.</p>',
         sources: [{ title: 'BCBS', url: '#' }] }
@@ -2093,6 +2535,7 @@ function scrollToSection(id, tabIndex) {
     const idx = TX[LANG].tabIds.indexOf(id)
     activeTabIndex = idx >= 0 ? idx : 0
   }
+  navOpen.value = false
   renderNav(); renderDots()
   const el = document.getElementById('section-' + id)
   const sc = getScrollEl()
@@ -2102,25 +2545,42 @@ function scrollToSection(id, tabIndex) {
   else sc.scrollTop = top
 }
 
-function setupScrollSpy() {
-  if (spyIO && spyIO.disconnect) spyIO.disconnect()
-  const sc = getScrollEl(); if (!sc) return
-  if (!window.IntersectionObserver) return
-  spyIO = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) {
-        activeSection = e.target.id.replace('section-', '')
-        const idx = TX[LANG].tabIds.indexOf(activeSection)
-        activeTabIndex = idx >= 0 ? idx : 0
-        renderNav(); renderDots()
-        headerSolid.value = activeSection !== 'hero'
-      }
-    })
-  }, { root: sc, threshold: 0.45 })
+function updateActiveSectionFromScroll() {
+  const sc = getScrollEl()
+  if (!sc) return
+  const mid = sc.scrollTop + sc.clientHeight * 0.46
+  let bestId = SECTION_IDS[0], bestDist = Infinity
   SECTION_IDS.forEach(function (id) {
     const el = document.getElementById('section-' + id)
-    if (el) spyIO.observe(el)
+    if (!el) return
+    const dist = Math.abs(el.offsetTop - mid)
+    if (dist < bestDist) { bestDist = dist; bestId = id }
   })
+  if (bestId === activeSection) return
+  activeSection = bestId
+  const idx = TX[LANG].tabIds.indexOf(activeSection)
+  activeTabIndex = idx >= 0 ? idx : 0
+  renderNav(); renderDots()
+  headerSolid.value = activeSection !== 'hero'
+}
+
+function setupScrollSpy() {
+  if (spyIO && spyIO.disconnect) spyIO.disconnect()
+  spyIO = null
+  const sc = getScrollEl(); if (!sc) return
+  if (sc.dataset.spyBound) {
+    updateActiveSectionFromScroll()
+    return
+  }
+  sc.dataset.spyBound = '1'
+  sc.addEventListener('scroll', function () {
+    if (spyScrollRaf) return
+    spyScrollRaf = requestAnimationFrame(function () {
+      spyScrollRaf = null
+      updateActiveSectionFromScroll()
+    })
+  }, { passive: true })
+  updateActiveSectionFromScroll()
 }
 
 function navButtonsHTML() {
@@ -2135,7 +2595,8 @@ function renderNav() {
   const html = navButtonsHTML()
   const mainNav = document.getElementById('mainNav')
   const footerNav = document.getElementById('footerNav')
-  ;[mainNav, footerNav].forEach(nav => {
+  const mobileNav = document.getElementById('mobileNav')
+  ;[mainNav, footerNav, mobileNav].forEach(nav => {
     if (!nav) return
     nav.innerHTML = html
     nav.onclick = (e) => {
@@ -2143,6 +2604,16 @@ function renderNav() {
       if (btn) scrollToSection(btn.dataset.section, +btn.dataset.tabIndex)
     }
   })
+}
+
+function menuBtnLabel() {
+  return TX[LANG][navOpen.value ? 'menuClose' : 'menuOpen']
+}
+
+function toggleNav() {
+  navOpen.value = !navOpen.value
+  const btn = document.getElementById('menuBtn')
+  if (btn) btn.setAttribute('aria-label', menuBtnLabel())
 }
 
 function renderDots() {
@@ -2229,96 +2700,128 @@ function bindBizCards() {
       if (el.dataset.section) scrollToSection(el.dataset.section)
     }
   })
+  bindBizTouchHover()
 }
 
-function calcMapLensPos(dot, stageW, stageH, lensW, lensH) {
-  const px = (dot.x / 100) * stageW
-  const py = (dot.y / 100) * stageH
-  let left = px + 36
-  let top = py - lensH * 0.55
-  if (left + lensW > stageW - 8) left = px - lensW - 36
-  if (left < 8) left = 8
-  if (top < 8) top = py + 24
-  if (top + lensH > stageH - 8) top = Math.max(8, stageH - lensH - 8)
-  return { left, top, px, py }
+function bindBizTouchHover() {
+  document.querySelectorAll('.gs-biz-card').forEach(card => {
+    if (card.dataset.touchBound) return
+    card.dataset.touchBound = '1'
+    card.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return
+      document.querySelectorAll('.gs-biz-card.is-touch-hover').forEach(c => c.classList.remove('is-touch-hover'))
+      card.classList.add('is-touch-hover')
+    })
+    const clearTouch = () => card.classList.remove('is-touch-hover')
+    card.addEventListener('pointerup', clearTouch)
+    card.addEventListener('pointerleave', clearTouch)
+    card.addEventListener('pointercancel', clearTouch)
+  })
 }
 
-function mapRedPinMarkup(dot) {
-  const gid = 'mapPinG' + dot.id
-  return `<svg viewBox="0 0 52 62" class="gs-map-red-pin-svg" aria-hidden="true">
-    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ef5350"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient></defs>
-    <path fill="url(#${gid})" d="M26 4 C14 4 5 14 5 25 C5 38 26 58 26 58 C26 58 47 38 47 25 C47 14 38 4 26 4 Z"/>
-    <circle cx="26" cy="22" r="12.5" fill="#fff"/>
-  </svg>
-  <div class="gs-map-red-pin-flag">${mediaFlagTag(dot.seed, mt(dot.label))}</div>`
+function updateBizCarouselArrows() {
+  const grid = document.getElementById('bizGrid')
+  const prev = document.getElementById('bizPrev')
+  const next = document.getElementById('bizNext')
+  if (!grid || !prev || !next) return
+  const maxScroll = grid.scrollWidth - grid.clientWidth
+  prev.disabled = grid.scrollLeft <= 4
+  next.disabled = grid.scrollLeft >= maxScroll - 4
+}
+
+function bindBizCarousel() {
+  const grid = document.getElementById('bizGrid')
+  const prev = document.getElementById('bizPrev')
+  const next = document.getElementById('bizNext')
+  if (!grid || !prev || !next) return
+  const t = TX[LANG]
+  prev.setAttribute('aria-label', t.bizPrev)
+  next.setAttribute('aria-label', t.bizNext)
+  if (!grid.dataset.carouselBound) {
+    grid.dataset.carouselBound = '1'
+    const scrollStep = () => {
+      const card = grid.querySelector('.gs-biz-card')
+      return card ? card.offsetWidth : grid.clientWidth * 0.78
+    }
+    prev.addEventListener('click', () => grid.scrollBy({ left: -scrollStep(), behavior: 'smooth' }))
+    next.addEventListener('click', () => grid.scrollBy({ left: scrollStep(), behavior: 'smooth' }))
+    grid.addEventListener('scroll', updateBizCarouselArrows, { passive: true })
+    window.addEventListener('resize', updateBizCarouselArrows)
+  }
+  updateBizCarouselArrows()
+}
+
+function updateHeaderUtil() {
+  const t = TX[LANG]
+  const contact = document.getElementById('contactUsLink')
+  if (contact) contact.textContent = t.contactUs
+  const mainMenuBtn = document.getElementById('mainMenuBtn')
+  if (mainMenuBtn) {
+    mainMenuBtn.textContent = t.mainMenu
+    mainMenuBtn.setAttribute('aria-label', t.mainMenu)
+    mainMenuBtn.setAttribute('title', t.mainMenu)
+  }
+  const btnKo = document.getElementById('btnKo')
+  const btnEn = document.getElementById('btnEn')
+  if (btnKo) { btnKo.setAttribute('aria-label', t.langKo); btnKo.setAttribute('title', t.langKo) }
+  if (btnEn) { btnEn.setAttribute('aria-label', t.langEn); btnEn.setAttribute('title', t.langEn) }
+  const menuBtn = document.getElementById('menuBtn')
+  if (menuBtn) menuBtn.setAttribute('aria-label', menuBtnLabel())
 }
 
 function renderWorldMapBase() {
   const base = document.getElementById('mapBase')
   if (!base) return
-  base.innerHTML = worldMapImgHTML()
+  if (!base.querySelector('.gs-map-photo')) {
+    base.insertAdjacentHTML('afterbegin', worldMapImgHTML())
+  }
 }
 
-function applyMapZoomImage(dot, zoomWrap, lensW, lensH, stageW) {
-  const baseImg = document.querySelector('.gs-map-base .gs-map-photo')
-  const mapW = baseImg?.offsetWidth || stageW
-  const mapH = baseImg?.offsetHeight || mapW * 0.625
-  let zoomImg = zoomWrap.querySelector('.gs-map-photo--zoom')
-  if (!zoomImg) {
-    zoomWrap.innerHTML = worldMapImgHTML('gs-map-photo--zoom') + '<div class="gs-map-mag-hi-spot" id="mapMagHi"></div>'
-    zoomImg = zoomWrap.querySelector('.gs-map-photo--zoom')
+function syncMapLayout() {
+  const base = document.getElementById('mapBase')
+  const img = base?.querySelector('.gs-map-photo')
+  const wrap = document.getElementById('mapDots')
+  if (!base || !img || !wrap) return
+  const padX = Math.min(8, (24 / Math.max(img.offsetWidth, 1)) * 100)
+  const padY = Math.min(8, (24 / Math.max(img.offsetHeight, 1)) * 100)
+  wrap.querySelectorAll('.gs-map-hit').forEach(btn => {
+    const dot = MAP_DOTS.find(d => d.id === btn.dataset.mapId)
+    if (!dot) return
+    btn.style.left = Math.max(padX, Math.min(100 - padX, dot.x)) + '%'
+    btn.style.top = Math.max(padY, Math.min(100 - padY, dot.y)) + '%'
+  })
+  if (mapMagActiveId) {
+    const dot = MAP_DOTS.find(d => d.id === mapMagActiveId)
+    if (dot) setMapMagnifier(dot)
   }
-  if (!zoomImg) return
-  const scale = dot.type === 'sub' ? 5 : 4.2
-  zoomImg.style.width = mapW + 'px'
-  zoomImg.style.height = mapH + 'px'
-  const hx = (dot.x / 100) * mapW
-  const hy = (dot.y / 100) * mapH
-  zoomImg.style.transform = `translate(${lensW / 2 - hx * scale}px, ${lensH / 2 - hy * scale}px) scale(${scale})`
+}
+
+function bindMapLayoutSync() {
+  const base = document.getElementById('mapBase')
+  if (!base || base.dataset.layoutBound) return
+  base.dataset.layoutBound = '1'
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(() => syncMapLayout())
+    ro.observe(base)
+  }
+  window.addEventListener('resize', syncMapLayout)
+  const img = base.querySelector('.gs-map-photo')
+  if (img && !img.complete) img.addEventListener('load', syncMapLayout, { once: true })
+  syncMapLayout()
 }
 
 function setMapMagnifier(dot) {
   const mag = document.getElementById('mapMagnifier')
-  const stage = document.querySelector('.gs-map-stage')
-  const lens = document.getElementById('mapMagLens')
-  const zoomWrap = document.getElementById('mapMagZoom')
-  const lines = document.getElementById('mapMagLines')
   const label = document.getElementById('mapMagLabel')
-  const pin = document.getElementById('mapMagPin')
   const visit = document.getElementById('mapMagVisit')
-  if (!mag || !stage || !lens || !dot) return
+  if (!mag || !dot) return
   const t = TX[LANG]
-  const stageW = stage.clientWidth
-  const stageH = stage.clientHeight
-  const lensW = lens.offsetWidth || 210
-  const lensH = lens.offsetHeight || 210
-  const { left, top, px, py } = calcMapLensPos(dot, stageW, stageH, lensW, lensH)
-  const cx = left + lensW / 2
-  const cy = top + lensH / 2
-  lens.style.left = left + 'px'
-  lens.style.top = top + 'px'
-  if (lines) {
-    lines.setAttribute('viewBox', `0 0 ${stageW} ${stageH}`)
-    lines.innerHTML = `<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" /><line x1="${px}" y1="${py}" x2="${cx + 18}" y2="${cy - 12}" opacity=".55" /><line x1="${px}" y1="${py}" x2="${cx - 16}" y2="${cy + 14}" opacity=".55" />`
-  }
-  if (zoomWrap) applyMapZoomImage(dot, zoomWrap, lensW, lensH, stageW)
-  if (pin) {
-    const gid = 'magPinG' + dot.id
-    pin.innerHTML = `<svg viewBox="0 0 52 62" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" x2="1"><stop offset="0%" stop-color="#ef5350"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient></defs><path fill="url(#${gid})" d="M26 4 C14 4 5 14 5 25 C5 38 26 58 26 58 C26 58 47 38 47 25 C47 14 38 4 26 4 Z"/><circle cx="26" cy="22" r="12.5" fill="#fff"/></svg><div class="gs-map-mag-pin-flag">${mediaFlagTag(dot.seed, mt(dot.label))}</div>`
-  }
   if (label) {
     label.innerHTML = `${mediaFlagTag(dot.seed, mt(dot.country))}<span>${mt(dot.country)}</span>`
   }
   if (visit) {
     visit.href = '#'
     visit.innerHTML = `<span class="gs-map-mag-visit-arrow">↗</span><span>${t.networkVisitSite}</span>`
-  }
-  const activePin = document.getElementById('mapActivePin')
-  if (activePin) {
-    activePin.style.left = dot.x + '%'
-    activePin.style.top = dot.y + '%'
-    activePin.innerHTML = mapRedPinMarkup(dot)
-    activePin.classList.add('is-on')
   }
   mag.classList.add('is-on')
   mag.setAttribute('aria-hidden', 'false')
@@ -2328,8 +2831,6 @@ function setMapMagnifier(dot) {
 function hideMapMagnifier() {
   const mag = document.getElementById('mapMagnifier')
   if (mag) { mag.classList.remove('is-on'); mag.setAttribute('aria-hidden', 'true') }
-  const activePin = document.getElementById('mapActivePin')
-  if (activePin) { activePin.classList.remove('is-on'); activePin.innerHTML = '' }
   document.querySelectorAll('.gs-map-hit.is-active').forEach(el => el.classList.remove('is-active'))
   mapMagActiveId = null
 }
@@ -2376,6 +2877,8 @@ function renderMapDots() {
     btn.onfocus = () => activateMapDot(dot, btn)
   })
   bindMapInteractions()
+  bindMapLayoutSync()
+  syncMapLayout()
   if (mapMagActiveId) {
     const dot = MAP_DOTS.find(d => d.id === mapMagActiveId)
     if (dot) setMapMagnifier(dot)
@@ -2388,6 +2891,7 @@ function renderHero() {
   const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v }
   set('heroTagline', t.tagline)
   setHtml('heroTitle', t.heroTitleHtml)
+  set('heroEdition', formatHeroEditionLine(LANG))
   set('heroCta', t.heroCta)
   setHtml('logoText', t.logoTextHtml)
   set('networkTitle', t.networkTitle)
@@ -2441,35 +2945,67 @@ function renderTrends() {
   const t = TX[LANG]
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v }
   set('trendsTitle', t.trendsTitle)
-  set('trendsFocusLabel', t.trendsFocusLabel)
+  set('trendsPageSub', t.trendsPageSub)
+  set('trendsStatementLabel', t.trendsStatementLabel)
+  set('trendsBriefSummary', t.trendsBriefSummary)
+  set('trendsProblemLabel', t.trendsProblemLabel)
+  set('trendsProblemDesc', t.trendsProblemDesc)
+  set('trendsOpportunityLabel', t.trendsOpportunityLabel)
+  set('trendsOpportunityDesc', t.trendsOpportunityDesc)
+  set('trendsSolutionLabel', t.trendsSolutionLabel)
   set('trendsFocusTitle', t.trendsFocusTitle)
   set('trendsFocusDesc', t.trendsFocusDesc)
   set('trendsActionLabel', t.trendsActionLabel)
-  set('trendsShockLabel', t.trendsShockLabel)
-  set('trendsShockValue', t.trendsShockValue)
-  set('trendsShockSub', t.trendsShockSub)
-  set('trendsShockDesc', t.trendsShockDesc)
-  set('trendsVarLabel', t.trendsVarLabel)
-  set('trendsVarValue', t.trendsVarValue)
-  set('trendsVarSub', t.trendsVarSub)
-  set('trendsVarDesc', t.trendsVarDesc)
   set('trendsSignalsTitle', t.trendsSignalsTitle)
   set('trendsSignalsHint', t.trendsSignalsHint)
   const tagsEl = document.getElementById('trendsFocusTags')
-  if (tagsEl) tagsEl.innerHTML = t.trendsFocusTags.map(tag => `<span class="gs-trends-tag">${tag}</span>`).join('')
-  const actionsEl = document.getElementById('trendsActionList')
-  if (actionsEl) actionsEl.innerHTML = t.trendsActions.map(a => `<li>${a}</li>`).join('')
+  if (tagsEl) tagsEl.innerHTML = t.trendsFocusTags.map(tag => `<span class="gs-exec-tag">${tag}</span>`).join('')
   const grid = document.getElementById('trendsSignalsGrid')
   if (grid) {
-    grid.innerHTML = t.signals.map((s, i) => `<article class="gs-trends-signal" data-modal="brief:${i}">
-      <div class="gs-trends-signal-hd gs-trends-signal-hd--${s.catClass}">
-        <span class="gs-trends-signal-num">${s.n}</span>
-        <span class="gs-trends-signal-cat">${s.cat}</span>
-      </div>
-      <div class="gs-trends-signal-body"><h4>${s.h}</h4><p>${s.p}</p></div>
-    </article>`).join('')
+    grid.innerHTML = t.signals.map((s, i) =>
+      `<article class="gs-exec-signal-card" data-modal="brief:${i}">
+        <div class="gs-exec-signal-card-hd gs-exec-signal-card-hd--${s.catClass}">
+          <span class="gs-exec-signal-num">${s.n}</span>
+          <span>${s.cat}</span>
+        </div>
+        <div class="gs-exec-signal-card-body"><h4>${s.h}</h4><p>${s.p}</p></div>
+      </article>`
+    ).join('')
     bindDrawerClicks()
   }
+  const actionsEl = document.getElementById('trendsActionList')
+  const actionImgs = t.trendsActionImgs || []
+  if (actionsEl) {
+    actionsEl.innerHTML = t.trendsActions.map((a, i) => {
+      const img = actionImgs[i] || actionImgs[0] || { src: '', alt: '' }
+      const alt = (img.alt || '').replace(/"/g, '&quot;')
+      return `<li class="gs-exec-team-item">
+        <span class="gs-exec-team-avatar"><img src="${img.src}" alt="${alt}" loading="lazy" width="48" height="48" /></span>
+        <div><strong>${a}</strong><p>${(t.trendsActionDescs && t.trendsActionDescs[i]) || ''}</p></div>
+      </li>`
+    }).join('')
+  }
+}
+
+function mediaWrapDist(i, offset, total) {
+  let d = i - offset
+  while (d > total / 2) d -= total
+  while (d <= -total / 2) d += total
+  return d
+}
+
+function mediaNormIndex(offset, total) {
+  return ((Math.round(offset) % total) + total) % total
+}
+
+function snapToMediaIndex(idx) {
+  const total = TX[LANG].mediaCards.length
+  const cur = Math.round(mediaCarouselOffset)
+  const curMod = mediaNormIndex(cur, total)
+  let diff = idx - curMod
+  if (diff > total / 2) diff -= total
+  if (diff < -total / 2) diff += total
+  snapMediaCarouselTo(cur + diff, true)
 }
 
 function updateMediaCarousel(wheeling) {
@@ -2493,7 +3029,7 @@ function updateMediaCarousel(wheeling) {
   const maxTx = stageW / 2 - cardHalf * outerScale * 0.22 - edgePad
   const radius = Math.max(175, maxTx / Math.max(0.46, outerSin))
   cards.forEach((card, i) => {
-    const d = i - mediaCarouselOffset
+    const d = mediaWrapDist(i, mediaCarouselOffset, total)
     const theta = d * angleRad
     const cosT = Math.cos(theta)
     const sinT = Math.sin(theta)
@@ -2530,26 +3066,29 @@ function updateMediaCarousel(wheeling) {
     }
     card.classList.toggle('is-active', absD < 0.45 && front > 0.72)
   })
-  mediaCarouselIndex = Math.max(0, Math.min(total - 1, Math.round(mediaCarouselOffset)))
+  mediaCarouselIndex = mediaNormIndex(mediaCarouselOffset, total)
   const counter = document.getElementById('mediaCounter')
   if (counter) counter.textContent = `${mediaCarouselIndex + 1} / ${total}`
   const prev = document.getElementById('mediaPrev')
   const next = document.getElementById('mediaNext')
-  if (prev) prev.disabled = mediaCarouselOffset <= 0.01
-  if (next) next.disabled = mediaCarouselOffset >= total - 1.01
+  if (prev) prev.disabled = false
+  if (next) next.disabled = false
 }
 
 function mediaEaseInOutCubic(p) {
   return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
 }
 
-function snapMediaCarouselTo(target, fast) {
-  if (mediaWheelRaf) { cancelAnimationFrame(mediaWheelRaf); mediaWheelRaf = null; mediaWheelLastTs = 0 }
-  if (mediaSnapAnim) cancelAnimationFrame(mediaSnapAnim)
+function snapMediaCarouselTo(target, fast, arrow, wheel) {
+  if (!wheel) mediaWheelDriving = false
+  if (mediaSnapAnim) { cancelAnimationFrame(mediaSnapAnim); mediaSnapAnim = null }
   mediaCarouselTarget = target
   const start = mediaCarouselOffset
   const startTime = performance.now()
-  const duration = fast ? MEDIA_SNAP_CLICK_MS : MEDIA_SNAP_MS
+  const wheelDist = Math.abs(target - start)
+  const duration = wheel
+    ? Math.max(50, Math.min(MEDIA_SNAP_STEP_MS * wheelDist, MEDIA_SNAP_STEP_MS * 4))
+    : (arrow ? MEDIA_SNAP_STEP_MS : (fast ? MEDIA_SNAP_CLICK_MS : MEDIA_SNAP_MS))
   const track = document.getElementById('mediaCoverflowTrack')
   if (track) { track.classList.remove('is-wheeling'); track.classList.add('is-snapping') }
   function frame(now) {
@@ -2561,7 +3100,7 @@ function snapMediaCarouselTo(target, fast) {
     else {
       mediaCarouselOffset = target
       mediaCarouselTarget = target
-      mediaCarouselIndex = target
+      mediaCarouselIndex = mediaNormIndex(target, TX[LANG].mediaCards.length)
       mediaSnapAnim = null
       if (track) track.classList.remove('is-snapping')
       updateMediaCarousel(false)
@@ -2571,54 +3110,64 @@ function snapMediaCarouselTo(target, fast) {
 }
 
 function snapMediaCarousel() {
-  snapMediaCarouselTo(Math.max(0, Math.min(TX[LANG].mediaCards.length - 1, Math.round(mediaCarouselTarget))))
+  snapMediaCarouselTo(Math.round(mediaCarouselTarget))
 }
 
 function moveMediaCarousel(dir) {
-  const total = TX[LANG].mediaCards.length
-  const target = Math.max(0, Math.min(total - 1, mediaCarouselIndex + dir))
-  snapMediaCarouselTo(target)
+  if (mediaWheelIdleTimer) { clearTimeout(mediaWheelIdleTimer); mediaWheelIdleTimer = null }
+  mediaWheelDriving = false
+  snapMediaCarouselTo(Math.round(mediaCarouselOffset) + dir, false, true)
 }
 
-function ensureMediaWheelSmooth() {
-  if (mediaWheelRaf) return
-  mediaWheelLastTs = 0
-  function frame(ts) {
-    if (!mediaWheelLastTs) mediaWheelLastTs = ts
-    const dt = Math.min(32, ts - mediaWheelLastTs)
-    mediaWheelLastTs = ts
+function startMediaWheelLoop() {
+  const track = document.getElementById('mediaCoverflowTrack')
+  if (track) { track.classList.remove('is-wheeling'); track.classList.add('is-snapping') }
+  mediaWheelLastFrame = performance.now()
+  function frame(now) {
+    const dt = Math.min(48, now - mediaWheelLastFrame)
+    mediaWheelLastFrame = now
     const diff = mediaCarouselTarget - mediaCarouselOffset
-    if (Math.abs(diff) < 0.0005) {
+    if (Math.abs(diff) <= 0.001) {
       mediaCarouselOffset = mediaCarouselTarget
-      updateMediaCarousel(true)
-      mediaWheelRaf = null
-      mediaWheelLastTs = 0
-      return
+      updateMediaCarousel(false)
+      if (!mediaWheelDriving) {
+        mediaSnapAnim = null
+        if (track) track.classList.remove('is-snapping')
+        return
+      }
+    } else {
+      const step = Math.sign(diff) * Math.min(Math.abs(diff), dt / MEDIA_SNAP_STEP_MS)
+      mediaCarouselOffset += step
+      updateMediaCarousel(false)
     }
-    const step = 1 - Math.exp(-dt / MEDIA_WHEEL_SMOOTH_MS)
-    mediaCarouselOffset += diff * step
-    updateMediaCarousel(true)
-    mediaWheelRaf = requestAnimationFrame(frame)
+    mediaSnapAnim = requestAnimationFrame(frame)
   }
-  mediaWheelRaf = requestAnimationFrame(frame)
+  if (mediaSnapAnim) cancelAnimationFrame(mediaSnapAnim)
+  mediaSnapAnim = requestAnimationFrame(frame)
 }
 
 function onMediaStageWheel(e) {
   if (activeSection !== 'media') return
   e.preventDefault()
-  const track = document.getElementById('mediaCoverflowTrack')
-  if (mediaSnapAnim) {
-    cancelAnimationFrame(mediaSnapAnim)
-    mediaSnapAnim = null
-    mediaCarouselTarget = mediaCarouselOffset
-    if (track) track.classList.remove('is-snapping')
+  let delta = e.deltaY
+  if (e.deltaMode === 1) delta *= MEDIA_WHEEL_CARD_PX
+  else if (e.deltaMode === 2) delta *= MEDIA_WHEEL_CARD_PX * 3
+  const deltaCards = delta / MEDIA_WHEEL_CARD_PX
+  if (!mediaWheelDriving) {
+    if (mediaSnapAnim) { cancelAnimationFrame(mediaSnapAnim); mediaSnapAnim = null }
+    mediaWheelDriving = true
+    mediaCarouselTarget = mediaCarouselOffset + deltaCards
+    startMediaWheelLoop()
+  } else {
+    mediaCarouselTarget += deltaCards
   }
-  if (track) track.classList.add('is-wheeling')
-  const total = TX[LANG].mediaCards.length
-  mediaCarouselTarget = Math.max(0, Math.min(total - 1, mediaCarouselTarget + e.deltaY * MEDIA_WHEEL_SENS))
-  ensureMediaWheelSmooth()
-  clearTimeout(mediaWheelEndTimer)
-  mediaWheelEndTimer = setTimeout(snapMediaCarousel, MEDIA_WHEEL_SNAP_DELAY)
+  if (mediaWheelIdleTimer) clearTimeout(mediaWheelIdleTimer)
+  mediaWheelIdleTimer = setTimeout(() => {
+    mediaWheelIdleTimer = null
+    mediaWheelDriving = false
+    mediaCarouselTarget = Math.round(mediaCarouselTarget)
+    if (!mediaSnapAnim) startMediaWheelLoop()
+  }, MEDIA_WHEEL_IDLE_MS)
 }
 
 function getMediaCardAtPoint(clientX, clientY) {
@@ -2645,7 +3194,7 @@ function handleMediaCardPick(clientX, clientY) {
   if (!card) return
   const idx = +card.dataset.index
   if (idx === mediaCarouselIndex) { showDrawer('media', idx); return }
-  snapMediaCarouselTo(idx, true)
+  snapToMediaIndex(idx)
 }
 
 function bindMediaCarousel() {
@@ -2684,8 +3233,10 @@ function renderMediaPage() {
   const track = document.getElementById('mediaCoverflowTrack')
   if (!track) return
   if (mediaCarouselIndex >= t.mediaCards.length) mediaCarouselIndex = 0
-  mediaCarouselOffset = mediaCarouselIndex
-  mediaCarouselTarget = mediaCarouselIndex
+  mediaCarouselOffset = 0
+  mediaCarouselTarget = 0
+  mediaWheelDriving = false
+  if (mediaWheelIdleTimer) { clearTimeout(mediaWheelIdleTimer); mediaWheelIdleTimer = null }
   track.innerHTML = t.mediaCards.map((c, i) => `<article class="gs-media-card" data-index="${i}">
     <div class="gs-media-card-inner">
       <span class="gs-media-card-flag" role="img" aria-label="${c.country.replace(/"/g, '&quot;')}">${mediaFlagTag(c.seed, c.country)}</span>
@@ -2712,6 +3263,7 @@ function renderBusiness() {
       <h2>${c.title}</h2><p>${c.desc}</p></article>`
   }).join('')
   bindBizCards()
+  updateBizCarouselArrows()
 }
 
 function renderHub() {
@@ -2737,6 +3289,7 @@ function bindMediaFilters() {
 function renderAll() {
   renderHero(); renderTrends(); renderMediaPage(); renderRegulation(); renderBusiness(); renderHub(); renderMapDots()
   updateClockUI(); renderNav(); renderDots(); renderDock()
+  updateHeaderUtil(); bindBizCarousel()
   bindMediaFilters(); renderCountryMedia('all'); bindMediaCarousel()
   setupScrollSpy()
 }
@@ -2898,6 +3451,7 @@ function initHeroVideo() {
           }, 15000)
           document.addEventListener('click', (e) => {
             if (!e.target.closest('.gs-pulse-zone')) closeAllClockPickers()
+            if (navOpen.value && !e.target.closest('.gs-header')) navOpen.value = false
           })
           getScrollEl()?.addEventListener('scroll', () => {
             headerSolid.value = (getScrollEl()?.scrollTop || 0) > 80
@@ -2906,16 +3460,18 @@ function initHeroVideo() {
 
         onMounted(init)
         onUnmounted(() => {
-          clearInterval(clockTimer); spyIO?.disconnect()
+          clearInterval(clockTimer)
+          if (spyScrollRaf) cancelAnimationFrame(spyScrollRaf)
+          spyIO?.disconnect()
           document.body.style.overflow = ''
         })
 
-        return { lang, headerSolid, heroVideo, heroUseFallback, heroFallbackImg, colorMode, drawerOpen, setLang, closeDrawer, drawerCloseLabel, scrollToSection, toggleColorMode, themeSwitchLabel, logoMarkLabel }
+        return { lang, headerSolid, navOpen, heroVideo, heroUseFallback, heroFallbackImg, colorMode, drawerOpen, setLang, closeDrawer, drawerCloseLabel, scrollToSection, toggleColorMode, themeSwitchLabel, logoMarkLabel, toggleNav, menuBtnLabel }
 
       },
       template: `
         <div class="gs-app">
-          <header class="gs-header" :class="{ solid: headerSolid }">
+          <header class="gs-header" :class="{ solid: headerSolid || navOpen, 'nav-open': navOpen }">
             <div class="gs-header-inner">
               <a class="gs-logo" href="#" @click.prevent="scrollToSection('hero')">
                 <span class="gs-logo-mark">
@@ -2936,10 +3492,11 @@ function initHeroVideo() {
               </a>
               <nav id="mainNav" class="gs-nav"></nav>
               <div class="gs-util">
-                <a class="gs-util-link" href="#" @click.prevent="scrollToSection('hub')">CONTACT US</a>
+                <a class="gs-util-link" id="contactUsLink" href="#" @click.prevent="scrollToSection('hub')">문의하기</a>
+                <button type="button" id="mainMenuBtn" class="gs-main-menu-btn" @click="scrollToSection('business', 1)">메인메뉴</button>
                 <div class="gs-lang">
-                  <button id="btnKo" type="button" class="on" @click="setLang('ko')">KOR</button>
-                  <button id="btnEn" type="button" @click="setLang('en')">ENG</button>
+                  <button id="btnKo" type="button" class="on" @click="setLang('ko')" aria-label="한국어" title="한국어">🇰🇷</button>
+                  <button id="btnEn" type="button" @click="setLang('en')" aria-label="English" title="English">🇺🇸</button>
                 </div>
                 <button
                   type="button"
@@ -2966,8 +3523,11 @@ function initHeroVideo() {
                     </svg>
                   </span>
                 </button>
-                <button type="button" class="gs-menu-btn" aria-label="menu"><span></span><span></span><span></span></button>
+                <button type="button" id="menuBtn" class="gs-menu-btn" :aria-label="menuBtnLabel()" :title="menuBtnLabel()" @click="toggleNav"><span></span><span></span><span></span></button>
               </div>
+            </div>
+            <div class="gs-nav-panel" id="mobileNavPanel">
+              <nav id="mobileNav" class="gs-nav-mobile" :aria-label="menuBtnLabel()"></nav>
             </div>
           </header>
 
@@ -2984,6 +3544,7 @@ function initHeroVideo() {
                 <div class="gs-hero-box">
                   <p class="gs-hero-tag" id="heroTagline">WORLD INTELLIGENCE · ONE TEAM</p>
                   <h1 id="heroTitle"><span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM</h1>
+                  <p id="heroEdition" class="gs-hero-edition">2026.06.29(월) - 24회차</p>
                   <button type="button" id="heroCta" class="gs-hero-cta" @click="scrollToSection('business')">더 알아보기</button>
                 </div>
               </div>
@@ -2991,43 +3552,66 @@ function initHeroVideo() {
 
             <section id="section-business" class="gs-fp gs-business">
               <div class="gs-business-bg"></div>
-              <div class="gs-business-inner"><div id="bizGrid" class="gs-biz-grid"></div></div>
+              <div class="gs-business-inner">
+                <div class="gs-biz-carousel">
+                  <button type="button" class="gs-biz-arrow" id="bizPrev" aria-label="이전 카드">‹</button>
+                  <div class="gs-biz-carousel-viewport"><div id="bizGrid" class="gs-biz-grid"></div></div>
+                  <button type="button" class="gs-biz-arrow" id="bizNext" aria-label="다음 카드">›</button>
+                </div>
+              </div>
             </section>
 
             <section id="section-trends" class="gs-fp gs-trends">
-              <div class="gs-trends-inner">
-                <h2 id="trendsTitle" class="gs-trends-page-title">브리핑&글로벌동향</h2>
-                <div class="gs-trends-focus">
-                  <div class="gs-trends-focus-main">
-                    <span id="trendsFocusLabel" class="gs-trends-label gs-trends-label--gold">주간 초점</span>
-                    <h3 id="trendsFocusTitle" class="gs-trends-focus-title">엔화 146 시대의 도래 · 아시아 금융 재편 시작</h3>
-                    <p id="trendsFocusDesc" class="gs-trends-focus-desc"></p>
-                    <div id="trendsFocusTags" class="gs-trends-tags"></div>
+              <div class="gs-exec-inner">
+                <header class="gs-exec-hd">
+                  <div class="gs-exec-hd-title">
+                    <h2 id="trendsTitle">브리핑&글로벌동향</h2>
+                    <p id="trendsPageSub" class="gs-exec-hd-sub">W E E K L Y · B R I E F</p>
                   </div>
-                  <div class="gs-trends-focus-action">
-                    <span id="trendsActionLabel" class="gs-trends-label gs-trends-label--gold">KB 액션</span>
-                    <ol id="trendsActionList" class="gs-trends-action-list"></ol>
+                  <div class="gs-exec-hd-divider" aria-hidden="true"></div>
+                  <div class="gs-exec-hd-statement">
+                    <span id="trendsStatementLabel" class="gs-exec-hd-statement-label">EXECUTIVE SUMMARY</span>
+                    <p id="trendsBriefSummary"></p>
                   </div>
+                </header>
+                <div class="gs-exec-body">
+                  <div class="gs-exec-main">
+                    <div class="gs-exec-split">
+                      <div class="gs-exec-panel gs-exec-panel--white">
+                        <h3 id="trendsProblemLabel">핵심 리스크</h3>
+                        <p id="trendsProblemDesc"></p>
+                      </div>
+                      <div class="gs-exec-panel gs-exec-panel--white">
+                        <h3 id="trendsOpportunityLabel">전략 기회</h3>
+                        <p id="trendsOpportunityDesc"></p>
+                      </div>
+                    </div>
+                    <div class="gs-exec-solution">
+                      <div class="gs-exec-solution-text">
+                        <span id="trendsSolutionLabel" class="gs-exec-solution-label">주간 해법</span>
+                        <h3 id="trendsFocusTitle">엔화 146 시대의 도래 · 아시아 금융 재편 시작</h3>
+                        <p id="trendsFocusDesc" class="gs-exec-solution-desc"></p>
+                        <div id="trendsFocusTags" class="gs-exec-tags"></div>
+                      </div>
+                      <div class="gs-exec-solution-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M32 8c-2 10-10 14-10 24a10 10 0 1 0 20 0c0-10-8-14-10-24z"/>
+                          <path d="M32 44v12M24 52h16"/>
+                          <path d="M20 20c4 2 8 2 12 0M32 16c4 2 8 2 12 0"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="gs-exec-signals-block">
+                      <h3 id="trendsSignalsTitle">4대 시장신호</h3>
+                      <p id="trendsSignalsHint" class="gs-exec-signals-hint"></p>
+                      <div id="trendsSignalsGrid" class="gs-exec-signals-grid"></div>
+                    </div>
+                  </div>
+                  <aside class="gs-exec-side">
+                    <h3 id="trendsActionLabel">KB 액션</h3>
+                    <ul id="trendsActionList" class="gs-exec-team"></ul>
+                  </aside>
                 </div>
-                <div class="gs-trends-kpi">
-                  <article class="gs-trends-kpi-card gs-trends-kpi-card--shock">
-                    <span id="trendsShockLabel" class="gs-trends-kpi-label">이 주의 충격</span>
-                    <div id="trendsShockValue" class="gs-trends-kpi-value">5.75%</div>
-                    <div id="trendsShockSub" class="gs-trends-kpi-sub">BI-Rate 5.75% ▲</div>
-                    <p id="trendsShockDesc" class="gs-trends-kpi-desc"></p>
-                  </article>
-                  <article class="gs-trends-kpi-card gs-trends-kpi-card--var">
-                    <span id="trendsVarLabel" class="gs-trends-kpi-label">이 주의 변수</span>
-                    <div id="trendsVarValue" class="gs-trends-kpi-value">3.50-3.75%</div>
-                    <div id="trendsVarSub" class="gs-trends-kpi-sub">Fed 기준금리 3.50-3.75%</div>
-                    <p id="trendsVarDesc" class="gs-trends-kpi-desc"></p>
-                  </article>
-                </div>
-                <div class="gs-trends-signals-hd">
-                  <h3 id="trendsSignalsTitle">4대 시장신호</h3>
-                  <p id="trendsSignalsHint"></p>
-                </div>
-                <div id="trendsSignalsGrid" class="gs-trends-signals-grid"></div>
               </div>
             </section>
 
@@ -3062,21 +3646,23 @@ function initHeroVideo() {
                   <p id="regulationDesc" class="gs-regulation-desc"></p>
                   <p id="regulationHint" class="gs-regulation-hint"></p>
                 </div>
-                <div class="gs-regulation-block gs-regulation-block--branch">
-                  <div class="gs-regulation-block-hd">
-                    <h3 id="regulationBranchTitle" class="gs-regulation-block-title">국외점포</h3>
-                    <span id="regulationBranchBadge" class="gs-regulation-block-badge">8개 거점</span>
-                    <p id="regulationBranchDesc" class="gs-regulation-block-desc"></p>
+                <div class="gs-regulation-body">
+                  <div class="gs-regulation-block gs-regulation-block--branch">
+                    <div class="gs-regulation-block-hd">
+                      <h3 id="regulationBranchTitle" class="gs-regulation-block-title">국외지점</h3>
+                      <span id="regulationBranchBadge" class="gs-regulation-block-badge">10개 거점</span>
+                      <p id="regulationBranchDesc" class="gs-regulation-block-desc"></p>
+                    </div>
+                    <div id="regulationBranchGrid" class="gs-regulation-grid gs-regulation-grid--branch"></div>
                   </div>
-                  <div id="regulationBranchGrid" class="gs-regulation-grid gs-regulation-grid--branch"></div>
-                </div>
-                <div class="gs-regulation-block gs-regulation-block--sub">
-                  <div class="gs-regulation-block-hd">
-                    <h3 id="regulationSubsTitle" class="gs-regulation-block-title">국외연결자회사</h3>
-                    <span id="regulationSubsBadge" class="gs-regulation-block-badge">2개 법인</span>
-                    <p id="regulationSubsDesc" class="gs-regulation-block-desc"></p>
+                  <div class="gs-regulation-block gs-regulation-block--sub">
+                    <div class="gs-regulation-block-hd">
+                      <h3 id="regulationSubsTitle" class="gs-regulation-block-title">국외연결자회사</h3>
+                      <span id="regulationSubsBadge" class="gs-regulation-block-badge">2개 법인</span>
+                      <p id="regulationSubsDesc" class="gs-regulation-block-desc"></p>
+                    </div>
+                    <div id="regulationSubsGrid" class="gs-regulation-grid gs-regulation-grid--sub"></div>
                   </div>
-                  <div id="regulationSubsGrid" class="gs-regulation-grid gs-regulation-grid--sub"></div>
                 </div>
               </div>
             </section>
@@ -3090,18 +3676,13 @@ function initHeroVideo() {
                 <div class="gs-network-body">
                   <div class="gs-map-wrap">
                     <div class="gs-map-stage">
-                      <div class="gs-map-base" id="mapBase"></div>
-                      <div id="mapActivePin" class="gs-map-red-pin"></div>
-                      <div id="mapDots"></div>
-                      <div id="mapMagnifier" class="gs-map-mag" aria-hidden="true">
-                        <svg id="mapMagLines" class="gs-map-mag-lines" aria-hidden="true"></svg>
-                        <div id="mapMagLens" class="gs-map-mag-lens">
-                          <div id="mapMagZoom" class="gs-map-mag-zoom"></div>
-                          <div id="mapMagPin" class="gs-map-mag-pin"></div>
-                        </div>
-                        <div class="gs-map-mag-foot">
-                          <a id="mapMagVisit" class="gs-map-mag-visit" href="#" target="_blank" rel="noopener"></a>
-                          <div id="mapMagLabel" class="gs-map-mag-label"></div>
+                      <div class="gs-map-base" id="mapBase">
+                        <div id="mapDots"></div>
+                        <div id="mapMagnifier" class="gs-map-mag" aria-hidden="true">
+                          <div class="gs-map-mag-foot">
+                            <a id="mapMagVisit" class="gs-map-mag-visit" href="#" target="_blank" rel="noopener"></a>
+                            <div id="mapMagLabel" class="gs-map-mag-label"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
