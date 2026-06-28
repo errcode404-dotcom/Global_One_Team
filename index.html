@@ -72,8 +72,8 @@ html, body { height: 100%; overflow: hidden; background: #0a1628; }
 }
 .gs-nav-btn::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
-  border-radius: 0 0 12px 12px; background: #00e5c3;
-  box-shadow: 0 0 12px rgba(0, 229, 195, .65); opacity: 0; transition: opacity .2s; z-index: -1;
+  border-radius: 0 0 12px 12px; background: #E5C04A;
+  box-shadow: 0 0 12px rgba(229, 192, 74, .72); opacity: 0; transition: opacity .2s; z-index: -1;
 }
 .gs-nav-btn:hover, .gs-nav-btn.active { color: #fff; font-weight: 700; }
 .gs-nav-btn:hover::after, .gs-nav-btn.active::after { opacity: 1; }
@@ -531,43 +531,61 @@ html.gs-light .gs-regulation-card-flag {
 .gs-regulation-card time { display: block; margin-top: 8px; font-size: 9px; color: rgba(255,255,255,.38); }
 
 .gs-media {
-  background: #0a1628; justify-content: center; overflow: hidden;
+  background: #0a1628; justify-content: flex-start; overflow: hidden;
 }
 html.gs-light .gs-media { background: #eef1f6; }
 .gs-media-inner {
   width: 100%; max-width: 1280px; margin: 0 auto;
-  padding: calc(var(--header) + 24px) 32px 40px; min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center;
+  padding: calc(var(--header) + 20px) 32px 32px; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
 }
-.gs-media-hd { text-align: center; margin-bottom: 8px; width: 100%; }
+.gs-media-hd { text-align: center; margin-bottom: 0; width: 100%; }
 .gs-media-title {
   font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: #fff; letter-spacing: -.02em;
 }
 html.gs-light .gs-media-title { color: #1a1a2e; }
 .gs-media-desc { font-size: 14px; color: var(--muted); margin-top: 8px; }
 html.gs-light .gs-media-desc { color: #5a6270; }
-.gs-media-hint { font-size: 12px; color: rgba(255,255,255,.45); margin-top: 6px; }
+.gs-media-hint { font-size: 12px; color: rgba(255,255,255,.45); margin-top: 6px; margin-bottom: 0; }
 html.gs-light .gs-media-hint { color: #888; }
+.gs-media-carousel-block { width: 100%; margin-top: 6px; }
+.gs-media-counter-wrap--top {
+  text-align: center; padding: 0 0 8px; margin: 0;
+}
+.gs-media-counter-wrap--top .gs-media-counter {
+  font-size: 14px; font-weight: 700; letter-spacing: .06em;
+  color: rgba(255,255,255,.82);
+}
+html.gs-light .gs-media-counter-wrap--top .gs-media-counter { color: #1a1a2e; }
 .gs-media-carousel {
   position: relative; width: 100%; display: flex; align-items: center;
-  justify-content: center; gap: 16px; min-height: 520px; margin: 12px 0 8px;
+  justify-content: center; gap: 8px; min-height: 440px; margin: 0;
 }
 .gs-media-carousel-stage {
-  flex: 1; max-width: 960px; height: 460px; perspective: 1400px;
-  position: relative; overflow: visible;
+  flex: 1; max-width: 960px; height: 420px;
+  position: relative; overflow: hidden;
+  min-width: 0;
+}
+.gs-media-carousel-viewport {
+  width: 100%; height: 100%; overflow: hidden;
+  position: relative; contain: layout paint;
+  clip-path: inset(0 0 0 0);
 }
 .gs-media-carousel-track {
-  position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+  position: relative; width: 100%; height: 100%;
+  perspective: 1100px; perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
 }
 .gs-media-carousel-track.is-wheeling .gs-media-card,
 .gs-media-carousel-track.is-snapping .gs-media-card {
   transition: none;
 }
 .gs-media-card {
-  position: absolute; left: 50%; top: 50%; width: 280px; height: 420px;
-  margin: -210px 0 0 -140px; cursor: ns-resize; transform-style: preserve-3d;
-  transition: transform .85s cubic-bezier(.33, 1, .33, 1), opacity .85s cubic-bezier(.33, 1, .33, 1);
+  position: absolute; left: 50%; top: 50%; width: 280px; height: 392px;
+  margin: -196px 0 0 -140px; cursor: pointer; transform-style: preserve-3d;
+  transition: transform .52s cubic-bezier(.28, 1, .32, 1), opacity .52s cubic-bezier(.28, 1, .32, 1);
   will-change: transform, opacity;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
 .gs-media-card-inner {
   position: relative;
@@ -575,6 +593,8 @@ html.gs-light .gs-media-hint { color: #888; }
   background: #141820; border: 1px solid rgba(255,255,255,.1);
   box-shadow: 0 12px 40px rgba(0,0,0,.4); display: flex; flex-direction: column;
   transition: transform 0.55s cubic-bezier(.22, 1, .36, 1), box-shadow 0.55s cubic-bezier(.22, 1, .36, 1), border-color 0.45s ease;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  transform: translateZ(0.1px);
 }
 .gs-media-card-inner::after {
   content: ''; position: absolute; top: 0; left: -120%; width: 55%; height: 100%; z-index: 4;
@@ -585,8 +605,8 @@ html.gs-light .gs-media-hint { color: #888; }
 @media (hover: hover) {
   .gs-media-card:hover .gs-media-card-inner {
     transform: translateY(-8px) scale(1.025);
-    border-color: rgba(0,229,195,.5);
-    box-shadow: 0 22px 52px rgba(0,0,0,.48), 0 0 0 1px rgba(0,229,195,.32), 0 0 32px rgba(0,229,195,.14);
+    border-color: rgba(229, 192, 74, .58);
+    box-shadow: 0 22px 52px rgba(0,0,0,.48), 0 0 0 1px rgba(229, 192, 74, .42), 0 0 32px rgba(229, 192, 74, .22);
   }
   .gs-media-card:hover .gs-media-card-inner::after {
     animation: gs-biz-shimmer 0.9s cubic-bezier(.22, 1, .36, 1) forwards;
@@ -600,15 +620,19 @@ html.gs-light .gs-media-hint { color: #888; }
   }
 }
 html.gs-light .gs-media-card:hover .gs-media-card-inner {
-  box-shadow: 0 18px 40px rgba(26,26,46,.16), 0 0 0 1px rgba(0,102,204,.24), 0 0 24px rgba(0,102,204,.1);
+  box-shadow: 0 18px 40px rgba(26,26,46,.16), 0 0 0 1px rgba(201, 160, 50, .42), 0 0 24px rgba(229, 192, 74, .18);
 }
 html.gs-light .gs-media-card-inner {
   background: #fff; border-color: rgba(26,26,46,.1);
   box-shadow: 0 8px 28px rgba(0,0,0,.12);
 }
 .gs-media-card.is-active .gs-media-card-inner {
-  border-color: rgba(0,229,195,.55);
-  box-shadow: 0 16px 48px rgba(0,229,195,.22);
+  border-color: rgba(229, 192, 74, .62);
+  box-shadow: 0 16px 48px rgba(229, 192, 74, .26), 0 0 28px rgba(229, 192, 74, .16);
+}
+html.gs-light .gs-media-card.is-active .gs-media-card-inner {
+  border-color: rgba(201, 160, 50, .58);
+  box-shadow: 0 16px 40px rgba(26,26,46,.14), 0 0 0 1px rgba(201, 160, 50, .38), 0 0 24px rgba(229, 192, 74, .16);
 }
 .gs-media-card-flag {
   position: absolute; top: 12px; right: 12px; z-index: 2;
@@ -625,7 +649,7 @@ html.gs-light .gs-media-card-flag {
 .gs-media-card-flag img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.gs-media-card-cover { height: 168px; flex-shrink: 0; overflow: hidden; position: relative; }
+.gs-media-card-cover { height: 156px; flex-shrink: 0; overflow: hidden; position: relative; }
 .gs-media-card-cover img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform 0.75s cubic-bezier(.22, 1, .36, 1);
@@ -658,6 +682,8 @@ html.gs-light .gs-media-card-summary { color: #5a6270; }
 .gs-media-card-source { font-size: 10px; color: rgba(255,255,255,.38); margin-top: 4px; }
 html.gs-light .gs-media-card-source { color: #888; }
 .gs-media-card:not(.is-active) .gs-media-card-cap { opacity: .72; }
+.gs-media-card.is-side { cursor: pointer; }
+.gs-media-card.is-back { cursor: pointer; }
 .gs-media-arrow {
   width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
   border: 1px solid var(--line); background: rgba(255,255,255,.06);
@@ -741,7 +767,7 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
     transparent 28%,
     rgba(255,255,255,.06) 40%,
     rgba(255,255,255,.28) 48%,
-    rgba(0,229,195,.22) 50%,
+    rgba(229, 192, 74, .22) 50%,
     rgba(255,255,255,.38) 52%,
     rgba(255,255,255,.1) 58%,
     transparent 70%);
@@ -754,9 +780,9 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
     transform: translateY(-18px) scale(1.032);
     box-shadow:
       0 36px 72px rgba(0,0,0,.52),
-      0 0 0 1px rgba(0,229,195,.52),
-      0 0 56px rgba(0,229,195,.28),
-      0 12px 40px rgba(0,229,195,.14),
+      0 0 0 1px rgba(229, 192, 74, .58),
+      0 0 56px rgba(229, 192, 74, .32),
+      0 12px 40px rgba(229, 192, 74, .16),
       inset 0 1px 0 rgba(255,255,255,.42),
       inset 0 0 48px rgba(255,255,255,.1),
       inset 0 -72px 56px -24px rgba(10,22,40,.52);
@@ -833,9 +859,9 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
   0%, 100% {
     box-shadow:
       0 28px 56px rgba(26,26,46,.22),
-      0 0 0 1px rgba(0,102,204,.38),
-      0 0 44px rgba(0,102,204,.16),
-      0 10px 32px rgba(0,102,204,.1),
+      0 0 0 1px rgba(201, 160, 50, .42),
+      0 0 44px rgba(229, 192, 74, .2),
+      0 10px 32px rgba(229, 192, 74, .12),
       inset 0 1px 0 rgba(255,255,255,.88),
       inset 0 0 40px rgba(255,255,255,.28),
       inset 0 -72px 56px -24px rgba(26,26,46,.24);
@@ -844,9 +870,9 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
   50% {
     box-shadow:
       0 32px 64px rgba(26,26,46,.28),
-      0 0 0 1px rgba(0,102,204,.52),
-      0 0 60px rgba(0,102,204,.24),
-      0 12px 40px rgba(0,102,204,.14),
+      0 0 0 1px rgba(201, 160, 50, .55),
+      0 0 60px rgba(229, 192, 74, .28),
+      0 12px 40px rgba(229, 192, 74, .16),
       inset 0 1px 0 rgba(255,255,255,.98),
       inset 0 0 72px rgba(255,255,255,.42),
       inset 0 -72px 56px -24px rgba(26,26,46,.24);
@@ -857,9 +883,9 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
   0%, 100% {
     box-shadow:
       0 36px 72px rgba(0,0,0,.52),
-      0 0 0 1px rgba(0,229,195,.52),
-      0 0 56px rgba(0,229,195,.28),
-      0 12px 40px rgba(0,229,195,.14),
+      0 0 0 1px rgba(229, 192, 74, .58),
+      0 0 56px rgba(229, 192, 74, .32),
+      0 12px 40px rgba(229, 192, 74, .16),
       inset 0 1px 0 rgba(255,255,255,.42),
       inset 0 0 48px rgba(255,255,255,.1),
       inset 0 -72px 56px -24px rgba(10,22,40,.52);
@@ -868,9 +894,9 @@ html.gs-light .gs-biz-card:hover h2 { color: #fff; text-shadow: 0 4px 16px rgba(
   50% {
     box-shadow:
       0 40px 80px rgba(0,0,0,.58),
-      0 0 0 1px rgba(0,229,195,.65),
-      0 0 72px rgba(0,229,195,.38),
-      0 14px 48px rgba(0,229,195,.2),
+      0 0 0 1px rgba(229, 192, 74, .72),
+      0 0 72px rgba(229, 192, 74, .42),
+      0 14px 48px rgba(229, 192, 74, .22),
       inset 0 1px 0 rgba(255,255,255,.58),
       inset 0 0 80px rgba(255,255,255,.2),
       inset 0 -72px 56px -24px rgba(10,22,40,.52);
@@ -1342,9 +1368,10 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
   .gs-trends-signals-grid { grid-template-columns: repeat(2, 1fr); }
   .gs-regulation-grid--branch { grid-template-columns: repeat(3, 1fr); }
   .gs-regulation-grid--sub { max-width: none; }
-  .gs-media-carousel-stage { height: 400px; }
-  .gs-media-card { width: 240px; height: 360px; margin: -180px 0 0 -120px; }
-  .gs-media-card-cover { height: 140px; }
+  .gs-media-carousel { min-height: 400px; }
+  .gs-media-carousel-stage { height: 380px; }
+  .gs-media-card { width: 240px; height: 336px; margin: -168px 0 0 -120px; }
+  .gs-media-card-cover { height: 128px; }
   .gs-media-arrow { width: 40px; height: 40px; font-size: 18px; }
 }
 @media (max-width: 640px) {
@@ -1390,10 +1417,12 @@ let LANG = 'ko', clockTimer = null, activeSection = 'hero', activeTabIndex = 0, 
 const SECTION_IDS = ['hero', 'business', 'trends', 'media', 'regulation', 'network', 'hub']
 let mediaCarouselIndex = 0, mediaCarouselOffset = 0, mediaCarouselTarget = 0
 let mediaWheelEndTimer = null, mediaSnapAnim = null, mediaWheelRaf = null, mediaWheelLastTs = 0
-const MEDIA_WHEEL_SENS = 0.0028
-const MEDIA_WHEEL_SMOOTH_MS = 150
-const MEDIA_SNAP_MS = 920
-const MEDIA_WHEEL_SNAP_DELAY = 450
+const MEDIA_WHEEL_SENS = 0.0034
+const MEDIA_WHEEL_SMOOTH_MS = 95
+const MEDIA_SNAP_MS = 480
+const MEDIA_SNAP_CLICK_MS = 260
+const MEDIA_WHEEL_SNAP_DELAY = 320
+const MEDIA_VISIBLE_COUNT = 7
 
 const MAP_REF = { w: 710, h: 444 }
 
@@ -2448,20 +2477,58 @@ function updateMediaCarousel(wheeling) {
   const total = t.mediaCards.length
   if (!cards.length) return
   const track = document.getElementById('mediaCoverflowTrack')
+  const stage = document.querySelector('.gs-media-carousel-stage')
   if (track) track.classList.toggle('is-wheeling', !!wheeling)
-  const spacing = 240, angle = 48
+  const stageW = stage?.clientWidth || 960
+  const cardW = cards[0]?.offsetWidth || 280
+  const cardHalf = cardW / 2
+  const visibleHalf = (MEDIA_VISIBLE_COUNT - 1) / 2
+  const angleDeg = Math.min(28, Math.max(18, 360 / Math.max(total, 4)))
+  const angleRad = angleDeg * (Math.PI / 180)
+  const outerTheta = visibleHalf * angleRad
+  const outerSin = Math.sin(outerTheta)
+  const outerFront = (Math.cos(outerTheta) + 1) / 2
+  const outerScale = 0.44 + 0.56 * outerFront
+  const edgePad = 2
+  const maxTx = stageW / 2 - cardHalf * outerScale * 0.22 - edgePad
+  const radius = Math.max(175, maxTx / Math.max(0.46, outerSin))
   cards.forEach((card, i) => {
-    const offset = i - mediaCarouselOffset
-    const abs = Math.abs(offset)
-    const tx = offset * spacing
-    const ry = offset * -angle
-    const scale = abs < 0.5 ? 1 - abs * 0.08 : Math.max(0.62, 1 - abs * 0.14)
-    const tz = abs < 0.5 ? 120 - abs * 80 : -abs * 55
-    card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${ry * Math.min(1, abs)}deg) scale(${scale})`
-    card.style.zIndex = String(100 - Math.round(abs))
-    card.style.opacity = abs > 4 ? '0' : String(Math.max(0.35, 1 - abs * 0.12))
-    card.style.pointerEvents = abs > 4 ? 'none' : 'auto'
-    card.classList.toggle('is-active', abs < 0.5)
+    const d = i - mediaCarouselOffset
+    const theta = d * angleRad
+    const cosT = Math.cos(theta)
+    const sinT = Math.sin(theta)
+    const tx = sinT * radius
+    const tz = (cosT - 1) * radius
+    const ry = -d * angleDeg
+    const front = (cosT + 1) / 2
+    const scale = 0.44 + 0.56 * front
+    const absD = Math.abs(d)
+    const nearSideExtreme = Math.abs(sinT) > 0.9 && absD > visibleHalf + 0.35 && absD < total * 0.47
+    const onFrontArc = absD <= visibleHalf + 0.08
+    const onBackCenter = cosT < -0.58
+    const onWrapReturn = absD >= total * 0.34 && cosT < -0.15 && Math.abs(sinT) < 0.72
+    let show = !nearSideExtreme && (onFrontArc || onBackCenter || onWrapReturn)
+    card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`
+    card.style.zIndex = String(Math.round(200 + tz))
+    if (!show) {
+      card.style.opacity = '0'
+      card.style.pointerEvents = 'none'
+      card.classList.remove('is-active', 'is-side', 'is-back')
+      return
+    }
+    const sideFade = 1 - Math.max(0, absD - 0.4) * 0.1
+    if (onBackCenter || (onWrapReturn && !onFrontArc)) {
+      card.style.opacity = String(Math.max(0.16, 0.14 + front * 0.38))
+      card.style.pointerEvents = 'auto'
+      card.classList.add('is-back')
+      card.classList.remove('is-side')
+    } else {
+      card.style.opacity = String(Math.max(0.46, (0.42 + 0.58 * Math.min(1, front * 1.08)) * sideFade))
+      card.style.pointerEvents = 'auto'
+      card.classList.remove('is-back')
+      card.classList.toggle('is-side', absD >= 0.45)
+    }
+    card.classList.toggle('is-active', absD < 0.45 && front > 0.72)
   })
   mediaCarouselIndex = Math.max(0, Math.min(total - 1, Math.round(mediaCarouselOffset)))
   const counter = document.getElementById('mediaCounter')
@@ -2476,13 +2543,13 @@ function mediaEaseInOutCubic(p) {
   return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
 }
 
-function snapMediaCarouselTo(target) {
+function snapMediaCarouselTo(target, fast) {
   if (mediaWheelRaf) { cancelAnimationFrame(mediaWheelRaf); mediaWheelRaf = null; mediaWheelLastTs = 0 }
   if (mediaSnapAnim) cancelAnimationFrame(mediaSnapAnim)
   mediaCarouselTarget = target
   const start = mediaCarouselOffset
   const startTime = performance.now()
-  const duration = MEDIA_SNAP_MS
+  const duration = fast ? MEDIA_SNAP_CLICK_MS : MEDIA_SNAP_MS
   const track = document.getElementById('mediaCoverflowTrack')
   if (track) { track.classList.remove('is-wheeling'); track.classList.add('is-snapping') }
   function frame(now) {
@@ -2554,19 +2621,51 @@ function onMediaStageWheel(e) {
   mediaWheelEndTimer = setTimeout(snapMediaCarousel, MEDIA_WHEEL_SNAP_DELAY)
 }
 
+function getMediaCardAtPoint(clientX, clientY) {
+  const cards = [...document.querySelectorAll('.gs-media-card')].filter(c => {
+    if (c.style.opacity === '0') return false
+    const r = c.getBoundingClientRect()
+    return r.width > 0 && r.height > 0
+      && clientX >= r.left && clientX <= r.right
+      && clientY >= r.top && clientY <= r.bottom
+  })
+  if (!cards.length) return null
+  let best = null, bestDist = Infinity
+  cards.forEach(card => {
+    const r = card.getBoundingClientRect()
+    const cx = r.left + r.width / 2
+    const distX = Math.abs(clientX - cx)
+    if (distX < bestDist) { best = card; bestDist = distX }
+  })
+  return best
+}
+
+function handleMediaCardPick(clientX, clientY) {
+  const card = getMediaCardAtPoint(clientX, clientY)
+  if (!card) return
+  const idx = +card.dataset.index
+  if (idx === mediaCarouselIndex) { showDrawer('media', idx); return }
+  snapMediaCarouselTo(idx, true)
+}
+
 function bindMediaCarousel() {
   const section = document.getElementById('section-media')
   const track = document.getElementById('mediaCoverflowTrack')
   const stage = section?.querySelector('.gs-media-carousel-stage')
   if (!section || !track || !stage || section.dataset.bound) return
   section.dataset.bound = '1'
+  let mediaResizeTimer = null
+  window.addEventListener('resize', () => {
+    clearTimeout(mediaResizeTimer)
+    mediaResizeTimer = setTimeout(() => updateMediaCarousel(false), 120)
+  }, { passive: true })
   stage.addEventListener('wheel', onMediaStageWheel, { passive: false })
-  track.addEventListener('click', (e) => {
-    const card = e.target.closest('.gs-media-card')
+  stage.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return
+    const card = getMediaCardAtPoint(e.clientX, e.clientY)
     if (!card) return
-    const idx = +card.dataset.index
-    if (idx === mediaCarouselIndex) showDrawer('media', idx)
-    else snapMediaCarouselTo(idx)
+    e.preventDefault()
+    handleMediaCardPick(e.clientX, e.clientY)
   })
   document.getElementById('mediaPrev')?.addEventListener('click', () => moveMediaCarousel(-1))
   document.getElementById('mediaNext')?.addEventListener('click', () => moveMediaCarousel(1))
@@ -2939,15 +3038,19 @@ function initHeroVideo() {
                   <p id="mediaDesc" class="gs-media-desc"></p>
                   <p id="mediaHint" class="gs-media-hint"></p>
                 </div>
-                <div class="gs-media-carousel">
-                  <button type="button" id="mediaPrev" class="gs-media-arrow gs-media-arrow--prev" aria-label="Previous">&lt;</button>
-                  <div class="gs-media-carousel-stage">
-                    <div id="mediaCoverflowTrack" class="gs-media-carousel-track"></div>
+                <div class="gs-media-carousel-block">
+                  <div class="gs-media-counter-wrap gs-media-counter-wrap--top">
+                    <span id="mediaCounter" class="gs-media-counter">1 / 10</span>
                   </div>
-                  <button type="button" id="mediaNext" class="gs-media-arrow gs-media-arrow--next" aria-label="Next">&gt;</button>
-                </div>
-                <div class="gs-media-counter-wrap">
-                  <span id="mediaCounter" class="gs-media-counter">1 / 10</span>
+                  <div class="gs-media-carousel">
+                    <button type="button" id="mediaPrev" class="gs-media-arrow gs-media-arrow--prev" aria-label="Previous">&lt;</button>
+                    <div class="gs-media-carousel-stage">
+                      <div class="gs-media-carousel-viewport">
+                        <div id="mediaCoverflowTrack" class="gs-media-carousel-track"></div>
+                      </div>
+                    </div>
+                    <button type="button" id="mediaNext" class="gs-media-arrow gs-media-arrow--next" aria-label="Next">&gt;</button>
+                  </div>
                 </div>
               </div>
             </section>
