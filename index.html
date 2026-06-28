@@ -351,6 +351,31 @@ html.gs-light .gs-nav-mobile .gs-nav-btn.active {
 }
 .gs-dock-item span { font-size: 9px; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
 
+.gs-main-menu-fab {
+  display: none; position: fixed; right: 20px; bottom: 20px; z-index: 450;
+  align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid rgba(229, 192, 74, .55); background: rgba(10, 22, 40, .94);
+  color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 700;
+  letter-spacing: -.02em; cursor: pointer; flex-shrink: 0;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(8px); transition: border-color .2s, background .2s, transform .2s, box-shadow .2s;
+}
+.gs-main-menu-fab:hover {
+  border-color: #E5C04A; background: rgba(10, 22, 40, .98);
+  transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, .42);
+}
+.gs-main-menu-fab:active { transform: translateY(0); }
+html.gs-light .gs-main-menu-fab {
+  background: rgba(255, 255, 255, .96); color: #1a1a2e;
+  border-color: rgba(26, 26, 46, .22);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .12);
+}
+html.gs-light .gs-main-menu-fab:hover {
+  border-color: #E5C04A; background: #fff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .16);
+}
+
 .gs-hero {
   position: relative; min-height: 100vh; overflow: hidden;
 }
@@ -1727,8 +1752,9 @@ html.gs-light .gs-drawer-x { background: #fff; border-color: #ddd; color: #1a1a2
 }
 @media (max-width: 640px) {
   .gs-nav { display: none; }
-  .gs-menu-btn { display: flex; }
-  .gs-main-menu-btn { display: inline-flex; }
+  .gs-menu-btn { display: none !important; }
+  .gs-main-menu-btn { display: none !important; }
+  .gs-main-menu-fab { display: inline-flex; }
   .gs-dock { display: none !important; }
   .gs-header-inner { padding: 0 16px; gap: 10px; }
   .gs-util { gap: 6px; margin-left: auto; }
@@ -3369,6 +3395,10 @@ function themeSwitchLabel() {
   return TX[LANG][colorMode.value === 'dark' ? 'themeDark' : 'themeLight']
 }
 
+function mainMenuLabel() {
+  return TX[LANG].mainMenu
+}
+
 function logoMarkLabel() {
   return TX[LANG].logoMarkLabel
 }
@@ -3466,7 +3496,7 @@ function initHeroVideo() {
           document.body.style.overflow = ''
         })
 
-        return { lang, headerSolid, navOpen, heroVideo, heroUseFallback, heroFallbackImg, colorMode, drawerOpen, setLang, closeDrawer, drawerCloseLabel, scrollToSection, toggleColorMode, themeSwitchLabel, logoMarkLabel, toggleNav, menuBtnLabel }
+        return { lang, headerSolid, navOpen, heroVideo, heroUseFallback, heroFallbackImg, colorMode, drawerOpen, setLang, closeDrawer, drawerCloseLabel, scrollToSection, toggleColorMode, themeSwitchLabel, mainMenuLabel, logoMarkLabel, toggleNav, menuBtnLabel }
 
       },
       template: `
@@ -3533,6 +3563,13 @@ function initHeroVideo() {
 
           <nav id="pageDots" class="gs-dots"></nav>
           <div id="gsDock" class="gs-dock"></div>
+          <button
+            type="button"
+            class="gs-main-menu-fab"
+            @click="scrollToSection('business', 1)"
+            :aria-label="mainMenuLabel()"
+            :title="mainMenuLabel()"
+          >{{ mainMenuLabel() }}</button>
 
           <div id="gsScroll" class="gs-scroll">
             <section id="section-hero" class="gs-fp gs-hero">
