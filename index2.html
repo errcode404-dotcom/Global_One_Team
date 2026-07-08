@@ -4174,7 +4174,7 @@ function formatHeroEditionLine(lang) {
 }
 
 let LANG = 'ko', clockTimer = null, activeSection = 'hero', activeTabIndex = 0, spyIO = null, spyScrollRaf = null
-const SECTION_IDS = ['hero']
+const SECTION_IDS = ['hero', 'business2', 'business', 'smartnews', 'regulation', 'network', 'hub', 'outlets']
 const MEDIA_PAGES = {
   business: {
     sectionId: 'section-business',
@@ -4546,8 +4546,8 @@ const TX = {
     tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '2026년 6월 23일', sub: '08:00 KST · WEEKLY BRIEF',
     heroTitleHtml: '<span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM NEWS',
     headerBrandTitleHtml: '<span class="gs-header-brand-kb">KB</span> Global One Team News',
-    heroCta1: '1안보기',
-    heroCta2: '2안보기',
+    heroCtaAlt: '1안 보기',
+    heroCta: '더 알아보기',
     logoTextHtml: 'Global One Team<em>Team Intelligence</em>',
     logoMarkLabel: 'KB국민은행',
     themeLight: '라이트 모드',
@@ -4987,23 +4987,28 @@ const TX = {
         insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM 점검.</p>',
         sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
     ],
-    tabs: ['홈'],
-    tabIds: ['hero'],
+    tabs: ['홈', '메인 메뉴', '메인 메뉴', '글로벌 이슈 모니터링', '규제 · 금융기관', '글로벌네트워크', 'Key-Man', '주요 언론사 링크'],
+    tabIds: ['hero', 'business2', 'business', 'smartnews', 'regulation', 'network', 'hub', 'outlets'],
     footerText: '※ KB Global Intelligence 2026.6.23',
     footerMediaTitle: '주요 언론사 링크',
     footerMediaDesc: '한국 및 진출국가별 주요 매체 바로가기',
     partTitle: '참여 코너', partSub: '🎯 재미있는 2지선다 — A 또는 B!', funPicked: '투표 완료!',
     funEngageStat: '이번 주 참여 <strong>{n}</strong> / {t}',
     dock: [
-      { icon: '🏠', label: '홈', section: 'hero' }
+      { icon: '🏠', label: '홈', section: 'hero' },
+      { icon: '📋', label: '글로벌 이슈', section: 'smartnews' },
+      { icon: '🏢', label: '국외연결자회사', section: 'hub' },
+      { icon: '👁', label: 'Topic Watch', section: 'hub' },
+      { icon: '⚖', label: '규제 · 금융기관', section: 'hub' },
+      { icon: '🏆', label: 'Key-Man', section: 'hub' }
     ]
   },
   en: {
     tagline: 'WORLD INTELLIGENCE · ONE TEAM', date: '23 June 2026', sub: '08:00 KST · WEEKLY BRIEF',
     heroTitleHtml: '<span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM NEWS',
     headerBrandTitleHtml: '<span class="gs-header-brand-kb">KB</span> Global One Team News',
-    heroCta1: 'View Plan 1',
-    heroCta2: 'View Plan 2',
+    heroCtaAlt: 'View Plan 1',
+    heroCta: 'READ MORE',
     logoTextHtml: 'Global One Team<em>Team Intelligence</em>',
     logoMarkLabel: 'KB Kookmin Bank',
     themeLight: 'Light mode',
@@ -5443,15 +5448,20 @@ const TX = {
         insight: '<p><strong>KB Watch:</strong> KB Indonesia NIM.</p>',
         sources: [{ title: 'Bank Indonesia', url: 'https://www.bi.go.id/' }] }
     ],
-    tabs: ['Home'],
-    tabIds: ['hero'],
+    tabs: ['Home', 'Main Menu', 'Main Menu', 'Global Issue Monitoring', 'Regulation', 'Global Network', 'Key-Man', 'Major Media Outlets'],
+    tabIds: ['hero', 'business2', 'business', 'smartnews', 'regulation', 'network', 'hub', 'outlets'],
     footerText: '※ KB Global Intelligence',
     footerMediaTitle: 'Major Media Outlets',
     footerMediaDesc: 'Quick links to key media in Korea and presence countries',
     partTitle: 'Engagement', partSub: '🎯 Fun this-or-that — A or B!', funPicked: 'Voted!',
     funEngageStat: 'This week <strong>{n}</strong> / {t} answered',
     dock: [
-      { icon: '🏠', label: 'Home', section: 'hero' }
+      { icon: '🏠', label: 'Home', section: 'hero' },
+      { icon: '📋', label: 'Global Issues', section: 'smartnews' },
+      { icon: '🏢', label: 'Subsidiaries', section: 'hub' },
+      { icon: '👁', label: 'Topic Watch', section: 'hub' },
+      { icon: '⚖', label: 'Regulation', section: 'hub' },
+      { icon: '🏆', label: 'Key-Man', section: 'hub' }
     ]
   }
 }
@@ -6547,9 +6557,14 @@ function renderHero() {
   set('heroTagline', t.tagline)
   setHtml('heroTitle', t.heroTitleHtml)
   set('heroEdition', formatHeroEditionLine(LANG))
-  set('heroCta1', t.heroCta1)
-  set('heroCta2', t.heroCta2)
+  set('heroCtaAlt', t.heroCtaAlt)
+  set('heroCta', t.heroCta)
   setHtml('headerBrandText', t.headerBrandTitleHtml)
+  set('networkTitle', t.networkTitle)
+  renderNetworkMap()
+  renderNetworkOnewordEditor()
+  set('hubTitle', t.hubTitle)
+  set('hubDesc', t.hubDesc)
   set('footerText', t.footerText)
   set('footerAddr', LANG === 'ko' ? '서울특별시 영등포구 · KB금융그룹 Global Intelligence' : 'Seoul · KB Financial Group Global Intelligence')
 }
@@ -7857,8 +7872,15 @@ function initHeroVideo() {
             </div>
           </header>
 
-          <nav id="pageDots" class="gs-dots" style="display:none"></nav>
+          <nav id="pageDots" class="gs-dots"></nav>
           <div id="gsDock" class="gs-dock"></div>
+          <button
+            type="button"
+            class="gs-main-menu-fab"
+            @click="scrollToSection('business2', 1)"
+            :aria-label="mainMenuLabel()"
+            :title="mainMenuLabel()"
+          >{{ mainMenuLabel() }}</button>
 
           <div id="gsScroll" class="gs-scroll">
             <section id="section-hero" class="gs-fp gs-hero">
@@ -7872,10 +7894,259 @@ function initHeroVideo() {
                   <h1 id="heroTitle"><span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM NEWS</h1>
                   <p id="heroEdition" class="gs-hero-edition">2026.06.29(월) - 24회차</p>
                   <div class="gs-hero-cta-row">
-                    <a id="heroCta1" class="gs-hero-cta" href="index1.html">1안보기</a>
-                    <a id="heroCta2" class="gs-hero-cta" href="index2.html">2안보기</a>
+                    <a id="heroCtaAlt" class="gs-hero-cta" href="index1.html">1안 보기</a>
+                    <button type="button" id="heroCta" class="gs-hero-cta" @click="scrollToSection('business2')">더 알아보기</button>
                   </div>
                 </div>
+              </div>
+            </section>
+
+            <section id="section-business2" class="gs-fp gs-business">
+              <div class="gs-business-bg"></div>
+              <div class="gs-business-inner">
+                <h2 id="bizPage2Title" class="gs-biz-page-title">브리프 (금주의 Big5 이슈)</h2>
+                <div id="finWxTickerWrap" class="gs-finwx-ticker-wrap">
+                  <div id="finWxTicker" class="gs-finwx-ticker" role="button" tabindex="0" aria-expanded="false">
+                    <div class="gs-finwx-ticker-actions">
+                      <span id="finWxTickerHint" class="gs-finwx-ticker-hint-text">클릭하여 상세 보기</span>
+                      <button type="button" id="finWxTickerToggle" class="gs-finwx-ticker-toggle" aria-expanded="false" aria-label="상세 목록 펼치기">
+                        <span class="gs-finwx-ticker-arrow gs-finwx-ticker-arrow--down" aria-hidden="true">▼</span>
+                        <span class="gs-finwx-ticker-arrow gs-finwx-ticker-arrow--up" aria-hidden="true">▲</span>
+                      </button>
+                    </div>
+                    <div class="gs-finwx-ticker-viewport">
+                      <div id="finWxTickerTrack" class="gs-finwx-ticker-track"></div>
+                    </div>
+                  </div>
+                  <div id="finWxTickerDrop" class="gs-finwx-ticker-drop" hidden>
+                    <button type="button" id="finWxTickerClose" class="gs-finwx-ticker-close" aria-label="닫기">×</button>
+                    <div id="finWxTickerDropInner" class="gs-finwx-ticker-drop-inner"></div>
+                  </div>
+                </div>
+                <div class="gs-biz-carousel">
+                  <button type="button" class="gs-biz-arrow" id="bizPrev2" aria-label="이전 카드">‹</button>
+                  <div class="gs-biz-carousel-viewport"><div id="bizGrid2" class="gs-biz-grid gs-biz-grid--horizontal"></div></div>
+                  <button type="button" class="gs-biz-arrow" id="bizNext2" aria-label="다음 카드">›</button>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-business" class="gs-fp gs-media">
+              <div class="gs-media-inner">
+                <div class="gs-media-hd">
+                  <h2 id="bizMediaTitle" class="gs-media-title">국가별 경제·금융</h2>
+                  <p id="bizMediaDesc" class="gs-media-desc"></p>
+                  <p id="bizMediaHint" class="gs-media-hint"></p>
+                </div>
+                <div id="bizMediaFilterWrap" class="gs-media-filter-wrap" data-media-page="business">
+                  <div id="bizMediaFilters" class="gs-media-filters" role="tablist"></div>
+                  <div id="bizMediaFilterSub" class="gs-media-filter-sub" hidden></div>
+                </div>
+                <div class="gs-media-drawer-block">
+                  <div class="gs-media-counter-wrap gs-media-counter-wrap--top">
+                    <span id="bizMediaCounter" class="gs-media-counter">1 / 10</span>
+                  </div>
+                  <div class="gs-media-drawer-stage">
+                    <div id="bizMediaDrawer" class="gs-media-drawer">
+                      <button type="button" id="bizMediaDrawerClose" class="gs-media-drawer-close" hidden aria-label="목록으로">×</button>
+                      <div id="bizMediaCoverflowTrack" class="gs-media-drawer-track"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-smartnews" class="gs-fp gs-smartnews">
+              <div class="gs-es2-inner">
+                <div class="gs-es2-topbar" aria-hidden="true"></div>
+                <header class="gs-es2-hd">
+                  <div class="gs-es2-hd-center">
+                    <span id="girCompany" class="gs-es2-company">KB GLOBAL ONE TEAM</span>
+                    <h2 id="girTitle" class="gs-es2-title">국가별 글로벌 이슈 모니터링</h2>
+                    <p id="girDesc" class="gs-gir-desc"></p>
+                  </div>
+                  <div id="girLogo" class="gs-es2-logo">WEEKLY REPORT</div>
+                </header>
+                <div id="girMediaFilterWrap" class="gs-media-filter-wrap" data-media-page="gir">
+                  <div id="girMediaFilters" class="gs-media-filters" role="tablist"></div>
+                  <div id="girMediaFilterSub" class="gs-media-filter-sub" hidden></div>
+                </div>
+                <div id="girReportGrid" class="gs-gir-grid"></div>
+              </div>
+            </section>
+
+            <section id="section-trends" class="gs-fp gs-trends">
+              <div class="gs-exec-inner">
+                <header class="gs-exec-hd">
+                  <div class="gs-exec-hd-title">
+                    <h2 id="trendsTitle">브리핑&글로벌동향</h2>
+                    <p id="trendsPageSub" class="gs-exec-hd-sub">W E E K L Y · B R I E F</p>
+                  </div>
+                  <div class="gs-exec-hd-divider" aria-hidden="true"></div>
+                  <div class="gs-exec-hd-statement">
+                    <span id="trendsStatementLabel" class="gs-exec-hd-statement-label">EXECUTIVE SUMMARY</span>
+                    <p id="trendsBriefSummary"></p>
+                  </div>
+                </header>
+                <div class="gs-exec-body">
+                  <div class="gs-exec-main">
+                    <div class="gs-exec-split">
+                      <div class="gs-exec-panel gs-exec-panel--white">
+                        <h3 id="trendsProblemLabel">핵심 리스크</h3>
+                        <p id="trendsProblemDesc"></p>
+                      </div>
+                      <div class="gs-exec-panel gs-exec-panel--white">
+                        <h3 id="trendsOpportunityLabel">전략 기회</h3>
+                        <p id="trendsOpportunityDesc"></p>
+                      </div>
+                    </div>
+                    <div class="gs-exec-solution">
+                      <div class="gs-exec-solution-text">
+                        <span id="trendsSolutionLabel" class="gs-exec-solution-label">주간 해법</span>
+                        <h3 id="trendsFocusTitle">엔화 146 시대의 도래 · 아시아 금융 재편 시작</h3>
+                        <p id="trendsFocusDesc" class="gs-exec-solution-desc"></p>
+                        <div id="trendsFocusTags" class="gs-exec-tags"></div>
+                      </div>
+                      <div class="gs-exec-solution-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M32 8c-2 10-10 14-10 24a10 10 0 1 0 20 0c0-10-8-14-10-24z"/>
+                          <path d="M32 44v12M24 52h16"/>
+                          <path d="M20 20c4 2 8 2 12 0M32 16c4 2 8 2 12 0"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="gs-exec-signals-block">
+                      <h3 id="trendsSignalsTitle">4대 시장신호</h3>
+                      <p id="trendsSignalsHint" class="gs-exec-signals-hint"></p>
+                      <div id="trendsSignalsGrid" class="gs-exec-signals-grid"></div>
+                    </div>
+                  </div>
+                  <aside class="gs-exec-side">
+                    <h3 id="trendsActionLabel">KB 액션</h3>
+                    <ul id="trendsActionList" class="gs-exec-team"></ul>
+                  </aside>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-media" class="gs-fp gs-media">
+              <div class="gs-media-inner">
+                <div class="gs-media-hd">
+                  <h2 id="mediaTitle" class="gs-media-title">국가별 경제·금융</h2>
+                  <p id="mediaDesc" class="gs-media-desc"></p>
+                  <p id="mediaHint" class="gs-media-hint"></p>
+                </div>
+                <div id="mediaFilterWrap" class="gs-media-filter-wrap" data-media-page="media">
+                  <div id="mediaFilters" class="gs-media-filters" role="tablist"></div>
+                  <div id="mediaFilterSub" class="gs-media-filter-sub" hidden></div>
+                </div>
+                <div class="gs-media-carousel-block">
+                  <div class="gs-media-counter-wrap gs-media-counter-wrap--top">
+                    <span id="mediaCounter" class="gs-media-counter">1 / 10</span>
+                  </div>
+                  <div class="gs-media-carousel">
+                    <button type="button" id="mediaPrev" class="gs-media-arrow gs-media-arrow--prev" aria-label="Previous">&lt;</button>
+                    <div class="gs-media-carousel-stage">
+                      <div class="gs-media-carousel-viewport">
+                        <div id="mediaCoverflowTrack" class="gs-media-carousel-track"></div>
+                      </div>
+                    </div>
+                    <button type="button" id="mediaNext" class="gs-media-arrow gs-media-arrow--next" aria-label="Next">&gt;</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-regulation" class="gs-fp gs-regulation">
+              <div class="gs-regulation-inner">
+                <div class="gs-regulation-hd">
+                  <h2 id="regulationTitle" class="gs-regulation-title">규제·금융기관</h2>
+                  <p id="regulationDesc" class="gs-regulation-desc"></p>
+                  <p id="regulationHint" class="gs-regulation-hint"></p>
+                </div>
+                <div class="gs-regulation-body">
+                  <div class="gs-regulation-block gs-regulation-block--branch">
+                    <div class="gs-regulation-block-hd">
+                      <h3 id="regulationBranchTitle" class="gs-regulation-block-title">국외지점</h3>
+                      <span id="regulationBranchBadge" class="gs-regulation-block-badge">10개 거점</span>
+                      <p id="regulationBranchDesc" class="gs-regulation-block-desc"></p>
+                    </div>
+                    <div id="regulationBranchGrid" class="gs-regulation-grid gs-regulation-grid--branch"></div>
+                  </div>
+                  <div class="gs-regulation-block gs-regulation-block--sub">
+                    <div class="gs-regulation-block-hd">
+                      <h3 id="regulationSubsTitle" class="gs-regulation-block-title">국외연결자회사</h3>
+                      <span id="regulationSubsBadge" class="gs-regulation-block-badge">2개 법인</span>
+                      <p id="regulationSubsDesc" class="gs-regulation-block-desc"></p>
+                    </div>
+                    <div id="regulationSubsGrid" class="gs-regulation-grid gs-regulation-grid--sub"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-network" class="gs-fp gs-network">
+              <div class="gs-network-bg"></div>
+              <div class="gs-network-inner">
+                <div class="gs-network-hd">
+                  <h2 id="networkTitle" class="gs-network-page-title">글로벌네트웍스 - 국가별 한마디</h2>
+                </div>
+                <div class="gs-network-body">
+                  <div class="gs-map-wrap">
+                    <div class="gs-map-stage">
+                      <div class="gs-map-base" id="mapBase">
+                        <div id="mapZoomCtrl" class="gs-map-zoom-ctrl" role="group" aria-label="지도 확대·축소">
+                          <button type="button" id="mapZoomOut" class="gs-map-zoom-btn" aria-label="축소">−</button>
+                          <span id="mapZoomLevel" class="gs-map-zoom-level">100%</span>
+                          <button type="button" id="mapZoomIn" class="gs-map-zoom-btn" aria-label="확대">+</button>
+                        </div>
+                        <div id="mapZoomLayer" class="gs-map-zoom-layer"></div>
+                        <div id="mapDots"></div>
+                        <div id="mapMagnifier" class="gs-map-mag gs-map-bubble" aria-hidden="true">
+                          <div class="gs-map-bubble-inner">
+                            <div id="mapMagLabel" class="gs-map-bubble-title">국가별 한마디</div>
+                            <span id="mapMagCountry" class="gs-map-bubble-country"></span>
+                            <p id="mapMagText" class="gs-map-bubble-text"></p>
+                          </div>
+                          <span class="gs-map-bubble-tail" aria-hidden="true"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="gs-oneword-editor" id="networkOnewordEditor">
+                    <div class="gs-oneword-editor-hd">
+                      <h3 id="networkOnewordEditorTitle" class="gs-oneword-editor-title">국가별 한마디 입력하기</h3>
+                      <p id="networkOnewordEditorHint" class="gs-oneword-editor-hint"></p>
+                    </div>
+                    <div class="gs-oneword-form-row">
+                      <select id="networkOnewordCountry" class="gs-oneword-select" aria-label="국가 선택"></select>
+                      <input type="text" id="networkOnewordText" class="gs-oneword-text" />
+                      <button type="button" id="networkOnewordSubmit" class="gs-oneword-submit">입력</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-hub" class="gs-fp gs-hub">
+              <div class="gs-hub-inner">
+                <div class="gs-hub-engage-hd">
+                  <h2 id="hubTitle">Key-Man</h2>
+                  <p id="hubDesc"></p>
+                  <span id="hubKeyManBadge" class="gs-hub-engage-badge"></span>
+                </div>
+                <div id="keyManGrid" class="gs-keyman-grid"></div>
+                <div id="hubKeyManFoot" class="gs-hub-engage-foot"></div>
+              </div>
+            </section>
+
+            <section id="section-outlets" class="gs-fp gs-outlets">
+              <div class="gs-outlets-inner">
+                <section class="gs-footer-media" aria-labelledby="footerMediaTitle">
+                  <h2 id="footerMediaTitle" class="gs-footer-media-title">주요 언론사 링크</h2>
+                  <p id="footerMediaDesc" class="gs-footer-media-desc"></p>
+                  <div id="footerMediaGrid" class="gs-footer-media-grid"></div>
+                </section>
               </div>
             </section>
 
