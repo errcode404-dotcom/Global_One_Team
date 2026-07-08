@@ -1231,6 +1231,8 @@ html.gs-light #section-business .gs-media-drawer-vscroll-btn:hover:not(:disabled
   position: relative;
   overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  touch-action: none;
 }
 html.gs-light #section-business .gs-media-drawer-vscroll-track {
   background: rgba(26, 26, 46, 0.08);
@@ -1246,7 +1248,14 @@ html.gs-light #section-business .gs-media-drawer-vscroll-track {
   background: linear-gradient(180deg, #00e5c3 0%, #E5C04A 100%);
   box-shadow: 0 0 10px rgba(0, 229, 195, 0.45);
   transition: transform .22s cubic-bezier(.28, 1, .32, 1), height .22s cubic-bezier(.28, 1, .32, 1);
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+#section-business .gs-media-drawer-vscroll-thumb.is-dragging,
+#section-business .gs-media-drawer-vscroll-track.is-dragging .gs-media-drawer-vscroll-thumb {
+  cursor: grabbing;
+  transition: none;
 }
 html.gs-light #section-business .gs-media-drawer-vscroll-thumb {
   background: linear-gradient(180deg, #008f7a 0%, #c9a227 100%);
@@ -1254,6 +1263,12 @@ html.gs-light #section-business .gs-media-drawer-vscroll-thumb {
 }
 @media (max-width: 1024px) {
   #section-business .gs-media-drawer-vscroll { display: flex; }
+}
+@media (max-width: 640px) {
+  body.gs-section-business-active .gs-main-menu-fab {
+    right: auto;
+    left: 16px;
+  }
 }
 #section-business .gs-media-counter-wrap--top {
   position: relative;
@@ -4778,8 +4793,8 @@ const TX = {
     },
     mediaHint: '마우스 휠·좌우 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
     mediaHintVertical: '마우스 휠·상하 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
-    mediaHintDrawer: '휠로 돌려 뒤에서 앞으로 가져오기 · 앞 카드 클릭 시 펼치기',
-    mediaHintDrawerTouch: '오른쪽 스크롤 또는 위·아래로 밀어 카드 전환 · 앞 카드 탭 시 펼치기',
+    mediaHintDrawer: '휠로 돌려 뒤에서 앞으로 가져오기 · 카드 클릭 시 상세 보기',
+    mediaHintDrawerTouch: '오른쪽 스크롤 또는 위·아래로 밀어 카드 전환 · 카드 탭 시 상세 보기',
     mediaDrawerVscrollAria: '카드 이동',
     mediaHintDrawerFocus: '카드 클릭 시 상세 보기 · 하단 탭으로 전환 · 닫기로 목록 복귀',
     mediaDrawerClose: '목록으로',
@@ -5241,8 +5256,8 @@ const TX = {
     },
     mediaHint: 'Browse with wheel, arrows or card clicks · click the selected card again for details',
     mediaHintVertical: 'Browse with wheel, up/down arrows or card clicks · click the selected card again for details',
-    mediaHintDrawer: 'Scroll to bring cards from back to front · click the front card to expand',
-    mediaHintDrawerTouch: 'Use the scroll rail or swipe up/down to change cards · tap the front card to expand',
+    mediaHintDrawer: 'Scroll to bring cards from back to front · click a card for details',
+    mediaHintDrawerTouch: 'Use the scroll rail or swipe up/down to change cards · tap a card for details',
     mediaDrawerVscrollAria: 'Card navigation',
     mediaHintDrawerFocus: 'Click card for details · switch via bottom tabs · close to return to list',
     mediaDrawerClose: 'Back to list',
@@ -5725,6 +5740,10 @@ function updateClockUI() {
 
 function getScrollEl() { return document.getElementById('gsScroll') }
 
+function syncSectionBodyClass() {
+  document.body.classList.toggle('gs-section-business-active', activeSection === 'business')
+}
+
 function scrollToSection(id, tabIndex) {
   activeSection = id
   if (tabIndex != null) activeTabIndex = tabIndex
@@ -5735,6 +5754,7 @@ function scrollToSection(id, tabIndex) {
   navOpen.value = false
   heroHeader.value = id === 'hero'
   headerSolid.value = id !== 'hero'
+  syncSectionBodyClass()
   renderNav(); renderDots()
   const el = document.getElementById('section-' + id)
   const sc = getScrollEl()
@@ -5759,6 +5779,7 @@ function updateActiveSectionFromScroll() {
   activeSection = bestId
   const idx = TX[LANG].tabIds.indexOf(activeSection)
   activeTabIndex = idx >= 0 ? idx : 0
+  syncSectionBodyClass()
   renderNav(); renderDots()
   heroHeader.value = activeSection === 'hero'
   headerSolid.value = activeSection !== 'hero'
@@ -5781,6 +5802,7 @@ function setupScrollSpy() {
     })
   }, { passive: true })
   updateActiveSectionFromScroll()
+  syncSectionBodyClass()
 }
 
 function renderFooterMedia() {
@@ -7129,13 +7151,88 @@ function updateDrawerVscroll(key) {
 function bindDrawerVscroll(key) {
   if (key !== 'business' || document.body.dataset.bizDrawerVscrollBound) return
   document.body.dataset.bizDrawerVscrollBound = '1'
-  document.getElementById('bizMediaDrawerUp')?.addEventListener('click', () => moveMediaCarousel(key, -1))
-  document.getElementById('bizMediaDrawerDown')?.addEventListener('click', () => moveMediaCarousel(key, 1))
+  const up = document.getElementById('bizMediaDrawerUp')
+  const down = document.getElementById('bizMediaDrawerDown')
+  const track = document.getElementById('bizMediaDrawerVscrollTrack')
+  const thumb = document.getElementById('bizMediaDrawerThumb')
+  up?.addEventListener('click', () => moveMediaCarousel(key, -1))
+  down?.addEventListener('click', () => moveMediaCarousel(key, 1))
+  if (!track || !thumb) return
+
+  let dragging = false
+  let dragPointerId = null
+  let dragOffsetY = 0
+  let lastIdx = -1
+
+  function vscrollMetrics() {
+    const total = mediaCardTotal(key)
+    const trackH = track.clientHeight || 1
+    const thumbH = Math.max(24, trackH / Math.max(total, 4))
+    return { total, trackH, thumbH }
+  }
+
+  function idxFromPointerY(clientY, centerThumb) {
+    const { total, trackH, thumbH } = vscrollMetrics()
+    if (total <= 1) return 0
+    const rect = track.getBoundingClientRect()
+    let thumbTop = clientY - rect.top
+    thumbTop -= centerThumb ? thumbH / 2 : dragOffsetY
+    thumbTop = Math.max(0, Math.min(trackH - thumbH, thumbTop))
+    const pct = thumbTop / Math.max(1, trackH - thumbH)
+    return Math.round(pct * (total - 1))
+  }
+
+  function setDragging(on) {
+    dragging = on
+    thumb.classList.toggle('is-dragging', on)
+    track.classList.toggle('is-dragging', on)
+  }
+
+  function onPointerDown(e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    const { total } = vscrollMetrics()
+    if (total <= 1) return
+    dragPointerId = e.pointerId
+    track.setPointerCapture(e.pointerId)
+    setDragging(true)
+    const onThumb = e.target.closest('.gs-media-drawer-vscroll-thumb')
+    if (onThumb) {
+      dragOffsetY = e.clientY - thumb.getBoundingClientRect().top
+    } else {
+      dragOffsetY = vscrollMetrics().thumbH / 2
+      const idx = idxFromPointerY(e.clientY, true)
+      lastIdx = idx
+      snapToDrawerIndex(key, idx)
+    }
+    e.preventDefault()
+  }
+
+  function onPointerMove(e) {
+    if (!dragging || e.pointerId !== dragPointerId) return
+    const idx = idxFromPointerY(e.clientY, false)
+    if (idx !== lastIdx) {
+      lastIdx = idx
+      snapToDrawerIndex(key, idx)
+    }
+  }
+
+  function onPointerUp(e) {
+    if (!dragging || e.pointerId !== dragPointerId) return
+    setDragging(false)
+    dragPointerId = null
+    lastIdx = -1
+    track.releasePointerCapture(e.pointerId)
+    updateDrawerVscroll(key)
+  }
+
+  track.addEventListener('pointerdown', onPointerDown)
+  track.addEventListener('pointermove', onPointerMove)
+  track.addEventListener('pointerup', onPointerUp)
+  track.addEventListener('pointercancel', onPointerUp)
 }
 
 function getMediaDrawerHint(key, st) {
   const t = TX[LANG]
-  if (st.drawerFocused) return t.mediaHintDrawerFocus
   if (key === 'business' && t.mediaHintDrawerTouch) {
     const touch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 1024
     if (touch) return t.mediaHintDrawerTouch
@@ -7156,22 +7253,8 @@ function setDrawerFocus(key, focused) {
 function handleDrawerCardClick(key, idx) {
   const cfg = MEDIA_PAGES[key]
   const st = mediaPages[key]
-  if (!st.drawerFocused) {
-    if (idx !== st.carouselIndex) {
-      snapToDrawerIndex(key, idx)
-      return
-    }
-    setDrawerFocus(key, true)
-    return
-  }
-  if (idx === st.carouselIndex) {
-    showDrawer(cfg.drawerType, idx)
-    return
-  }
-  st.carouselIndex = idx
-  st.carouselOffset = idx
-  st.carouselTarget = idx
-  updateMediaDrawer(key)
+  if (idx !== st.carouselIndex) snapToDrawerIndex(key, idx)
+  showDrawer(cfg.drawerType, idx)
 }
 
 function finishDrawerWheelIdle(key) {
@@ -8153,7 +8236,7 @@ function initHeroVideo() {
                     </div>
                     <div class="gs-media-drawer-vscroll" role="group" aria-label="카드 이동">
                       <button type="button" id="bizMediaDrawerUp" class="gs-media-drawer-vscroll-btn" aria-label="이전 카드">▲</button>
-                      <div class="gs-media-drawer-vscroll-track" aria-hidden="true">
+                      <div id="bizMediaDrawerVscrollTrack" class="gs-media-drawer-vscroll-track">
                         <span id="bizMediaDrawerThumb" class="gs-media-drawer-vscroll-thumb"></span>
                       </div>
                       <button type="button" id="bizMediaDrawerDown" class="gs-media-drawer-vscroll-btn" aria-label="다음 카드">▼</button>
