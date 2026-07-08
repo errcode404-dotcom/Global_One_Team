@@ -1462,6 +1462,9 @@ html.gs-light #section-business .gs-media-drawer-close:hover {
   #section-business .gs-media-drawer:not(.active) .gs-media-drawer-track,
   #section-business .gs-media-drawer.active .gs-media-drawer-track { transform: none; }
 }
+@media (pointer: coarse), (max-width: 1024px) {
+  #section-business .gs-media-drawer-stage { touch-action: none; }
+}
 
 .gs-business { justify-content: stretch; }
 .gs-business-bg {
@@ -4680,6 +4683,7 @@ const TX = {
     mediaHint: '마우스 휠·좌우 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
     mediaHintVertical: '마우스 휠·상하 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
     mediaHintDrawer: '휠로 돌려 뒤에서 앞으로 가져오기 · 앞 카드 클릭 시 펼치기',
+    mediaHintDrawerTouch: '위·아래로 밀어 카드 전환 · 앞 카드 탭 시 펼치기',
     mediaHintDrawerFocus: '카드 클릭 시 상세 보기 · 하단 탭으로 전환 · 닫기로 목록 복귀',
     mediaDrawerClose: '목록으로',
     mobileFrameBack: '뒤로',
@@ -5141,6 +5145,7 @@ const TX = {
     mediaHint: 'Browse with wheel, arrows or card clicks · click the selected card again for details',
     mediaHintVertical: 'Browse with wheel, up/down arrows or card clicks · click the selected card again for details',
     mediaHintDrawer: 'Scroll to bring cards from back to front · click the front card to expand',
+    mediaHintDrawerTouch: 'Swipe up or down to change cards · tap the front card to expand',
     mediaHintDrawerFocus: 'Click card for details · switch via bottom tabs · close to return to list',
     mediaDrawerClose: 'Back to list',
     mobileFrameBack: 'Back',
@@ -6993,10 +6998,17 @@ function updateMediaDrawer(key) {
   const counter = document.getElementById(cfg.counterId)
   if (counter) counter.textContent = `${st.carouselIndex + 1} / ${total}`
   const hintEl = document.getElementById(cfg.hintId)
-  if (hintEl) {
-    const t = TX[LANG]
-    hintEl.textContent = st.drawerFocused ? t.mediaHintDrawerFocus : t.mediaHintDrawer
+  if (hintEl) hintEl.textContent = getMediaDrawerHint(key, st)
+}
+
+function getMediaDrawerHint(key, st) {
+  const t = TX[LANG]
+  if (st.drawerFocused) return t.mediaHintDrawerFocus
+  if (key === 'business' && t.mediaHintDrawerTouch) {
+    const touch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 1024
+    if (touch) return t.mediaHintDrawerTouch
   }
+  return t.mediaHintDrawer
 }
 
 function snapDrawerIndex(key, idx) {
@@ -7030,16 +7042,30 @@ function handleDrawerCardClick(key, idx) {
   updateMediaDrawer(key)
 }
 
-function onDrawerWheel(e, key) {
+function finishDrawerWheelIdle(key) {
+  const st = mediaPages[key]
+  if (st.wheelIdleTimer) { clearTimeout(st.wheelIdleTimer); st.wheelIdleTimer = null }
+  st.wheelDriving = false
+  const target = Math.round(st.carouselTarget)
+  if (st.snapAnim) { cancelAnimationFrame(st.snapAnim); st.snapAnim = null }
+  snapDrawerCarouselTo(key, target, false, false, true)
+}
+
+function scheduleDrawerWheelIdle(key) {
+  const st = mediaPages[key]
+  if (st.wheelIdleTimer) clearTimeout(st.wheelIdleTimer)
+  st.wheelIdleTimer = setTimeout(() => {
+    st.wheelIdleTimer = null
+    finishDrawerWheelIdle(key)
+  }, DRAWER_WHEEL_IDLE_MS)
+}
+
+function applyDrawerWheelDelta(key, deltaCards) {
   const cfg = MEDIA_PAGES[key]
   const st = mediaPages[key]
-  if (activeSection !== cfg.activeSection) return
-  if (st.drawerFocused) return
-  e.preventDefault()
-  let delta = e.deltaY
-  if (e.deltaMode === 1) delta *= MEDIA_WHEEL_CARD_PX
-  else if (e.deltaMode === 2) delta *= MEDIA_WHEEL_CARD_PX * 3
-  const deltaCards = delta / MEDIA_WHEEL_CARD_PX
+  if (activeSection !== cfg.activeSection) return false
+  if (st.drawerFocused) return false
+  if (!deltaCards) return false
   if (!st.wheelDriving) {
     if (st.snapAnim) { cancelAnimationFrame(st.snapAnim); st.snapAnim = null }
     st.wheelDriving = true
@@ -7048,14 +7074,46 @@ function onDrawerWheel(e, key) {
   } else {
     st.carouselTarget += deltaCards
   }
-  if (st.wheelIdleTimer) clearTimeout(st.wheelIdleTimer)
-  st.wheelIdleTimer = setTimeout(() => {
-    st.wheelIdleTimer = null
-    st.wheelDriving = false
-    const target = Math.round(st.carouselTarget)
-    if (st.snapAnim) { cancelAnimationFrame(st.snapAnim); st.snapAnim = null }
-    snapDrawerCarouselTo(key, target, false, false, true)
-  }, DRAWER_WHEEL_IDLE_MS)
+  scheduleDrawerWheelIdle(key)
+  return true
+}
+
+function onDrawerWheel(e, key) {
+  e.preventDefault()
+  let delta = e.deltaY
+  if (e.deltaMode === 1) delta *= MEDIA_WHEEL_CARD_PX
+  else if (e.deltaMode === 2) delta *= MEDIA_WHEEL_CARD_PX * 3
+  applyDrawerWheelDelta(key, delta / MEDIA_WHEEL_CARD_PX)
+}
+
+function bindDrawerTouch(drawer, key) {
+  if (key !== 'business') return
+  let tracking = false
+  let lastY = 0
+  const snapOnRelease = () => {
+    tracking = false
+    const st = mediaPages[key]
+    if (!st.wheelDriving && !st.wheelIdleTimer) return
+    finishDrawerWheelIdle(key)
+  }
+  drawer.addEventListener('touchstart', (e) => {
+    const cfg = MEDIA_PAGES[key]
+    const st = mediaPages[key]
+    if (activeSection !== cfg.activeSection || st.drawerFocused) return
+    if (!e.touches.length) return
+    tracking = true
+    lastY = e.touches[0].clientY
+  }, { passive: true })
+  drawer.addEventListener('touchmove', (e) => {
+    if (!tracking || !e.touches.length) return
+    const y = e.touches[0].clientY
+    const deltaY = lastY - y
+    lastY = y
+    if (Math.abs(deltaY) < 0.5) return
+    if (applyDrawerWheelDelta(key, deltaY / MEDIA_WHEEL_CARD_PX)) e.preventDefault()
+  }, { passive: false })
+  drawer.addEventListener('touchend', snapOnRelease, { passive: true })
+  drawer.addEventListener('touchcancel', snapOnRelease, { passive: true })
 }
 
 function bindMediaDrawer(key) {
@@ -7066,6 +7124,7 @@ function bindMediaDrawer(key) {
   if (!section || !drawer || !track || section.dataset.drawerBound) return
   section.dataset.drawerBound = '1'
   drawer.addEventListener('wheel', (e) => onDrawerWheel(e, key), { passive: false })
+  bindDrawerTouch(drawer, key)
   track.addEventListener('click', (e) => {
     const card = e.target.closest('.gs-drawer-card')
     if (!card) return
@@ -7513,7 +7572,7 @@ function renderMediaPage(key) {
   set(cfg.titleId, t.mediaTitle)
   set(cfg.descId, t.mediaDesc || '')
   if (cfg.drawer) {
-    set(cfg.hintId, st.drawerFocused ? t.mediaHintDrawerFocus : t.mediaHintDrawer)
+    set(cfg.hintId, getMediaDrawerHint(key, st))
     const closeBtn = document.getElementById(cfg.drawerCloseId)
     if (closeBtn) closeBtn.setAttribute('aria-label', t.mediaDrawerClose)
   } else {
