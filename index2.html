@@ -1161,6 +1161,100 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
   width: 100%;
   margin-top: 6px;
 }
+#section-business .gs-media-drawer-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+#section-business .gs-media-drawer-vscroll {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 44px;
+  padding: 10px 7px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(8, 20, 42, 0.58);
+  border: 1px solid rgba(100, 160, 255, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+html.gs-light #section-business .gs-media-drawer-vscroll {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(26, 26, 46, 0.1);
+  box-shadow: 0 4px 22px rgba(26, 26, 46, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+#section-business .gs-media-drawer-vscroll-btn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: var(--sans);
+  display: grid;
+  place-items: center;
+  transition: border-color .2s, color .2s, background .2s, transform .2s;
+}
+html.gs-light #section-business .gs-media-drawer-vscroll-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(26, 26, 46, 0.12);
+  color: #1a1a2e;
+}
+#section-business .gs-media-drawer-vscroll-btn:hover:not(:disabled) {
+  border-color: #00e5c3;
+  color: #00e5c3;
+  transform: translateY(-1px);
+}
+html.gs-light #section-business .gs-media-drawer-vscroll-btn:hover:not(:disabled) {
+  border-color: #008f7a;
+  color: #008f7a;
+}
+#section-business .gs-media-drawer-vscroll-btn:disabled { opacity: .35; cursor: default; }
+#section-business .gs-media-drawer-vscroll-track {
+  flex: 1;
+  width: 8px;
+  min-height: 72px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+html.gs-light #section-business .gs-media-drawer-vscroll-track {
+  background: rgba(26, 26, 46, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(26, 26, 46, 0.06);
+}
+#section-business .gs-media-drawer-vscroll-thumb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 24px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #00e5c3 0%, #E5C04A 100%);
+  box-shadow: 0 0 10px rgba(0, 229, 195, 0.45);
+  transition: transform .22s cubic-bezier(.28, 1, .32, 1), height .22s cubic-bezier(.28, 1, .32, 1);
+  pointer-events: none;
+}
+html.gs-light #section-business .gs-media-drawer-vscroll-thumb {
+  background: linear-gradient(180deg, #008f7a 0%, #c9a227 100%);
+  box-shadow: 0 0 8px rgba(0, 143, 122, 0.28);
+}
+@media (max-width: 1024px) {
+  #section-business .gs-media-drawer-vscroll { display: flex; }
+}
 #section-business .gs-media-counter-wrap--top {
   position: relative;
   z-index: 50;
@@ -1169,10 +1263,12 @@ html.gs-light .gs-media-counter { color: #1a1a2e; }
 }
 #section-business .gs-media-drawer-stage {
   position: relative;
+  flex: 1;
+  min-width: 0;
   width: 100%;
   max-width: 960px;
   height: 460px;
-  margin: 0 auto;
+  margin: 0;
   padding-top: 0;
   box-sizing: border-box;
   overflow: visible;
@@ -4683,7 +4779,8 @@ const TX = {
     mediaHint: '마우스 휠·좌우 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
     mediaHintVertical: '마우스 휠·상하 버튼·카드 클릭으로 탐색 · 선택한 카드를 다시 클릭하면 상세 보기',
     mediaHintDrawer: '휠로 돌려 뒤에서 앞으로 가져오기 · 앞 카드 클릭 시 펼치기',
-    mediaHintDrawerTouch: '위·아래로 밀어 카드 전환 · 앞 카드 탭 시 펼치기',
+    mediaHintDrawerTouch: '오른쪽 스크롤 또는 위·아래로 밀어 카드 전환 · 앞 카드 탭 시 펼치기',
+    mediaDrawerVscrollAria: '카드 이동',
     mediaHintDrawerFocus: '카드 클릭 시 상세 보기 · 하단 탭으로 전환 · 닫기로 목록 복귀',
     mediaDrawerClose: '목록으로',
     mobileFrameBack: '뒤로',
@@ -5145,7 +5242,8 @@ const TX = {
     mediaHint: 'Browse with wheel, arrows or card clicks · click the selected card again for details',
     mediaHintVertical: 'Browse with wheel, up/down arrows or card clicks · click the selected card again for details',
     mediaHintDrawer: 'Scroll to bring cards from back to front · click the front card to expand',
-    mediaHintDrawerTouch: 'Swipe up or down to change cards · tap the front card to expand',
+    mediaHintDrawerTouch: 'Use the scroll rail or swipe up/down to change cards · tap the front card to expand',
+    mediaDrawerVscrollAria: 'Card navigation',
     mediaHintDrawerFocus: 'Click card for details · switch via bottom tabs · close to return to list',
     mediaDrawerClose: 'Back to list',
     mobileFrameBack: 'Back',
@@ -6854,6 +6952,7 @@ function updateDrawerCoverflow(wheeling, key) {
   st.carouselIndex = mediaNormIndex(st.carouselOffset, total)
   const counter = document.getElementById(cfg.counterId)
   if (counter) counter.textContent = `${st.carouselIndex + 1} / ${total}`
+  updateDrawerVscroll(key)
 }
 
 function snapDrawerCarouselTo(key, target, fast, arrow, wheel) {
@@ -6999,6 +7098,39 @@ function updateMediaDrawer(key) {
   if (counter) counter.textContent = `${st.carouselIndex + 1} / ${total}`
   const hintEl = document.getElementById(cfg.hintId)
   if (hintEl) hintEl.textContent = getMediaDrawerHint(key, st)
+  updateDrawerVscroll(key)
+}
+
+function updateDrawerVscroll(key) {
+  if (key !== 'business') return
+  const st = mediaPages[key]
+  const total = mediaCardTotal(key)
+  const thumb = document.getElementById('bizMediaDrawerThumb')
+  const track = thumb?.parentElement
+  const up = document.getElementById('bizMediaDrawerUp')
+  const down = document.getElementById('bizMediaDrawerDown')
+  if (!thumb || !track) return
+  if (total <= 1) {
+    thumb.style.height = '100%'
+    thumb.style.transform = 'translateY(0)'
+    if (up) up.disabled = true
+    if (down) down.disabled = true
+    return
+  }
+  if (up) up.disabled = false
+  if (down) down.disabled = false
+  const trackH = track.clientHeight || 1
+  const thumbH = Math.max(24, trackH / Math.max(total, 4))
+  const pct = st.carouselIndex / (total - 1)
+  thumb.style.height = thumbH + 'px'
+  thumb.style.transform = `translateY(${(trackH - thumbH) * pct}px)`
+}
+
+function bindDrawerVscroll(key) {
+  if (key !== 'business' || document.body.dataset.bizDrawerVscrollBound) return
+  document.body.dataset.bizDrawerVscrollBound = '1'
+  document.getElementById('bizMediaDrawerUp')?.addEventListener('click', () => moveMediaCarousel(key, -1))
+  document.getElementById('bizMediaDrawerDown')?.addEventListener('click', () => moveMediaCarousel(key, 1))
 }
 
 function getMediaDrawerHint(key, st) {
@@ -7125,6 +7257,7 @@ function bindMediaDrawer(key) {
   section.dataset.drawerBound = '1'
   drawer.addEventListener('wheel', (e) => onDrawerWheel(e, key), { passive: false })
   bindDrawerTouch(drawer, key)
+  bindDrawerVscroll(key)
   track.addEventListener('click', (e) => {
     const card = e.target.closest('.gs-drawer-card')
     if (!card) return
@@ -7150,6 +7283,7 @@ function renderMediaDrawerTrack(key) {
     track.innerHTML = `<p class="gs-media-empty">${t.mediaFilterEmpty}</p>`
     const counter = document.getElementById(cfg.counterId)
     if (counter) counter.textContent = `0 / 0`
+    updateDrawerVscroll(key)
     return
   }
   track.innerHTML = st.displayedCards.map((c, i) => `<article class="gs-drawer-card" data-index="${i}">
@@ -7575,6 +7709,11 @@ function renderMediaPage(key) {
     set(cfg.hintId, getMediaDrawerHint(key, st))
     const closeBtn = document.getElementById(cfg.drawerCloseId)
     if (closeBtn) closeBtn.setAttribute('aria-label', t.mediaDrawerClose)
+    if (key === 'business') {
+      document.getElementById('bizMediaDrawerUp')?.setAttribute('aria-label', t.mediaPrevUp)
+      document.getElementById('bizMediaDrawerDown')?.setAttribute('aria-label', t.mediaNextDown)
+      document.querySelector('#section-business .gs-media-drawer-vscroll')?.setAttribute('aria-label', t.mediaDrawerVscrollAria)
+    }
   } else {
     set(cfg.hintId, cfg.vertical ? t.mediaHintVertical : t.mediaHint)
     const prev = document.getElementById(cfg.prevId)
@@ -8005,10 +8144,19 @@ function initHeroVideo() {
                   <div class="gs-media-counter-wrap gs-media-counter-wrap--top">
                     <span id="bizMediaCounter" class="gs-media-counter">1 / 10</span>
                   </div>
-                  <div class="gs-media-drawer-stage">
-                    <div id="bizMediaDrawer" class="gs-media-drawer">
-                      <button type="button" id="bizMediaDrawerClose" class="gs-media-drawer-close" hidden aria-label="목록으로">×</button>
-                      <div id="bizMediaCoverflowTrack" class="gs-media-drawer-track"></div>
+                  <div class="gs-media-drawer-row">
+                    <div class="gs-media-drawer-stage">
+                      <div id="bizMediaDrawer" class="gs-media-drawer">
+                        <button type="button" id="bizMediaDrawerClose" class="gs-media-drawer-close" hidden aria-label="목록으로">×</button>
+                        <div id="bizMediaCoverflowTrack" class="gs-media-drawer-track"></div>
+                      </div>
+                    </div>
+                    <div class="gs-media-drawer-vscroll" role="group" aria-label="카드 이동">
+                      <button type="button" id="bizMediaDrawerUp" class="gs-media-drawer-vscroll-btn" aria-label="이전 카드">▲</button>
+                      <div class="gs-media-drawer-vscroll-track" aria-hidden="true">
+                        <span id="bizMediaDrawerThumb" class="gs-media-drawer-vscroll-thumb"></span>
+                      </div>
+                      <button type="button" id="bizMediaDrawerDown" class="gs-media-drawer-vscroll-btn" aria-label="다음 카드">▼</button>
                     </div>
                   </div>
                 </div>
