@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KB Global One Team · Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+.gs-app {
+  --navy: #0a1628;
+  --navy2: #0d1f3c;
+  --blue: #0066cc;
+  --ink: #ffffff;
+  --muted: rgba(255,255,255,.72);
+  --header: 72px;
+  --sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--navy);
+}
+.gs-app * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #0a1628; }
+.gs-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--header);
+  display: flex; flex-direction: column; align-items: stretch;
+}
+.gs-header-inner {
+  width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 32px;
+  height: var(--header); flex-shrink: 0;
+  display: flex; align-items: center; gap: 20px;
+}
+.gs-logo {
+  display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex-shrink: 0;
+}
+.gs-logo-mark {
+  width: 40px; height: 40px; background: #695647; border-radius: 4px;
+  display: grid; place-items: center; padding: 5px; flex-shrink: 0;
+}
+.gs-logo-mark svg { width: 100%; height: 100%; display: block; }
+.gs-logo-text { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+.gs-logo-text em { font-style: normal; color: var(--muted); font-weight: 400; font-size: 14px; display: block; }
+.gs-nav { flex: 1; }
+.gs-util { display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin-left: auto; }
+.gs-util-link {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink);
+  text-decoration: none; opacity: .85;
+}
+.gs-lang { display: flex; gap: 4px; flex-shrink: 0; }
+.gs-lang button {
+  border: 1px solid rgba(255,255,255,.3); background: transparent; color: var(--ink);
+  min-width: 36px; height: 32px; padding: 0 8px; font-size: 18px; line-height: 1;
+  cursor: pointer; border-radius: 4px; display: grid; place-items: center;
+}
+.gs-lang button.on { background: var(--blue); border-color: var(--blue); }
+.gs-theme-switch {
+  width: 40px; height: 22px; border-radius: 11px; border: 1px solid #4c4d4f;
+  background: #141414; padding: 0; cursor: pointer; position: relative; flex-shrink: 0;
+}
+.gs-theme-switch__knob {
+  position: absolute; top: 1px; left: 1px; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12);
+  display: grid; place-items: center;
+  transform: translateX(18px);
+}
+.gs-theme-icon { width: 12px; height: 12px; position: absolute; color: #cfd3dc; }
+.gs-theme-icon--sun { opacity: 0; }
+.gs-theme-icon--moon { opacity: 1; }
+.gs-menu-btn {
+  width: 36px; height: 32px; border: 0; background: transparent; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 6px 4px;
+}
+.gs-menu-btn span { display: block; height: 2px; background: #fff; border-radius: 1px; }
+.gs-hero { position: relative; min-height: 100vh; overflow: hidden; }
+.gs-hero-video { position: absolute; inset: 0; z-index: 0; }
+.gs-hero-video::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: rgba(8, 12, 24, .42);
+}
+.gs-hero-video video {
+  width: 100%; height: 100%; display: block; object-fit: cover;
+}
+.gs-hero-inner {
+  position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 0 auto;
+  padding: calc(var(--header) + 32px) 32px 48px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; box-sizing: border-box; text-align: center;
+}
+.gs-hero-box { background: transparent; padding: 0; max-width: 720px; width: 100%; }
+.gs-hero-tag {
+  font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+  color: #00e5c3; margin-bottom: 18px;
+}
+.gs-hero-box h1 {
+  font-size: clamp(44px, 9vw, 88px); font-weight: 700; line-height: 1.05;
+  margin-bottom: 22px; letter-spacing: .08em; text-transform: uppercase;
+}
+.gs-hero-kb { color: #F39200; }
+.gs-hero-edition {
+  font-size: clamp(14px, 2.2vw, 18px); font-weight: 600; letter-spacing: .05em;
+  color: rgba(255,255,255,.76); margin: -6px 0 26px;
+}
+.gs-hero-cta-row {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center;
+}
+.gs-hero-cta {
+  position: relative; z-index: 0; isolation: isolate;
+  display: inline-block; border: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(1px 1px at 14% 32%, rgba(255,255,255,.45), transparent 80%),
+    radial-gradient(1px 1px at 68% 24%, rgba(255,255,255,.32), transparent 80%),
+    radial-gradient(1px 1px at 38% 72%, rgba(255,255,255,.28), transparent 80%),
+    radial-gradient(1px 1px at 82% 58%, rgba(255,255,255,.3), transparent 80%),
+    linear-gradient(180deg, rgba(12, 16, 32, .98) 0%, rgba(4, 6, 16, 1) 100%);
+  color: #fff;
+  padding: 15px 42px; font-size: 14px; font-weight: 600; letter-spacing: .04em;
+  font-family: var(--sans);
+  text-shadow:
+    0 0 8px rgba(217, 70, 239, .95),
+    0 0 16px rgba(139, 92, 246, .85),
+    0 0 24px rgba(59, 130, 246, .75),
+    0 0 32px rgba(34, 211, 238, .65);
+  text-decoration: none;
+  cursor: pointer;
+}
+.gs-hero-cta::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  pointer-events: none; padding: 1.5px;
+  background: linear-gradient(90deg, #e879f9 0%, #a855f7 18%, #6366f1 38%, #3b82f6 58%, #22d3ee 78%, #c084fc 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, .75)) drop-shadow(0 0 10px rgba(34, 211, 238, .55));
+}
+@media (max-width: 1024px) {
+  .gs-util-link { display: none; }
+  .gs-hero-inner { padding: calc(var(--header) + 24px) 20px 40px; }
+}
+@media (max-width: 640px) {
+  .gs-menu-btn { display: none; }
+  .gs-header-inner { padding: 0 16px; gap: 10px; }
+  .gs-util { gap: 6px; }
+  .gs-hero-box h1 { font-size: clamp(36px, 12vw, 56px); }
+}
+  </style>
+</head>
+<body>
+  <div class="gs-app">
+    <header class="gs-header">
+      <div class="gs-header-inner">
+        <a class="gs-logo" href="#">
+          <span class="gs-logo-mark">
+            <svg viewBox="0 0 32 32" aria-label="KB국민은행" role="img">
+              <rect width="32" height="32" rx="3" fill="#695647"/>
+              <circle cx="16" cy="16" r="3.2" fill="#FFBC00"/>
+              <circle cx="16" cy="7.2" r="1.7" fill="#FFBC00"/>
+              <circle cx="16" cy="24.8" r="1.7" fill="#FFBC00"/>
+              <circle cx="7.2" cy="16" r="1.7" fill="#FFBC00"/>
+              <circle cx="24.8" cy="16" r="1.7" fill="#FFBC00"/>
+              <circle cx="9.5" cy="9.5" r="1.5" fill="#FFBC00"/>
+              <circle cx="22.5" cy="9.5" r="1.5" fill="#FFBC00"/>
+              <circle cx="9.5" cy="22.5" r="1.5" fill="#FFBC00"/>
+              <circle cx="22.5" cy="22.5" r="1.5" fill="#FFBC00"/>
+            </svg>
+          </span>
+          <span class="gs-logo-text">Global One Team<em>Team Intelligence</em></span>
+        </a>
+        <nav class="gs-nav"></nav>
+        <div class="gs-util">
+          <a class="gs-util-link" href="#">문의하기</a>
+          <div class="gs-lang">
+            <button type="button" class="on" aria-label="한국어" title="한국어">🇰🇷</button>
+            <button type="button" aria-label="English" title="English">🇺🇸</button>
+          </div>
+          <button type="button" class="gs-theme-switch" aria-label="다크 모드" title="다크 모드">
+            <span class="gs-theme-switch__knob">
+              <svg class="gs-theme-icon gs-theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                <circle cx="12" cy="4" r="1.2" fill="currentColor"/>
+                <circle cx="12" cy="20" r="1.2" fill="currentColor"/>
+                <circle cx="4" cy="12" r="1.2" fill="currentColor"/>
+                <circle cx="20" cy="12" r="1.2" fill="currentColor"/>
+                <circle cx="6.3" cy="6.3" r="1.1" fill="currentColor"/>
+                <circle cx="17.7" cy="6.3" r="1.1" fill="currentColor"/>
+                <circle cx="6.3" cy="17.7" r="1.1" fill="currentColor"/>
+                <circle cx="17.7" cy="17.7" r="1.1" fill="currentColor"/>
+              </svg>
+              <svg class="gs-theme-icon gs-theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 4.5a8 8 0 1 0 7.8 9.9A6.5 6.5 0 0 1 12 4.5Z"/>
+              </svg>
+            </span>
+          </button>
+          <button type="button" class="gs-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </header>
+    <section class="gs-hero">
+      <div class="gs-hero-video">
+        <video src="global_intro_2.mp4" autoplay muted loop playsinline preload="auto" aria-label="KB Global One Team"></video>
+      </div>
+      <div class="gs-hero-inner">
+        <div class="gs-hero-box">
+          <p class="gs-hero-tag">WORLD INTELLIGENCE · ONE TEAM</p>
+          <h1><span class="gs-hero-kb">KB</span> GLOBAL<br>ONE TEAM</h1>
+          <p class="gs-hero-edition">2026.06.29(월) - 24회차</p>
+          <div class="gs-hero-cta-row">
+            <a class="gs-hero-cta" href="index.html">Home</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
